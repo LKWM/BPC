@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2299.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!doctype html&gt;</p>
+<p class="p1">&lt;html lang="fr"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;2025 Bien Prononcer le Coréen - Introduction&lt;/title&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-family: 'Inter', 'Noto Sans KR', sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>-webkit-font-smoothing: antialiased;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>-moz-osx-font-smoothing: grayscale;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.course-container {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>aspect-ratio: 4 / 5;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>max-height: 80vh;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.page {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>top: 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>left: 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>opacity: 0;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>visibility: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>background-color: white;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 2.5rem 3rem;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 0.75rem;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-sizing: border-box;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transform: translateY(10px);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.page.active {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>opacity: 1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>visibility: visible;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transform: translateY(0);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.page-content {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-grow: 1;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>overflow-y: auto;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>line-height: 1.8;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.nav-button {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>padding: 0.75rem 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>border-radius: 0.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transition: background-color 0.2s;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>.page-indicator {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>top: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>right: 1.5rem;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>font-size: 0.875rem;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>color: #9ca3af;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* Responsive */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>@media (max-width: 600px) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>body { padding: 0.5rem; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.course-container { aspect-ratio: auto; height: 90vh; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.page { padding: 2rem 1.5rem; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>h1 { font-size: 1.75rem; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>h2 { font-size: 1.5rem; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>h3 { font-size: 1.25rem; margin-bottom: 1rem; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.page-content { line-height: 1.7; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.page-content p { font-size: 0.95rem; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.nav-button { padding: 0.6rem 1rem; font-size: 0.9rem; }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.page-indicator { top: 1rem; right: 1rem; font-size: 0.8rem; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gray-100 flex items-center justify-center min-h-screen p-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="w-full max-w-2xl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="shadow-2xl rounded-xl course-container"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 1 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-1" class="page active"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;1 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-500 text-sm mb-2"&gt;Ver. 2025&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4"&gt;Bien Prononcer le Coréen&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2 class="text-2xl md:text-3xl font-medium text-indigo-600"&gt;Apprendre le Hangeul&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="mt-8 text-lg text-gray-700"&gt;Bienvenue dans le programme.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-end items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-2')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Commencer →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 2 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-2" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;2 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;L'histoire de BPC&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>BPC a débuté avec un manuel créé en 2022, a évolué avec le manuel et les cours vidéo "2023 Bien Prononcer le Coréen".</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-3')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 3 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-3" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;3 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Qu'est-ce qui est différent avec BPC 2025 ?&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Ce programme est une réorganisation du contenu de BPC 2023. Les leçons ont été divisées en plus petites unités pour faciliter l'apprentissage.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-4')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 4 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-4" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;4 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Période d'apprentissage&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Certains disent qu'il ne faut que quelques jours ou quelques heures pour apprendre le Hangeul, mais cela dépend de l'objectif et de la pratique.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-5')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 5 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-5" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;5 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Période d'apprentissage (suite)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Si vous étudiez assidûment tous les jours, vous devriez être capable de lire le Hangeul sans difficulté en peu de temps.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-6')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 6 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-6" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;6 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Période d'apprentissage (considérations)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>La durée varie selon votre emploi du temps et votre pratique régulière.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-7')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 7 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-7" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;7 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Que suivre en priorité ?&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Nous recommandons de suivre BPC du Chapitre 0 au 3 d'abord, puis continuer en parallèle avec d'autres chapitres.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-8')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 8 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-8" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;8 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Comment étudier en autodidacte ?&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Chaque cours est conçu pour que vous puissiez comprendre et apprendre seul sans difficulté, avec des explications claires.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-7')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-9')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 9 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-9" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;9 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Conseils d'étude&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Le plus important est de ne pas sauter les explications en français et de pratiquer régulièrement.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-10')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 10 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-10" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;10 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3 class="text-2xl font-bold text-gray-800 mb-6"&gt;Questions &amp; Formulaire&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-700 text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Si vous avez une question pendant votre apprentissage, veuillez la laisser dans le formulaire de questions.</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-11')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Suivant →&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 11 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-11" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-indicator"&gt;11 / 12&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-2xl text-gray-800"&gt;Nous espérons que votre premier cours de coréen sera agréable.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-3xl font-bold text-indigo-600 mt-6"&gt;Bonne chance !&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-between items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-10')" class="nav-button text-gray-600 hover:bg-gray-200"&gt;← Précédent&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-12')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700"&gt;Terminer&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Page 12: Completion --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="page-12" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="page-content text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;svg class="w-16 h-16 mx-auto mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"&gt;&lt;/path&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2"&gt;Introduction terminée !&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="text-gray-600 text-base md:text-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>Vous avez bien complété la première étape. Préparez-vous pour la prochaine !</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="flex justify-center items-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button onclick="showPage('page-1')" class="nav-button bg-gray-800 text-white hover:bg-gray-900"&gt;Recommencer&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let currentPageId = 'page-1';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function showPage(pageId) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const currentPage = document.getElementById(currentPageId);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (currentPage) currentPage.classList.remove('active');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const nextPage = document.getElementById(pageId);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (nextPage) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nextPage.classList.add('active');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentPageId = pageId;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.addEventListener('DOMContentLoaded', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>showPage('page-1');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
