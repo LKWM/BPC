@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon : Les consonnes basiques (ㅅ)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        /* CSS Custom Properties for Fluid Scaling */
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5vmin, 2rem);
+            --font-display: clamp(5rem, 20vmin, 8rem);
+            --font-char-btn: clamp(4rem, 15vmin, 5rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+
+        /* --- Desktop First Styles --- */
+        .course-wrapper {
+            width: 100%;
+            max-width: 600px;
+        }
+        .course-container {
+            width: 100%;
+            position: relative;
+            aspect-ratio: 1 / 1; /* Default to a square on desktop */
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); /* shadow-2xl */
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        .page {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out;
+            background-color: white;
+            padding: var(--padding-lg);
+            border-radius: 0.75rem; /* rounded-xl */
+            overflow: hidden;
+        }
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        #page-0 {
+            justify-content: center;
+        }
+        .page-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        /* Applying fluid font sizes */
+        .title-text { font-size: var(--font-title); }
+        .hangeul-char-display { font-size: var(--font-display); }
+        .char-button { font-size: var(--font-char-btn); }
+        .lesson-text { font-size: var(--font-lg); }
+        .quiz-question { font-size: var(--font-lg); }
+        .quiz-option > span { font-size: var(--font-xl); }
+        .nav-button { font-size: var(--font-base); }
+
+        /* --- Mobile Responsive Styles --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+                /* Ensure body takes full height on mobile for wrapper to anchor*/
+                height: 100vh;
+                max-height: -webkit-fill-available;
+            }
+            .course-wrapper {
+                height: 100%;
+                max-width: 100%;
+            }
+            .course-container {
+                aspect-ratio: auto; /* Let height and width define the shape */
+                height: 100%;
+                border-radius: 0;
+            }
+            .page {
+                padding: 1.5rem 1rem;
+                border-radius: 0;
+            }
+            .lesson-image { max-height: 30%; }
+        }
+
+        /* Common styles for elements */
+        .hangeul-char-display, .char-button {
+            font-weight: 700;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #3b82f6;
+            text-align: center;
+        }
+        .char-button {
+            background-color: #eff6ff;
+            border: 2px solid #93c5fd;
+            border-radius: 1rem;
+            padding: var(--padding-sm) var(--padding-md);
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            line-height: 1.1; /* Adjust line height for better vertical centering */
+        }
+        .char-button:hover { background-color: #dbeafe; }
+        .char-button:active { transform: scale(0.95); }
+        
+        .lesson-image {
+            max-width: 80%;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .audio-button {
+            background: none; border: none; cursor: pointer;
+        }
+        .audio-icon {
+            width: 3rem; height: 3rem; color: #6b7280; transition: color 0.2s;
+        }
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+
+        .quiz-option {
+            display: inline-block;
+            padding: var(--padding-sm) var(--padding-md);
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-family: 'Noto Sans KR', sans-serif;
+            text-align: center;
+            min-width: 60px;
+        }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7; border-color: #4ade80; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #f87171; }
+        .quiz-option input { display: none; }
+
+        .nav-button {
+            padding: var(--padding-sm) var(--padding-md);
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .feedback-area {
+            text-align: center;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 1rem; /* Add some space above feedback text */
+        }
+        .quiz-nav-container {
+             min-height: 50px; /* Give the nav container a minimum height to reduce shifts */
+             display: flex;
+             align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="course-wrapper">
+        <div class="course-container">
+
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active">
+                <div class="w-full text-center">
+                    <h1 class="title-text font-bold text-gray-800 mb-6 leading-tight">Chapitre 1 - Les consonnes basiques (4)</h1>
+                    <p class="hangeul-char-display">ㅅ</p>
+                </div>
+                <div class="w-full text-center">
+                     <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Page 1: Lesson ㅅ -->
+            <div id="page-1" class="page">
+                <div class="page-content">
+                    <button class="char-button" onclick="playSound('s')">ㅅ</button>
+                    <p class="lesson-text text-gray-700 mt-8"><strong class="text-blue-600">&lt;ㅅ&gt; (시옷 si-ot)</strong> est une consonne fricative alvéolaire.</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 2: Fricatif -->
+            <div id="page-2" class="page">
+                <div class="page-content">
+                    <button class="char-button" onclick="playSound('s')">ㅅ</button>
+                    <p class="lesson-text text-gray-700 mt-8"><strong class="text-blue-600">&lt;Fricatif&gt;</strong> signifie que le son se produit par un frottement. À la différence des consonnes explosives, les sons fricatifs n’exercent pas une fermeture complète.</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 3: Alvéolaire -->
+            <div id="page-3" class="page">
+                 <div class="page-content">
+                    <img src="https://static.wixstatic.com/media/699687_2a00fd81bab44e16945e96356a716e7b~mv2.jpg" alt="Position d'articulation de 'ㅅ'" class="lesson-image">
+                    <p class="lesson-text text-gray-700">Gardez une petite fente entre les dents et la langue et faites le son en laissant fuir légèrement de l’air, comme si vous imitiez un serpent !</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 4: Combination -->
+            <div id="page-4" class="page">
+                <div class="page-content">
+                    <div class="flex items-center gap-4 md:gap-8">
+                        <button class="char-button" onclick="playSound('s')">ㅅ</button>
+                        <button class="char-button" style="color: #ef4444;" onclick="playSound('a')">ㅏ</button>
+                    </div>
+                    <div class="mt-8">
+                        <button class="char-button" style="color: #1f2937;" onclick="playSound('sa')">사</button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Quiz Pages (5-15) -->
+            <!-- Page 5: Quiz 1 -->
+            <div id="page-5" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez le bon caractère.</p>
+                    <button class="audio-button mb-8" onclick="playSound('d')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-1-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="g"><span>ㄱ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="n"><span>ㄴ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="d"><span>ㄷ</span></label>
+                    </div>
+                </div>
+                <div id="quiz-1-feedback" class="feedback-area"></div>
+                <div id="quiz-1-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+            
+            <!-- Page 6: Quiz 2 -->
+            <div id="page-6" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez le bon caractère.</p>
+                    <button class="audio-button mb-8" onclick="playSound('s')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-2-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="b"><span>ㅂ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="s"><span>ㅅ</span></label>
+                    </div>
+                </div>
+                <div id="quiz-2-feedback" class="feedback-area"></div>
+                <div id="quiz-2-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 7: Quiz 3 -->
+            <div id="page-7" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez le bon caractère.</p>
+                    <button class="audio-button mb-8" onclick="playSound('a')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-3-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="a"><span>ㅏ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="o"><span>ㅗ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="i"><span>ㅣ</span></label>
+                    </div>
+                </div>
+                <div id="quiz-3-feedback" class="feedback-area"></div>
+                <div id="quiz-3-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 8: Quiz 4 -->
+            <div id="page-8" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez le bon caractère.</p>
+                    <button class="audio-button mb-8" onclick="playSound('i')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-4-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="a"><span>ㅏ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="o"><span>ㅗ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="i"><span>ㅣ</span></label>
+                    </div>
+                </div>
+                <div id="quiz-4-feedback" class="feedback-area"></div>
+                <div id="quiz-4-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 9: Quiz 5 -->
+            <div id="page-9" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez le bon caractère.</p>
+                    <button class="audio-button mb-8" onclick="playSound('o')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-5-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz5" value="a"><span>ㅏ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz5" value="o"><span>ㅗ</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz5" value="i"><span>ㅣ</span></label>
+                    </div>
+                </div>
+                <div id="quiz-5-feedback" class="feedback-area"></div>
+                <div id="quiz-5-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+            
+            <!-- Page 10: Quiz 6 -->
+            <div id="page-10" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez la bonne syllabe.</p>
+                    <button class="audio-button mb-8" onclick="playSound('da')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-6-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz6" value="ga"><span>가</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz6" value="da"><span>다</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz6" value="ba"><span>바</span></label>
+                    </div>
+                </div>
+                <div id="quiz-6-feedback" class="feedback-area"></div>
+                <div id="quiz-6-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 11: Quiz 7 -->
+            <div id="page-11" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez la bonne syllabe.</p>
+                    <button class="audio-button mb-8" onclick="playSound('so')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-7-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz7" value="do"><span>도</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz7" value="so"><span>소</span></label>
+                    </div>
+                </div>
+                <div id="quiz-7-feedback" class="feedback-area"></div>
+                <div id="quiz-7-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 12: Quiz 8 -->
+            <div id="page-12" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez la bonne syllabe.</p>
+                    <button class="audio-button mb-8" onclick="playSound('bi')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-8-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz8" value="bi"><span>비</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz8" value="si"><span>시</span></label>
+                    </div>
+                </div>
+                <div id="quiz-8-feedback" class="feedback-area"></div>
+                <div id="quiz-8-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 13: Quiz 9 -->
+            <div id="page-13" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez la bonne syllabe.</p>
+                    <button class="audio-button mb-8" onclick="playSound('sa')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-9-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz9" value="da"><span>다</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz9" value="sa"><span>사</span></label>
+                    </div>
+                </div>
+                <div id="quiz-9-feedback" class="feedback-area"></div>
+                <div id="quiz-9-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 14: Quiz 10 -->
+            <div id="page-14" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez la bonne syllabe.</p>
+                    <button class="audio-button mb-8" onclick="playSound('gi')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-10-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz10" value="si"><span>시</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz10" value="gi"><span>기</span></label>
+                    </div>
+                </div>
+                <div id="quiz-10-feedback" class="feedback-area"></div>
+                <div id="quiz-10-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Page 15: Quiz 11 -->
+            <div id="page-15" class="page">
+                <div class="page-content">
+                    <p class="quiz-question font-semibold text-gray-800 mb-4">Choisissez la bonne syllabe.</p>
+                    <button class="audio-button mb-8" onclick="playSound('si')">
+                        <svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                    </button>
+                    <div id="quiz-11-options" class="flex flex-wrap justify-center gap-2">
+                        <label class="quiz-option"><input type="radio" name="quiz11" value="bi"><span>비</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz11" value="si"><span>시</span></label>
+                        <label class="quiz-option"><input type="radio" name="quiz11" value="di"><span>디</span></label>
+                    </div>
+                </div>
+                <div id="quiz-11-feedback" class="feedback-area"></div>
+                <div id="quiz-11-nav" class="quiz-nav-container w-full flex justify-between items-center"></div>
+            </div>
+
+            <!-- Completion Message -->
+            <div id="completion-message" class="page">
+                <div class="page-content">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="title-text font-bold text-gray-800 mb-3">Leçon terminée !</h2>
+                    <p class="lesson-text text-gray-600">Félicitations ! Vous avez terminé cette leçon.<br>Préparez-vous pour la leçon suivante !</p>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-15')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Revoir le quiz final</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+
+        // Audio files for the lesson
+        const sounds = {
+            'g': { file: 'https://static.wixstatic.com/mp3/699687_a14958ffc05243ccb827e78390a1c8ca.mp3' },
+            'd': { file: 'https://static.wixstatic.com/mp3/699687_87a9f8b74219436d93beb9b795320bc7.mp3' },
+            'b': { file: 'https://static.wixstatic.com/mp3/699687_75717886fe7f4b1aacf95580bf551aa6.mp3' },
+            's': { file: 'https://static.wixstatic.com/mp3/699687_88ce9d0e984d41989f3bd6c61cbc7219.mp3' },
+            'a': { file: 'https://static.wixstatic.com/mp3/699687_23c826488a4041f488691d65bbecea21.mp3' },
+            'o': { file: 'https://static.wixstatic.com/mp3/699687_58ae738b4c2f4673bb8aace39a46b41b.mp3' },
+            'i': { file: 'https://static.wixstatic.com/mp3/699687_641a5e9958a8416a917cc0c267310c13.mp3' },
+            'ga': { file: 'https://static.wixstatic.com/mp3/699687_9dfb39b123834dfc8f2ad96ddec7df76.mp3' },
+            'da': { file: 'https://static.wixstatic.com/mp3/699687_38e487f77a2f44beb3e9d80d9521e6da.mp3' },
+            'do': { file: 'https://static.wixstatic.com/mp3/699687_a7a055252e984492bd4ef522f0902d6e.mp3' },
+            'bi': { file: 'https://static.wixstatic.com/mp3/699687_288bbda680a9492980f4e51c775eb7c0.mp3' },
+            'ba': { file: 'https://static.wixstatic.com/mp3/699687_be6000d487c4469db9d99d3c6431aa96.mp3' },
+            'bo': { file: 'https://static.wixstatic.com/mp3/699687_eb8f810ff6864d3e8a8f70e7da39adef.mp3' },
+            'gi': { file: 'https://static.wixstatic.com/mp3/699687_81f4c44772bd48c1bdf58aed73ef0510.mp3' },
+            'di': { file: 'https://static.wixstatic.com/mp3/699687_a2efc6ef62274780adbdc6082f1d40b2.mp3' },
+            'sa': { file: 'https://static.wixstatic.com/mp3/699687_ca2c8cad16524f64bcad9b0b519ef9bf.mp3' },
+            'so': { file: 'https://static.wixstatic.com/mp3/699687_e2ea874a6d614f219d82f3de054657da.mp3' },
+            'si': { file: 'https://static.wixstatic.com/mp3/699687_bde1e56a0bdf4c979d1ee8651718c3c7.mp3' },
+        };
+
+        // Configuration for all quizzes
+        const quizConfig = {
+            '1': { correctAnswer: 'd', nextPageId: 'page-6', prevPageId: 'page-4' },
+            '2': { correctAnswer: 's', nextPageId: 'page-7', prevPageId: 'page-5' },
+            '3': { correctAnswer: 'a', nextPageId: 'page-8', prevPageId: 'page-6' },
+            '4': { correctAnswer: 'i', nextPageId: 'page-9', prevPageId: 'page-7' },
+            '5': { correctAnswer: 'o', nextPageId: 'page-10', prevPageId: 'page-8' },
+            '6': { correctAnswer: 'da', nextPageId: 'page-11', prevPageId: 'page-9' },
+            '7': { correctAnswer: 'so', nextPageId: 'page-12', prevPageId: 'page-10' },
+            '8': { correctAnswer: 'bi', nextPageId: 'page-13', prevPageId: 'page-11' },
+            '9': { correctAnswer: 'sa', nextPageId: 'page-14', prevPageId: 'page-12' },
+            '10': { correctAnswer: 'gi', nextPageId: 'page-15', prevPageId: 'page-13' },
+            '11': { correctAnswer: 'si', nextPageId: 'completion-message', prevPageId: 'page-14' }
+        };
+
+        // Function to play sound using Tone.js
+        function playSound(soundKey) {
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+                player.onstop = () => player.dispose();
+            }).catch(e => console.error("Audio could not start:", e));
+        }
+
+        // Function to navigate between pages
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+
+                // Reset quiz state when navigating to a quiz page
+                const quizNumMatch = pageId.match(/page-(\d+)/);
+                if (quizNumMatch) {
+                    const pageNum = parseInt(quizNumMatch[1]);
+                    if (pageNum >= 5 && pageNum <= 15) {
+                        const quizNum = String(pageNum - 4);
+                        resetQuiz(quizNum);
+                    }
+                }
+            }
+        }
+        
+        // Function to disable quiz options after an answer is submitted
+        function disableQuizOptions(quizName) {
+            document.querySelectorAll(`input[name="${quizName}"]`).forEach(opt => {
+                opt.disabled = true;
+            });
+        }
+        
+        // Function to reset a quiz for a retry or on page load
+        function resetQuiz(quizNum) {
+            const quizName = `quiz${quizNum}`;
+            const feedbackEl = document.getElementById(`quiz-${quizNum}-feedback`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const options = document.querySelectorAll(`input[name="${quizName}"]`);
+            const config = quizConfig[quizNum];
+
+            if (!config || !navEl) return;
+
+            if (feedbackEl) feedbackEl.innerHTML = '';
+            
+            // Restore original nav buttons using the config
+            navEl.innerHTML = `
+                <button onclick="showPage('${config.prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                <button onclick="checkAnswer('quiz${quizNum}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+            `;
+
+            options.forEach(opt => {
+                opt.disabled = false;
+                opt.checked = false;
+                opt.parentElement.classList.remove('selected', 'correct', 'incorrect');
+            });
+        }
+
+        // Function to check the user's answer
+        function checkAnswer(quizName) {
+            const quizNum = quizName.replace('quiz', '');
+            const config = quizConfig[quizNum];
+            if (!config) return;
+
+            const { correctAnswer, nextPageId, prevPageId } = config;
+            const selectedOption = document.querySelector(`input[name="${quizName}"]:checked`);
+            const feedbackEl = document.getElementById(`quiz-${quizNum}-feedback`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+
+            if (!selectedOption) {
+                feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez sélectionner une réponse.</p>`;
+                return;
+            }
+            
+            disableQuizOptions(quizName);
+            
+            const selectedLabel = selectedOption.parentElement;
+            const prevButtonHTML = `<button onclick="showPage('${prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>`;
+            
+            if (selectedOption.value === correctAnswer) {
+                selectedLabel.classList.add('correct');
+                feedbackEl.innerHTML = `<p class="text-green-600 font-bold">Bonne réponse !</p>`;
+                const buttonText = nextPageId === 'completion-message' ? 'Terminer la leçon' : 'Page suivante &rarr;';
+                navEl.innerHTML = `
+                    ${prevButtonHTML}
+                    <button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>
+                `;
+            } else {
+                selectedLabel.classList.add('incorrect');
+                feedbackEl.innerHTML = `<p class="text-red-600 font-bold">Incorrect. Essayez encore !</p>`;
+                navEl.innerHTML = `
+                    ${prevButtonHTML}
+                    <button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>
+                `;
+            }
+        }
+        
+        // Add event listeners to radio buttons for selection styling
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                    opt.parentElement.classList.remove('selected');
+                });
+                if(e.target.checked) {
+                    e.target.parentElement.classList.add('selected');
+                }
+            });
+        });
+
+        // Initial setup for the first page
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('page-0');
+        });
+    </script>
+</body>
+</html>
