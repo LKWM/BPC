@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon : Apprendre le Hangeul</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+        }
+        .course-wrapper {
+            width: 100%;
+            max-width: 600px;
+        }
+        .course-container {
+            width: 100%;
+            position: relative;
+            aspect-ratio: 1 / 1; /* Maintain square shape on desktop */
+        }
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out;
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        #page-0 {
+            justify-content: center;
+        }
+        .page-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .korean-char {
+            font-size: 2.5rem;
+            line-height: 1.5;
+            color: #3b82f6;
+            font-weight: bold;
+            letter-spacing: 0.5em;
+            text-align: center;
+            margin: 0;
+        }
+        .korean-char-container {
+            margin: 1rem 0;
+        }
+        .page-header {
+            text-align: center;
+            color: #4b5563;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+        .quiz-question {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        .quiz-option {
+            display: block;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .quiz-option:hover {
+            background-color: #f3f4f6;
+        }
+        .quiz-option input {
+            margin-right: 0.75rem;
+        }
+        .nav-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .feedback-area {
+            text-align: center;
+            min-height: 70px; /* To prevent layout shift */
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            body {
+                padding: 0.5rem;
+            }
+            .course-container {
+                aspect-ratio: auto;
+                height: 90vh;
+            }
+            .page {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.5rem; /* Smaller title */
+            }
+             h2 {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+            .page-header {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+            }
+            .page-content p, .quiz-option {
+                font-size: 0.9rem;
+            }
+            .korean-char {
+                font-size: 1.5rem;
+                letter-spacing: 0.25em;
+            }
+            .nav-button {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .feedback-area {
+                min-height: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="course-wrapper">
+        <div class="shadow-2xl rounded-xl course-container">
+
+            <!-- Page 0: Title (FIXED) -->
+            <div id="page-0" class="page active items-center text-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Chapitre 0 - (2)<br>Le hangeul et la langue coréenne</h1>
+                    <p class="text-gray-600 text-lg">Appuyez sur le bouton pour commencer la leçon.</p>
+                    <button onclick="showPage('page-1')" class="mt-10 bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Page 1: Lesson Hangeul vs Hangugeo -->
+            <div id="page-1" class="page">
+                <div class="page-content">
+                    <div class="page-header">Chapitre 0 - (2) Le hangeul et la langue coréenne</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">한국어 (Hangugeo) vs 한글 (Hangeul)</h2>
+                    <p class="text-gray-700 text-lg mb-4">Avant de commencer la première leçon de coréen, il y a deux mots à connaître : <strong>한국어 (Hangugeo)</strong> et <strong>한글 (Hangeul)</strong>.</p>
+                    <p class="text-gray-700 text-lg mb-4"><strong>한국어 (Hangugeo)</strong> signifie la langue coréenne et <strong>한글 (Hangeul)</strong> est son système d’écriture. De la même manière que l’alphabet latin pour le français, il faut connaître <strong>한글 (Hangeul)</strong> pour lire et écrire la langue coréenne.</p>
+                    <p class="text-gray-700 text-lg bg-blue-50 p-4 rounded-lg">Donc si on vous dit que vous pouvez apprendre <strong>한국어 (Hangugeo)</strong> en quelques jours, c’est un leurre, mais par contre si on vous dit que vous pouvez apprendre <strong>한글 (Hangeul)</strong> en quelques jours, cela peut être un défi intéressant !</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 2: Quiz 1 -->
+            <div id="page-2" class="page">
+                <div class="page-content">
+                    <div class="page-header">Quiz 1</div>
+                    <p class="quiz-question">Laquelle des descriptions suivantes est correcte ?</p>
+                    <div id="quiz-1-options">
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="a">a. Le Hangeul est la langue utilisée en Corée, et le Hangugeo est son système d'écriture.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="b">b. Le Hangeul est le système d'écriture utilisé en Corée, et le Hangugeo est la langue.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="c">c. Le Hangeul et le Hangugeo sont des synonymes signifiant 'langue coréenne'.</label>
+                    </div>
+                </div>
+                <div id="quiz-1-feedback" class="feedback-area"></div>
+                <div id="quiz-1-nav" class="flex justify-between items-center">
+                     <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>
+                     <button onclick="checkAnswer('quiz1', 'b', 'page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <!-- Page 3: Lesson History -->
+            <div id="page-3" class="page">
+                 <div class="page-content">
+                    <div class="page-header">Chapitre 0 - (2) Le hangeul et la langue coréenne</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">L'histoire de 한글 (Hangeul)</h2>
+                    <p class="text-gray-700 text-lg mb-4"><strong>한글</strong> est connu comme l’un des systèmes d'écriture les plus scientifiques du monde. Il a été inventé au XVème siècle par le roi Sejong.</p>
+                    <p class="text-gray-700 text-lg mb-4">Les caractères sont fondés en imitant la forme des organes phonatoires (la bouche, la langue, etc.).</p>
+                    <p class="text-gray-700 text-lg">Il existe 14 consonnes et 10 voyelles de base en coréen moderne, ainsi que plusieurs autres consonnes et voyelles composées à partir de ces caractères de base.</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Quiz précédent</button>
+                    <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+            
+            <!-- Page 4: Quiz 2 -->
+            <div id="page-4" class="page">
+                <div class="page-content">
+                    <div class="page-header">Quiz 2</div>
+                    <p class="quiz-question">Laquelle des descriptions suivantes est correcte ?</p>
+                    <div id="quiz-2-options">
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="a">a. Le Hangeul est utilisé en Chine, au Japon et en Corée.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="b">b. Le Hangeul est une écriture idéographique.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="c">c. Apprendre le Hangeul permet de parler coréen.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="d">d. Le Hangeul est composé de consonnes et de voyelles.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="e">e. Le Hangeul a été inventé au 20ème siècle.</label>
+                    </div>
+                </div>
+                <div id="quiz-2-feedback" class="feedback-area"></div>
+                <div id="quiz-2-nav" class="flex justify-between items-center">
+                     <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>
+                     <button onclick="checkAnswer('quiz2', 'd', 'page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <!-- Page 5: Lesson Consonants -->
+            <div id="page-5" class="page">
+                <div class="page-content">
+                    <div class="page-header">Chapitre 0 - (2) Le hangeul et la langue coréenne</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Les consonnes</h2>
+                    <h3 class="font-semibold text-lg text-gray-700">&lt; Les consonnes dans l’ordre traditionnel &gt;</h3>
+                    <p class="korean-char">ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ</p>
+                    <p class="text-gray-700 text-lg mt-4">Les caractères de base sont créés en imitant la forme de l'organe phonatoire et sont modifiés par l'ajout de traits.</p>
+                    <p class="text-sm text-gray-500 mt-4">* Les consonnes tendues ne sont pas incluses dans cette liste.</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Quiz précédent</button>
+                    <button onclick="showPage('page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 6: Quiz 3 -->
+            <div id="page-6" class="page">
+                <div class="page-content">
+                    <div class="page-header">Quiz 3</div>
+                    <p class="quiz-question">Laquelle des descriptions suivantes est correcte ?</p>
+                    <div id="quiz-3-options">
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="a">a. Il y a 10 consonnes de base au total.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="b">b. Les consonnes sont formées de lignes horizontales et verticales.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="c">c. Les consonnes imitent la forme des organes phonatoires.</label>
+                    </div>
+                </div>
+                <div id="quiz-3-feedback" class="feedback-area"></div>
+                <div id="quiz-3-nav" class="flex justify-between items-center">
+                    <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>
+                    <button onclick="checkAnswer('quiz3', 'c', 'page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <!-- Page 7: Lesson Vowels -->
+            <div id="page-7" class="page">
+                <div class="page-content">
+                    <div class="page-header">Chapitre 0 - (2) Le hangeul et la langue coréenne</div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Les voyelles</h2>
+                    <h3 class="font-semibold text-lg text-gray-700">&lt; Les voyelles dans l’ordre traditionnel &gt;</h3>
+                    <div class="korean-char-container">
+                        <p class="korean-char">ㅏ ㅑ ㅓ ㅕ ㅗ</p>
+                        <p class="korean-char">ㅛ ㅜ ㅠ ㅡ ㅣ</p>
+                    </div>
+                    <p class="text-gray-700 text-lg mt-4">Les voyelles sont composées uniquement de traits horizontaux/verticaux et se placent à droite ou en dessous de la consonne.</p>
+                    <p class="text-sm text-gray-500 mt-4">* Les voyelles combinées ne sont pas incluses dans cette liste.</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Quiz précédent</button>
+                    <button onclick="showPage('page-8')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 8: Quiz 4 -->
+            <div id="page-8" class="page">
+                <div class="page-content">
+                    <div class="page-header">Quiz 4</div>
+                    <p class="quiz-question">Laquelle des descriptions suivantes est correcte ?</p>
+                    <div id="quiz-4-options">
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="a">a. Il y a 10 voyelles de base au total.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="b">b. Le caractère 'ㅇ' est une voyelle.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="c">c. Les voyelles imitent la forme des organes phonatoires.</label>
+                    </div>
+                </div>
+                <div id="quiz-4-feedback" class="feedback-area"></div>
+                <div id="quiz-4-nav" class="flex justify-between items-center">
+                    <button onclick="showPage('page-7')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>
+                    <button onclick="checkAnswer('quiz4', 'a', 'page-9')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <!-- Page 9: Final Quiz -->
+            <div id="page-9" class="page">
+                <div class="page-content">
+                    <div class="page-header">Quiz Final</div>
+                    <p class="quiz-question">Parmi les suivants, sélectionnez toutes les consonnes.</p>
+                    <div id="quiz-5-options">
+                        <label class="quiz-option"><input type="checkbox" name="quiz5" value="ㄱ"> ㄱ</label>
+                        <label class="quiz-option"><input type="checkbox" name="quiz5" value="ㅇ"> ㅇ</label>
+                        <label class="quiz-option"><input type="checkbox" name="quiz5" value="ㅏ"> ㅏ</label>
+                        <label class="quiz-option"><input type="checkbox" name="quiz5" value="ㅂ"> ㅂ</label>
+                        <label class="quiz-option"><input type="checkbox" name="quiz5" value="ㅡ"> ㅡ</label>
+                        <label class="quiz-option"><input type="checkbox" name="quiz5" value="ㅣ"> ㅣ</label>
+                        <label class="quiz-option"><input type="checkbox" name="quiz5" value="ㅅ"> ㅅ</label>
+                    </div>
+                </div>
+                <div id="quiz-5-feedback" class="feedback-area"></div>
+                <div id="quiz-5-nav" class="flex justify-between items-center">
+                    <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Quiz précédent</button>
+                    <button onclick="checkMultiAnswer('completion-message')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <!-- Completion Message -->
+            <div id="completion-message" class="page items-center justify-center text-center">
+                <div class="page-content flex flex-col items-center justify-center">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Leçon terminée !</h2>
+                    <p class="text-gray-600 text-xl">Félicitations ! Vous avez terminé cette leçon.<br>Préparez-vous pour la leçon suivante !</p>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Revoir le quiz final</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+
+                // Reset quiz state when showing a new page
+                const quizNavs = document.querySelectorAll('[id$="-nav"]');
+                quizNavs.forEach(nav => nav.classList.remove('hidden'));
+                
+                const feedbackElements = document.querySelectorAll('[id$="-feedback"]');
+                feedbackElements.forEach(el => {
+                    el.innerHTML = '';
+                });
+
+                const options = document.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+                options.forEach(opt => {
+                    opt.checked = false;
+                    opt.disabled = false;
+                });
+                 const labels = document.querySelectorAll('.quiz-option');
+                labels.forEach(label => {
+                    label.style.cursor = 'pointer';
+                    label.classList.remove('opacity-50');
+                });
+            }
+        }
+
+        function disableQuizOptions(quizName) {
+            const options = document.querySelectorAll(`input[name="${quizName}"]`);
+            options.forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'not-allowed';
+                opt.parentElement.classList.add('opacity-50');
+            });
+        }
+
+        function checkAnswer(quizName, correctAnswer, nextPageId) {
+            const quizNum = quizName.slice(-1);
+            const lessonPageId = `page-${(quizNum * 2) - 1}`;
+            const selectedOption = document.querySelector(`input[name="${quizName}"]:checked`);
+            const feedbackEl = document.getElementById(`quiz-${quizNum}-feedback`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+
+            if (!selectedOption) {
+                feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold mt-4">Veuillez sélectionner une réponse.</p>`;
+                return;
+            }
+            
+            disableQuizOptions(quizName);
+            navEl.classList.add('hidden'); // Hide the original nav buttons
+
+            if (selectedOption.value === correctAnswer) {
+                feedbackEl.innerHTML = `<div class="mt-4"><p class="text-green-600 font-bold mb-2">Bonne réponse !</p><button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">Page suivante &rarr;</button></div>`;
+            } else {
+                feedbackEl.innerHTML = `<div class="mt-4"><p class="text-red-600 font-bold mb-2">Incorrect. Essayez encore !</p><button onclick="showPage('${lessonPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">&larr; Revoir la leçon</button></div>`;
+            }
+        }
+
+        function checkMultiAnswer(nextPageId) {
+            const feedbackEl = document.getElementById('quiz-5-feedback');
+            const navEl = document.getElementById('quiz-5-nav');
+            const selectedOptions = document.querySelectorAll('input[name="quiz5"]:checked');
+            const correctAnswers = ['ㄱ', 'ㅇ', 'ㅂ', 'ㅅ'];
+            let userAnswers = Array.from(selectedOptions).map(opt => opt.value);
+            const isCorrect = correctAnswers.length === userAnswers.length && correctAnswers.every(val => userAnswers.includes(val));
+            
+            disableQuizOptions('quiz5');
+            navEl.classList.add('hidden');
+
+            if (isCorrect) {
+                 feedbackEl.innerHTML = `<div class="mt-4"><p class="text-green-600 font-bold mb-2">Bonne réponse !</p><button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">Terminer la leçon</button></div>`;
+            } else {
+                feedbackEl.innerHTML = `<div class="mt-4"><p class="text-red-600 font-bold mb-2">Incorrect. Essayez encore !</p><button onclick="showPage('page-9')" class="nav-button bg-red-600 text-white hover:bg-red-700">&larr; Revoir le quiz</button></div>`;
+            }
+        }
+    </script>
+</body>
+</html>
