@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon : Former une syllabe en Hangeul</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+            background-color: #f3f4f6;
+        }
+
+        /* --- Desktop First Styles --- */
+        .course-wrapper {
+            width: 100%;
+            max-width: 600px;
+        }
+        .course-container {
+            width: 100%;
+            position: relative;
+            aspect-ratio: 1 / 1; /* Default to a square on desktop */
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+        }
+        .page {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out;
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        #page-0 {
+            justify-content: center;
+        }
+        .page-content {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        .page-header {
+            text-align: center;
+            color: #4b5563;
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+            flex-shrink: 0;
+        }
+        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+        
+        /* --- Mobile Responsive Styles --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 0.5rem;
+            }
+            .course-wrapper {
+                height: 90vh;
+            }
+            .course-container {
+                aspect-ratio: auto;
+                height: 100%;
+            }
+            .page {
+                padding: 1.5rem;
+            }
+            h1 { font-size: 1.5rem !important; line-height: 2rem !important; }
+            h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+            .page-header {
+                font-size: 1rem;
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+            }
+            .page-content p, .text-lg, .quiz-option {
+                font-size: 0.9rem;
+            }
+            .nav-button {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            .feedback-area { min-height: 60px; }
+            .example-syllable-container { margin: 1rem 0; gap: 1rem; }
+            .syllable-svg { width: 70px; height: 70px; }
+            .syllable-svg text { font-size: 48px; }
+            .syllable-quiz-box {
+                font-size: clamp(2.5rem, 15vw, 4rem); /* Fluid font size */
+                margin: 0.5rem;
+            }
+            .syllable-part {
+                padding: clamp(0.5rem, 3vw, 1rem) clamp(1rem, 5vw, 1.5rem); /* Fluid padding */
+            }
+        }
+
+        /* Common Styles */
+        .syllable-svg { width: 100px; height: 100px; }
+        .syllable-svg text {
+            font-size: 64px;
+            font-weight: 700;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .consonant-color { color: #3b82f6; }
+        .vowel-color { color: #ef4444; }
+        .final-consonant-color { color: #16a34a; }
+        .consonant { fill: #3b82f6; }
+        .vowel { fill: #ef4444; }
+        .final-consonant { fill: #16a34a; }
+        .syllable-part.consonant { color: #3b82f6; }
+        .syllable-part.vowel { color: #ef4444; }
+
+        .example-syllable-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            min-height: 100px;
+        }
+        .syllable-quiz-box {
+            display: inline-flex;
+            border: 2px solid #9ca3af;
+            font-size: 4rem;
+            font-weight: bold;
+            line-height: 1;
+            cursor: default;
+            margin: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .syllable-part {
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border: 2px solid transparent;
+        }
+        .syllable-part:hover { background-color: #f0f9ff; }
+        .syllable-part.selected {
+            background-color: #e0e7ff;
+            border-color: #a5b4fc;
+        }
+        .vertical { flex-direction: column; }
+        .quiz-question {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        .quiz-option {
+            display: block;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option input { margin-right: 0.75rem; }
+        .nav-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .feedback-area {
+            text-align: center;
+            min-height: 70px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="course-wrapper">
+        <div class="course-container">
+
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active items-center text-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6 leading-tight">Chapitre 0 - (3)<br>Comment former une syllabe<br>en 한글 (Hangeul) ?</h1>
+                    <button onclick="showPage('page-1')" class="mt-10 bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Page 1: Lesson 1 -->
+            <div id="page-1" class="page">
+                <div class="page-content">
+                    <div class="page-header">Chapitre 0 - (3) Comment former une syllabe en 한글 (Hangeul) ?</div>
+                    <p class="text-gray-700 text-lg mb-4">Une syllabe de base se compose de 2 caractères : une <span class="consonant-color font-semibold">consonne</span> et une <span class="vowel-color font-semibold">voyelle</span>.</p>
+                    <div class="example-syllable-container">
+                        <svg viewBox="0 0 100 100" class="syllable-svg" aria-label="La syllabe '가' (ga)">
+                            <text x="20" y="70" class="consonant">ㄱ</text>
+                            <text x="58" y="70" class="vowel">ㅏ</text>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700 text-lg mb-4">On peut également former des syllabes de 3 caractères : une <span class="consonant-color font-semibold">consonne</span>, une <span class="vowel-color font-semibold">voyelle</span> et une <span class="final-consonant-color font-semibold">consonne finale</span> (appelée 받침 'batchim').</p>
+                    <div class="example-syllable-container">
+                        <svg viewBox="0 0 100 100" class="syllable-svg" aria-label="La syllabe '밤' (bam)">
+                            <text x="22" y="48" class="consonant">ㅂ</text>
+                            <text x="60" y="48" class="vowel">ㅏ</text>
+                            <text x="41" y="92" class="final-consonant">ㅁ</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 2: Lesson 2 -->
+            <div id="page-2" class="page">
+                <div class="page-content">
+                    <div class="page-header">Chapitre 0 - (3) Comment former une syllabe en 한글 (Hangeul) ?</div>
+                    <p class="text-gray-700 text-lg mb-4">À la différence du français, les syllabes coréennes commencent toujours par une <span class="consonant-color font-semibold">consonne</span>, qui est suivie par une <span class="vowel-color font-semibold">voyelle</span>.</p>
+                    <div class="example-syllable-container">
+                          <svg viewBox="0 0 100 100" class="syllable-svg" aria-label="La syllabe '미' (mi)">
+                            <text x="22" y="70" class="consonant">ㅁ</text>
+                            <text x="60" y="70" class="vowel">ㅣ</text>
+                        </svg>
+                    </div>
+                    <p class="text-gray-700 text-lg mb-4">La <span class="vowel-color font-semibold">voyelle</span> se trouve à droite ou en dessous de la <span class="consonant-color font-semibold">consonne</span>, selon sa forme (verticale ou horizontale).</p>
+                    <div class="example-syllable-container">
+                        <svg viewBox="0 0 100 100" class="syllable-svg" aria-label="La syllabe '버' (beo)">
+                            <text x="22" y="70" class="consonant">ㅂ</text>
+                            <text x="60" y="70" class="vowel">ㅓ</text>
+                        </svg>
+                        <svg viewBox="0 0 100 100" class="syllable-svg" aria-label="La syllabe '두' (du)">
+                            <text x="41" y="50" class="consonant">ㄷ</text>
+                            <text x="41" y="88" class="vowel">ㅜ</text>
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+            
+            <!-- Page 3: Quiz 1 -->
+            <div id="page-3" class="page">
+                <div class="page-content text-center">
+                    <div class="page-header">Quiz : Position</div>
+                    <p class="quiz-question">Cliquez sur la <strong>consonne</strong>.</p>
+                    <div class="flex flex-wrap justify-center items-center gap-4 mt-8">
+                        <div id="quiz-syllable-1" class="syllable-quiz-box">
+                            <div class="syllable-part consonant" data-correct="true" onclick="selectSyllablePart(this, 'quiz-syllable-1')">ㄷ</div>
+                            <div class="syllable-part vowel" data-correct="false" onclick="selectSyllablePart(this, 'quiz-syllable-1')">ㅏ</div>
+                        </div>
+                        <div id="quiz-syllable-2" class="syllable-quiz-box vertical">
+                            <div class="syllable-part consonant" data-correct="true" onclick="selectSyllablePart(this, 'quiz-syllable-2')">ㅅ</div>
+                            <div class="syllable-part vowel" data-correct="false" onclick="selectSyllablePart(this, 'quiz-syllable-2')">ㅡ</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="quiz-syllable-feedback" class="feedback-area"></div>
+                <div id="quiz-3-nav" class="flex justify-between items-center">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>
+                    <button id="validate-syllable-quiz" onclick="validateSyllableQuiz()" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <!-- Page 4: Lesson 3 -->
+            <div id="page-4" class="page">
+                <div class="page-content">
+                    <div class="page-header">Chapitre 0 - (3) Comment former une syllabe en 한글 (Hangeul) ?</div>
+                    <p class="text-gray-700 text-lg mb-4">Quand une syllabe commence phonétiquement par une voyelle (par ex. 'A' dans 'America'), on utilise le caractère <strong class="consonant-color">'ㅇ' (ieung)</strong> pour occuper la place de la consonne initiale.</p>
+                    <p class="text-gray-700 text-lg mb-4">Ce caractère n’a aucune valeur phonétique dans cette position (il est muet), mais il est nécessaire pour éviter d'avoir une "cavité" vide dans la syllabe.</p>
+                    <div class="example-syllable-container">
+                        <div>
+                            <svg viewBox="0 0 100 100" class="syllable-svg" aria-label="La syllabe '아' (a)">
+                                <text x="22" y="70" class="consonant">ㅇ</text>
+                                <text x="60" y="70" class="vowel">ㅏ</text>
+                            </svg>
+                            <p class="text-center text-gray-500 text-xl mt-2">/a/</p>
+                        </div>
+                        <div>
+                           <svg viewBox="0 0 100 100" class="syllable-svg" aria-label="La syllabe '오' (o)">
+                                <text x="41" y="50" class="consonant">ㅇ</text>
+                                <text x="41" y="88" class="vowel">ㅗ</text>
+                            </svg>
+                            <p class="text-center text-gray-500 text-xl mt-2">/o/</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Quiz précédent</button>
+                    <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 5: Quiz 2 -->
+            <div id="page-5" class="page">
+                <div class="page-content">
+                    <div class="page-header">Quiz Final</div>
+                    <p class="quiz-question">Cochez la ou les affirmations correctes.</p>
+                    <div id="quiz-2-options">
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="a">a. La voyelle se trouve à gauche de la consonne.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="b">b. Une syllabe peut être composée de 3 caractères.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="c">c. Il existe des lettres composées uniquement d'une consonne ou d'une voyelle.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="d">d. Si une position de consonne n'a pas de valeur phonétique, on la laisse vide.</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="e">e. Aucune des affirmations n'est correcte.</label>
+                    </div>
+                </div>
+                <div id="quiz-2-feedback" class="feedback-area"></div>
+                <div id="quiz-2-nav" class="flex justify-between items-center">
+                     <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>
+                     <button onclick="checkAnswer('quiz2', 'b', 'completion-message')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <!-- Completion Message -->
+            <div id="completion-message" class="page items-center justify-center text-center">
+                <div class="page-content flex flex-col items-center justify-center">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Leçon terminée !</h2>
+                    <p class="text-gray-600 text-xl">Félicitations ! Vous avez terminé cette leçon.<br>Préparez-vous pour la leçon suivante !</p>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Revoir le quiz final</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+
+                // Reset quiz states when a new page is shown
+                if (pageId === 'page-3') {
+                    resetSyllableQuiz();
+                } else {
+                    const quizNavs = document.querySelectorAll('[id$="-nav"]:not(#quiz-3-nav)');
+                    quizNavs.forEach(nav => nav.classList.remove('hidden'));
+                    const feedbackElements = document.querySelectorAll('[id$="-feedback"]:not(#quiz-syllable-feedback)');
+                    feedbackElements.forEach(el => el.innerHTML = '');
+                    const options = document.querySelectorAll('input[type="radio"]');
+                    options.forEach(opt => {
+                        opt.checked = false;
+                        opt.disabled = false;
+                        opt.parentElement.style.cursor = 'pointer';
+                        opt.parentElement.classList.remove('opacity-50');
+                    });
+                }
+            }
+        }
+
+        function selectSyllablePart(element, quizId) {
+            const quizBox = document.getElementById(quizId);
+            quizBox.querySelectorAll('.syllable-part').forEach(part => part.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+        
+        function resetSyllableQuiz() {
+            document.querySelectorAll('.syllable-part').forEach(el => {
+                el.classList.remove('selected');
+                el.style.pointerEvents = 'auto';
+                el.style.backgroundColor = '';
+                el.style.borderColor = 'transparent';
+            });
+            document.getElementById('quiz-syllable-feedback').innerHTML = '';
+            const nav = document.getElementById('quiz-3-nav');
+            const validateButton = nav.querySelector('#validate-syllable-quiz');
+            const prevButton = nav.querySelector('button:first-child');
+            
+            prevButton.style.visibility = 'visible';
+            validateButton.textContent = 'Valider';
+            validateButton.onclick = validateSyllableQuiz;
+            validateButton.disabled = false;
+            validateButton.classList.remove('bg-green-600', 'hover:bg-green-700', 'bg-red-600', 'hover:bg-red-700', 'opacity-50', 'cursor-not-allowed');
+            validateButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+        }
+
+
+        function validateSyllableQuiz() {
+            const quiz1 = document.getElementById('quiz-syllable-1');
+            const quiz2 = document.getElementById('quiz-syllable-2');
+            const selected1 = quiz1.querySelector('.selected');
+            const selected2 = quiz2.querySelector('.selected');
+            const feedbackEl = document.getElementById('quiz-syllable-feedback');
+            const navEl = document.getElementById('quiz-3-nav');
+            const validateButton = navEl.querySelector('#validate-syllable-quiz');
+            const prevButton = navEl.querySelector('button:first-child');
+
+            if (!selected1 || !selected2) {
+                feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez sélectionner une réponse pour chaque syllabe.</p>`;
+                return;
+            }
+
+            const isCorrect1 = selected1.dataset.correct === 'true';
+            const isCorrect2 = selected2.dataset.correct === 'true';
+
+            quiz1.querySelectorAll('.syllable-part').forEach(p => p.style.pointerEvents = 'none');
+            quiz2.querySelectorAll('.syllable-part').forEach(p => p.style.pointerEvents = 'none');
+
+            if (isCorrect1 && isCorrect2) {
+                feedbackEl.innerHTML = `<p class="text-green-600 font-bold">Excellent !</p>`;
+                selected1.style.backgroundColor = '#dcfce7';
+                selected2.style.backgroundColor = '#dcfce7';
+                
+                prevButton.style.visibility = 'hidden';
+                validateButton.textContent = 'Suivant →';
+                validateButton.onclick = () => showPage('page-4');
+                validateButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                validateButton.classList.add('bg-green-600', 'hover:bg-green-700');
+
+            } else {
+                feedbackEl.innerHTML = `<p class="text-red-600 font-bold">Incorrect. Essayez encore !</p>`;
+                if (!isCorrect1) selected1.style.backgroundColor = '#fee2e2';
+                if (isCorrect1) selected1.style.backgroundColor = '#dcfce7';
+                if (!isCorrect2) selected2.style.backgroundColor = '#fee2e2';
+                if (isCorrect2) selected2.style.backgroundColor = '#dcfce7';
+                
+                prevButton.style.visibility = 'hidden';
+                validateButton.textContent = 'Réessayer';
+                validateButton.onclick = resetSyllableQuiz;
+                validateButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                validateButton.classList.add('bg-red-600', 'hover:bg-red-700');
+            }
+        }
+        
+        function disableQuizOptions(quizName) {
+            const options = document.querySelectorAll(`input[name="${quizName}"]`);
+            options.forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'not-allowed';
+                opt.parentElement.classList.add('opacity-50');
+            });
+        }
+
+        function checkAnswer(quizName, correctAnswer, nextPageId) {
+            const quizNum = quizName.slice(-1);
+            let lessonPageId;
+            if (quizNum === '1') lessonPageId = 'page-2';
+            else if (quizNum === '2') lessonPageId = 'page-4';
+            
+            const selectedOption = document.querySelector(`input[name="${quizName}"]:checked`);
+            const feedbackEl = document.getElementById(`quiz-${quizNum}-feedback`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+
+            if (!selectedOption) {
+                feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold mt-4">Veuillez sélectionner une réponse.</p>`;
+                return;
+            }
+            
+            disableQuizOptions(quizName);
+            navEl.classList.add('hidden');
+
+            if (selectedOption.value === correctAnswer) {
+                const buttonText = nextPageId === 'completion-message' ? 'Terminer la leçon' : 'Page suivante &rarr;';
+                feedbackEl.innerHTML = `<div class="mt-4"><p class="text-green-600 font-bold mb-2">Bonne réponse !</p><button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button></div>`;
+            } else {
+                feedbackEl.innerHTML = `<div class="mt-4"><p class="text-red-600 font-bold mb-2">Incorrect. Essayez encore !</p><button onclick="showPage('page-${(parseInt(quizNum) * 2) - 1}')" class="nav-button bg-red-600 text-white hover:bg-red-700">&larr; Revoir la leçon</button></div>`;
+            }
+        }
+    </script>
+</body>
+</html>
