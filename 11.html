@@ -782,9 +782,15 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 resetPage(nextPage);
-            }
-        }
-        
+            
+            if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+                
         function resetPage(pageElement) {
             // Reset navigation/feedback areas
             const nav = pageElement.querySelector('[id$="-nav"]');
