@@ -510,6 +510,14 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
 
+             if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }    
+
                 // Reset quiz state when navigating to a quiz page
                 const quizNumMatch = pageId.match(/page-(\d+)/);
                 if (quizNumMatch) {
