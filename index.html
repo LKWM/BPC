@@ -50,6 +50,8 @@
             flex-direction: column;
             justify-content: center;
             line-height: 1.8;
+            /* Ajout pour le défilement sur petit contenu */
+            padding-right: 5px; 
         }
         .nav-button {
             padding: 0.75rem 1.5rem;
@@ -117,8 +119,7 @@
                 <div class="page-content text-center">
                     <p class="text-gray-500 text-sm mb-2">Ver. 2025</p>
                     <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Bien Prononcer le Coréen</h1>
-                    <h2 class="text-2xl md:text-3xl font-medium text-indigo-600">Apprendre le Hangeul</h2>
-                    <p class="mt-8 text-lg text-gray-700">Bienvenue dans le programme.</p>
+                    <p class="text-lg text-gray-600">Introduction au Hangeul</p>
                 </div>
                 <div class="flex justify-end items-center w-full">
                     <button onclick="showPage('page-2')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700">Commencer &rarr;</button>
@@ -191,7 +192,7 @@
                 <div class="page-content">
                      <h3 class="text-2xl font-bold text-gray-800 mb-6">Période d'apprentissage</h3>
                     <p class="text-gray-700 text-lg">
-                        Cependant, cette durée peut être plus courte ou plus longue en fonction de votre emploi du temps personnel, de votre vitesse d'apprentissage, etc. Le plus important est de <span class="font-bold text-indigo-600">trouver votre propre rythme et d'étudier régulièrement</span>.
+                        Bien sûr, la durée varie en fonction de votre investissement personnel. L'important est de pratiquer régulièrement, même si ce n'est que 30 minutes par jour, plutôt que d'étudier intensivement une seule fois par semaine.
                     </p>
                 </div>
                 <div class="flex justify-between items-center w-full">
@@ -204,9 +205,9 @@
             <div id="page-7" class="page">
                  <div class="page-indicator">7 / 11</div>
                 <div class="page-content">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Période d'apprentissage</h3>
+                     <h3 class="text-2xl font-bold text-gray-800 mb-6">Objectif du cours</h3>
                     <p class="text-gray-700 text-lg">
-                        Nous recommandons de suivre uniquement BPC du Chapitre 0 au 3. Cependant, par la suite, suivre en parallèle <span class="font-bold">"Le coréen au quotidien"</span> (sortie prévue en août 2025) rendra votre apprentissage plus intéressant et utile.
+                        L'objectif de BPC 2025 n'est pas seulement de mémoriser les lettres. C'est de <span class="font-bold text-indigo-600">comprendre les principes de prononciation</span> qui se cachent derrière ces lettres et de pouvoir lire n'importe quel mot coréen, même inconnu.
                     </p>
                 </div>
                 <div class="flex justify-between items-center w-full">
@@ -236,12 +237,12 @@
                 <div class="page-content">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">Comment étudier en autodidacte ?</h3>
                     <p class="text-gray-700 text-lg">
-                        Le plus important est de <span class="font-bold text-indigo-600">ne pas sauter les explications en français, mais de les lire attentivement et de les comprendre</span>. Cette section contient les réponses à toutes les questions fréquemment posées par les centaines d'étudiants qui ont suivi ce cours.
+                        Le plus important est de <span class="font-bold text-indigo-600">ne pas sauter les explications en français, mais de les lire attentivement et de les comprendre</span>. Cette section contient les réponses à toutes les questions fréquemment posées par les hundreds d'étudiants qui ont suivi ce cours.
                     </p>
                 </div>
                 <div class="flex justify-between items-center w-full">
-                    <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
-                    <button onclick="showPage('page-10')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700">Suivant &rarr;</button>
+                   <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                   <button onclick="showPage('page-10')" class="nav-button bg-indigo-600 text-white hover:bg-indigo-700">Suivant &rarr;</button>
                 </div>
             </div>
 
@@ -251,7 +252,7 @@
                 <div class="page-content">
                      <h3 class="text-2xl font-bold text-gray-800 mb-6">Comment étudier en autodidacte ?</h3>
                     <p class="text-gray-700 text-lg">
-                        Si vous avez une question pendant votre apprentissage, veuillez la laisser dans le &lt;Formulaire de question&gt; joint à la fin de chaque chapitre. Les questions seront collectées périodiquement et les réponses seront publiées sur la page du programme et sur les comptes Instagram/YouTube de LKWM. Si vous souhaitez une réponse individuelle, vous pouvez laisser une question via le bouton Message en bas à droite du site web tout en étant connecté à votre compte.
+                        Prenez votre temps. Ne vous précipitez pas pour "finir" le cours. Assurez-vous de bien maîtriser chaque leçon avant de passer à la suivante. La qualité prime sur la vitesse.
                     </p>
                 </div>
                 <div class="flex justify-between items-center w-full">
@@ -264,8 +265,10 @@
             <div id="page-11" class="page">
                 <div class="page-indicator">11 / 11</div>
                 <div class="page-content text-center">
-                    <p class="text-2xl text-gray-800">Nous espérons que votre premier cours de coréen sera agréable.</p>
-                    <p class="text-3xl font-bold text-indigo-600 mt-6">Bonne chance !</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Prêt à commencer ?</h3>
+                    <p class="text-gray-700 text-lg">
+                        Vous avez terminé l'introduction. Cliquez sur le bouton ci-dessous pour commencer votre apprentissage du Hangeul !
+                    </p>
                 </div>
                 <div class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-10')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
@@ -276,14 +279,16 @@
             <!-- Page 12: Completion -->
             <div id="page-12" class="page">
                 <div class="page-content text-center">
-                    <svg class="w-16 h-16 mx-auto mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Introduction terminée !</h2>
-                    <p class="text-gray-600 text-base md:text-lg">
-                        Vous avez bien complété la première étape. Préparez-vous pour la prochaine !
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Introduction terminée !</h2>
+                    <p class="text-gray-700 text-lg mb-8">
+                        Vous êtes prêt à plonger dans le monde du Hangeul.
+                    </p>
+                    <p class="text-gray-500 text-base">
+                        (Ce module est terminé. Vous pouvez maintenant fermer cette fenêtre ou recommencer.)
                     </p>
                 </div>
                 <div class="flex justify-center items-center w-full">
-                    <button onclick="showPage('page-1')" class="nav-button bg-gray-800 text-white hover:bg-gray-900">Recommencer</button>
+                     <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Recommencer</button>
                 </div>
             </div>
 
@@ -292,21 +297,37 @@
 
     <script>
         let currentPageId = 'page-1';
+        const COMPLETION_PAGE_ID = 'page-12';
 
         function showPage(pageId) {
             const currentPage = document.getElementById(currentPageId);
-            if (currentPage) currentPage.classList.remove('active');
+            if (currentPage) {
+                currentPage.classList.remove('active');
+            }
             
             const nextPage = document.getElementById(pageId);
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
+
+                // Vérifier si la page actuelle est la page de complétion
+                if (pageId === COMPLETION_PAGE_ID) {
+                    // Envoyer un message au parent pour indiquer que la leçon est terminée
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+
+                // Remonter en haut de la page si le contenu défile
+                const pageContent = nextPage.querySelector('.page-content');
+                if (pageContent) {
+                    pageContent.scrollTop = 0;
+                }
             }
         }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            showPage('page-1');
-        });
     </script>
 </body>
 </html>
+
