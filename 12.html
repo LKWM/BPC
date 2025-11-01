@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Leçon supplémentaire 3 - Activité (1)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5.5vmin, 2.25rem);
+            --font-quiz-option: clamp(1.5rem, 6vmin, 2rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1.5rem, 4vmin, 2.5rem);
+        }
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; min-height: 100dvh;
+            padding: 1rem; background-color: #f3f4f6;
+        }
+        .course-wrapper {
+            width: 100%; max-width: 600px; height: 100%; max-height: 600px;
+            position: relative; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem; overflow: hidden; background-color: white;
+        }
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
+            background-color: white; padding: var(--padding-lg); box-sizing: border-box;
+        }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content {
+            flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        h1 { font-size: var(--font-title); font-weight: 700; text-align: center;}
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        .quiz-question { font-weight: 600; font-size: var(--font-xl); color: #1f2937; margin-bottom: 1rem; text-align: center; }
+        .quiz-option {
+            display: inline-flex; align-items:center; justify-content:center;
+            padding: var(--padding-sm) var(--padding-md); border: 2px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-size: var(--font-quiz-option); font-family: 'Noto Sans KR', sans-serif; text-align: center;
+            min-width: 120px; margin: 0.25rem;
+        }
+        .quiz-option-small { font-size: var(--font-base); padding: var(--padding-sm); min-width: unset; }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .audio-button { background: none; border: none; cursor: pointer; margin-bottom: 1rem; }
+        .audio-icon { width: clamp(3rem, 10vmin, 4rem); height: clamp(3rem, 10vmin, 4rem); color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
+        @media (max-width: 600px) {
+            body { padding: 0; }
+            .course-wrapper { width: 100%; height: 100%; max-height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; }
+            .quiz-option { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="course-wrapper">
+        <div class="course-container">
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active items-center justify-center text-center">
+                <div class="page-content">
+                    <h1 class="text-4xl font-bold text-gray-800 mb-6 leading-tight">Leçon supplémentaire 3 - Activité (1)</h1>
+                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Quiz Pages 1-16 -->
+            <div id="page-1" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('agi')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q1" value="agi">아기</label>
+                        <label class="quiz-option"><input type="radio" name="q1" value="aji">아지</label>
+                    </div>
+                </div>
+                <div id="quiz-1-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-2" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('saja')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q2" value="saja">사자</label>
+                        <label class="quiz-option"><input type="radio" name="q2" value="jasa">자사</label>
+                    </div>
+                </div>
+                <div id="quiz-2-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-3" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('jubu')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q3" value="jubu">주부</label>
+                        <label class="quiz-option"><input type="radio" name="q3" value="subu">수부</label>
+                    </div>
+                </div>
+                <div id="quiz-3-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-4" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('gada')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q4" value="nada">나다</label>
+                        <label class="quiz-option"><input type="radio" name="q4" value="gada">가다</label>
+                    </div>
+                </div>
+                <div id="quiz-4-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-5" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('gaji')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q5" value="jagi">자기</label>
+                        <label class="quiz-option"><input type="radio" name="q5" value="gaji">가지</label>
+                    </div>
+                </div>
+                <div id="quiz-5-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-6" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('baji')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q6" value="maji">마지</label>
+                        <label class="quiz-option"><input type="radio" name="q6" value="baji">바지</label>
+                    </div>
+                </div>
+                <div id="quiz-6-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-7" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('gasu')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q7" value="gasu">가수</label>
+                        <label class="quiz-option"><input type="radio" name="q7" value="jasu">자수</label>
+                    </div>
+                </div>
+                <div id="quiz-7-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+            
+            <div id="page-8" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et chosissez la bonne transcription.</p>
+                    <button class="audio-button" onclick="playSound('dubu')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q8" value="dubu">두부</label>
+                        <label class="quiz-option"><input type="radio" name="q8" value="dobo">도보</label>
+                    </div>
+                </div>
+                <div id="quiz-8-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-9" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('gada')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="bebe">Bébé</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="lion">Lion</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="aller">Aller</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="pantalon">Pantalon</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="chanteur">Chanteur</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q9" value="tofu">Tofu</label>
+                    </div>
+                </div>
+                <div id="quiz-9-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-10" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('gaji')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="pantalon">Pantalon</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="tofu">Tofu</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="bebe">Bébé</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="chanteur">Chanteur</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="lion">Lion</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q10" value="aller">Aller</label>
+                    </div>
+                </div>
+                <div id="quiz-10-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-11" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('dubu')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="tofu">Tofu</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="pantalon">Pantalon</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="chanteur">Chanteur</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="bebe">Bébé</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="aller">Aller</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q11" value="lion">Lion</label>
+                    </div>
+                </div>
+                <div id="quiz-11-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-12" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('saja')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="aller">Aller</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="bebe">Bébé</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="lion">Lion</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="pantalon">Pantalon</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="tofu">Tofu</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q12" value="chanteur">Chanteur</label>
+                    </div>
+                </div>
+                <div id="quiz-12-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-13" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('jubu')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="chanteur">Chanteur</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="bebe">Bébé</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="tofu">Tofu</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="lion">Lion</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="aller">Aller</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q13" value="pantalon">Pantalon</label>
+                    </div>
+                </div>
+                <div id="quiz-13-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-14" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('gasu')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="pantalon">Pantalon</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="aller">Aller</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="lion">Lion</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="chanteur">Chanteur</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="tofu">Tofu</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q14" value="bebe">Bébé</label>
+                    </div>
+                </div>
+                <div id="quiz-14-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-15" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('agi')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="bebe">Bébé</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="lion">Lion</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="aller">Aller</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="pantalon">Pantalon</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="chanteur">Chanteur</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q15" value="tofu">Tofu</label>
+                    </div>
+                </div>
+                <div id="quiz-15-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <div id="page-16" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition.</p>
+                    <button class="audio-button !mb-6" onclick="playSound('baji')"><svg class="audio-icon !w-12 !h-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="chanteur">Chanteur</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="tofu">Tofu</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="pantalon">Pantalon</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="aubergine">Aubergine</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="aller">Aller</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="bebe">Bébé</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="foyer">Femme/homme au foyer</label>
+                        <label class="quiz-option quiz-option-small"><input type="radio" name="q16" value="lion">Lion</label>
+                    </div>
+                </div>
+                <div id="quiz-16-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <!-- Page 17: Completion Message -->
+            <div id="page-17" class="page items-center justify-center text-center">
+                <div class="page-content">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Activité terminée !</h2>
+                    <p class="text-gray-600">Félicitations, vous avez terminé l'activité.</p>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+        
+        const sounds = {
+            'dubu': { file: 'https://static.wixstatic.com/mp3/699687_9f1d9eecb14e4450aebbb20a3e247e22.mp3' },
+            'gada': { file: 'https://static.wixstatic.com/mp3/699687_f6705ef1791f4ea2abb72826231dd307.mp3' },
+            'baji': { file: 'https://static.wixstatic.com/mp3/699687_62be60a8dc6945a9a90b26e532f450d3.mp3' },
+            'jubu': { file: 'https://static.wixstatic.com/mp3/699687_a871a2595e2143aab71a0f8661271fb5.mp3' },
+            'saja': { file: 'https://static.wixstatic.com/mp3/699687_43b758e785e341d9a6041da783d8bd31.mp3' },
+            'agi': { file: 'https://static.wixstatic.com/mp3/699687_6e3603c4cc7142b99af6110f69573023.mp3' },
+            'gaji': { file: 'https://static.wixstatic.com/mp3/699687_1701edb05aef4e799291f8b74c09484c.mp3' },
+            'gasu': { file: 'https://static.wixstatic.com/mp3/699687_6c979c3ecd5742a1a87bfa5a07550c2b.mp3' },
+        };
+
+        const quizConfig = {
+            '1': { name: 'q1', correctAnswer: 'agi', nextPageId: 'page-2', prevPageId: 'page-0' },
+            '2': { name: 'q2', correctAnswer: 'saja', nextPageId: 'page-3', prevPageId: 'page-1' },
+            '3': { name: 'q3', correctAnswer: 'jubu', nextPageId: 'page-4', prevPageId: 'page-2' },
+            '4': { name: 'q4', correctAnswer: 'gada', nextPageId: 'page-5', prevPageId: 'page-3' },
+            '5': { name: 'q5', correctAnswer: 'gaji', nextPageId: 'page-6', prevPageId: 'page-4' },
+            '6': { name: 'q6', correctAnswer: 'baji', nextPageId: 'page-7', prevPageId: 'page-5' },
+            '7': { name: 'q7', correctAnswer: 'gasu', nextPageId: 'page-8', prevPageId: 'page-6' },
+            '8': { name: 'q8', correctAnswer: 'dubu', nextPageId: 'page-9', prevPageId: 'page-7' },
+            '9': { name: 'q9', correctAnswer: 'aller', nextPageId: 'page-10', prevPageId: 'page-8' },
+            '10': { name: 'q10', correctAnswer: 'aubergine', nextPageId: 'page-11', prevPageId: 'page-9' },
+            '11': { name: 'q11', correctAnswer: 'tofu', nextPageId: 'page-12', prevPageId: 'page-10' },
+            '12': { name: 'q12', correctAnswer: 'lion', nextPageId: 'page-13', prevPageId: 'page-11' },
+            '13': { name: 'q13', correctAnswer: 'foyer', nextPageId: 'page-14', prevPageId: 'page-12' },
+            '14': { name: 'q14', correctAnswer: 'chanteur', nextPageId: 'page-15', prevPageId: 'page-13' },
+            '15': { name: 'q15', correctAnswer: 'bebe', nextPageId: 'page-16', prevPageId: 'page-14' },
+            '16': { name: 'q16', correctAnswer: 'pantalon', nextPageId: 'page-17', prevPageId: 'page-15' },
+        };
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey]) return;
+            if (Tone.context.state !== 'running') {
+                Tone.start();
+            }
+            const player = new Tone.Player(sounds[soundKey].file).toDestination();
+            player.autostart = true;
+        }
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+                resetPageState(nextPage);
+            }
+        }
+        
+        function resetPageState(pageElement) {
+            const pageNumStr = pageElement.id.replace('page-', '');
+            const pageNum = parseInt(pageNumStr, 10);
+            const nav = pageElement.querySelector('[id$="-nav"]');
+            
+            if(nav) {
+                const config = quizConfig[pageNum];
+                if (config) {
+                    nav.innerHTML = `
+                        <button onclick="showPage('${config.prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                        <div class="flex items-center gap-4">
+                            <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
+                            <button onclick="checkAnswer('${pageNum}', '${config.correctAnswer}', '${config.nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        </div>
+                    `;
+                }
+            }
+
+            const options = pageElement.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                const radio = opt.querySelector('input');
+                if (radio) { radio.checked = false; radio.disabled = false; }
+            });
+        }
+        
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                    opt.parentElement.classList.remove('selected');
+                });
+                if (e.target.checked) {
+                    e.target.parentElement.classList.add('selected');
+                }
+            });
+        });
+
+        function checkAnswer(quizNum, correctAnswer, nextPageId) {
+            const selectedOption = document.querySelector(`input[name="q${quizNum}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            
+            if (!selectedOption) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-semibold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                return;
+            }
+            
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'default';
+            });
+            navEl.querySelector('button[onclick^="checkAnswer"]').style.display = 'none';
+
+            const selectedLabel = selectedOption.parentElement;
+            
+            if (selectedOption.value === correctAnswer) {
+                selectedLabel.classList.add('correct');
+                const buttonText = nextPageId === 'page-17' ? 'Terminer' : 'Suivant &rarr;';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                const pageId = navEl.closest('.page').id;
+                selectedLabel.classList.add('incorrect');
+                feedbackContainer.innerHTML = `<button onclick="resetPageState(document.getElementById('${pageId}'))" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                nav.dataset.initialHtml = nav.innerHTML;
+            });
+            
+            const allPages = document.querySelectorAll('.page');
+            allPages.forEach(page => {
+                resetPageState(page);
+            });
+
+            showPage('page-0');
+        });
+
+    </script>
+</body>
+</html>
