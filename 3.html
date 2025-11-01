@@ -357,7 +357,15 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
-
+                
+  // Si c'est la page de complétion, envoyer le message au parent
+                if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
                 // Reset quiz states when a new page is shown
                 if (pageId === 'page-3') {
                     resetSyllableQuiz();
