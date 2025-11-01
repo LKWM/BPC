@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKWM - Test - Bien Prononcer le Coréen - Apprendre le Hangeul </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', 'Noto Sans KR', sans-serif; }
+        .card { background-color: white; border-radius: 1rem; padding: 2.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+        .option-btn { display: flex; align-items: center; justify-content: center; width: 100%; text-align: center; padding: 0.75rem 1.25rem; border: 2px solid #d1d5db; border-radius: 0.5rem; transition: all 0.2s ease-in-out; font-size: 1.25rem; cursor: pointer; }
+        .option-btn:hover { border-color: #6d28d9; background-color: #f5f3ff; }
+        .option-btn.selected { border-color: #6d28d9; background-color: #ddd6fe; font-weight: bold; }
+        .dictation-input { width: 100%; text-align: center; padding: 0.75rem 1.25rem; border: 2px solid #d1d5db; border-radius: 0.5rem; font-size: 1.25rem; }
+        .dictation-input:focus { border-color: #6d28d9; outline: none; }
+        #question-context { text-align: center; margin: 1.5rem 0; }
+        #question-image { max-width: 150px; margin: 0 auto 1rem auto; display: block; border-radius: 0.5rem; }
+        audio { width: 100%; margin-top: 1rem; }
+        .checkbox-label { display: flex; align-items: center; padding: 0.75rem 1.25rem; border: 2px solid #d1d5db; border-radius: 0.5rem; cursor: pointer; }
+        .checkbox-label:has(input:checked) { border-color: #6d28d9; background-color: #ddd6fe; }
+        .checkbox-label input { margin-right: 0.75rem; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="app-container" class="w-full max-w-2xl mx-auto p-4 my-8">
+        <div class="card">
+            <header class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-violet-800">Test - Bien Prononcer le Coréen - Apprendre le Hangeul</h1>
+            
+            </header>
+
+            <div id="start-screen">
+                <div class="text-left bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold text-center mb-4">시험 안내 / Instructions</h3>
+                    <p class="mb-2">이 시험은 "Bien Prononcer le Coréen" 교재의 내용을 바탕으로 한 한글 발음 능력 평가입니다.</p>
+                    <p class="text-sm text-gray-600 mb-4">Ce test évalue votre prononciation du Hangeul sur la base du manuel "Bien Prononcer le Coréen".</p>
+                    <p class="mb-2">총 25개의 문제로 구성되어 있으며, 전체 시험 시간은 30분입니다.</p>
+                    <p class="text-sm text-gray-600">Il est composé de 25 questions et la durée totale du test est de 30 minutes.</p>
+                </div>
+                <button id="start-btn" class="mt-8 w-full bg-violet-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-violet-800 transition">시험 시작 (Commencer le test)</button>
+            </div>
+
+            <div id="quiz-area" class="hidden text-left">
+                <p id="question-counter" class="text-lg font-semibold text-gray-700 text-center mb-4"></p>
+                <div id="instruction-area" class="mb-4 text-center">
+                    <p id="instruction-text" class="text-xl font-bold"></p>
+                </div>
+                <div id="question-context"></div>
+                <div id="options-container" class="space-y-3 mt-6"></div>
+                <button id="next-btn" class="mt-8 w-full bg-violet-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-violet-700">다음 (Suivant)</button>
+            </div>
+
+            <div id="result-area" class="hidden text-center">
+                <h3 class="text-3xl font-bold text-gray-800 mb-2">Test terminé !</h3>
+                <p class="text-lg text-gray-600 mb-4">Merci pour votre participation.</p>
+
+                <div class="my-6 bg-violet-50 p-4 rounded-lg">
+                    <p class="text-lg text-gray-700">Votre score :</p>
+                    <p id="final-score-display" class="text-5xl font-bold text-violet-700"></p>
+                </div>
+
+                <div id="score-feedback-message" class="text-left p-4 mb-6 bg-gray-100 rounded-lg"></div>
+
+                <!-- 삭제된 이메일 전송 영역 -->
+                
+                <button id="restart-btn" class="w-full mt-4 bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600">Recommencer</button>
+            </div>
+
+            <div id="quiz-footer" class="mt-8 text-center hidden">
+                <p class="text-lg font-bold text-violet-700" id="timer-display">Temps restant : 30:00</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="timeout-modal" class="modal-overlay">
+        <div class="card text-center w-11/12 max-w-sm">
+            <h3 class="text-xl font-bold mb-4">Temps écoulé</h3>
+            <p class="text-gray-600 mb-6">Le temps du test est écoulé. Vos résultats vont être soumis automatiquement.</p>
+            <button id="timeout-ok-btn" class="w-full bg-violet-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-violet-700">OK</button>
+        </div>
+    </div>
+
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrsweIuIZMo1_cs-wmyWoaTqaJjf-EwHjjvuEvtlW44yLmPkvbYxvYGv-Qbh64QOo-nQ/exec'; // Google Sheets 연동 시 웹 앱 URL을 여기에 붙여넣으세요.
+
+        const questions = [
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_6e3603c4cc7142b99af6110f69573023.mp3", image: "https://static.wixstatic.com/media/699687_ed0a692113d64030b634140a9ee9f2d4~mv2.png", options: ["ㅏ기", "아기"], answer: "아기" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_1701edb05aef4e799291f8b74c09484c.mp3", image: "https://static.wixstatic.com/media/699687_6a18521f5044481eb801fbbf908ea882~mv2.png", options: ["자지", "가지", "카지"], answer: "가지" },
+            { type: 'mcq', instruction: "Choisissez les bonnes consonnes pour remplir les blancs.", audio: "https://static.wixstatic.com/mp3/699687_43b758e785e341d9a6041da783d8bd31.mp3", image: "https://static.wixstatic.com/media/699687_464cbf14f7ad40fe94f7fcbf04fdfc23~mv2.png", context: "_ ㅏ _ ㅏ", options: ["ㅊ, ㅈ", "ㅆ, ㅊ", "ㅅ, ㅊ", "ㅅ, ㅈ"], answer: "ㅅ, ㅈ" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_d6d02eef338141f4b2e6c0633d444166.mp3", image: "https://static.wixstatic.com/media/699687_d8d27f7fb72b4a93948061b79a74efd3~mv2.png", options: ["키차", "기차", "키자", "기자"], answer: "기차" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_193396d6bb89436286a044133f3f16b7.mp3", image: "https://static.wixstatic.com/media/699687_0593e01702ee4da8a3cbc49de40a184b~mv2.png", options: ["애", "해", "레"], answer: "해" },
+            { type: 'mcq', instruction: "Choisissez le son qui est produit par une partie différente de l'organe phonatoire.", options: ["가", "다", "카"], answer: "다" },
+            { type: 'dictation', instruction: "Écrivez en Hangeul ce que vous entendez.", audio: "https://static.wixstatic.com/mp3/699687_6c979c3ecd5742a1a87bfa5a07550c2b.mp3", image: "https://static.wixstatic.com/media/699687_16f447364c134ef4a6aa94d392ee95ba~mv2.png", answer: "가수" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_dd5aed05922f4c828095674d9b117b62.mp3", image: "https://static.wixstatic.com/media/699687_a1ca4a58ae114ccb81490f14549bb609~mv2.png", options: ["차다", "짜다", "자다"], answer: "자다" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_299aa0c8f1244f99bdd7192c5d552636.mp3", image: "https://static.wixstatic.com/media/699687_44ad26ae46f646bba237084427c11443~mv2.png", options: ["사다", "차다", "싸다"], answer: "사다" },
+            { type: 'mcq-multi', instruction: "틀린 것을 모두 고르시오 (Choisissez toutes les affirmations incorrectes.)", options: ["La position d’une voyelle se décide par la forme d’une consonne.", "On peut placer une voyelle au-dessus d’une consonne.", "Quand on prononce le <ᄊ>, la langue touche la gencive."], answer: ["La position d’une voyelle se décide par la forme d’une consonne.","On peut placer une voyelle au-dessus d’une consonne.", "Quand on prononce le <ᄊ>, la langue touche la gencive."] },
+            { type: 'dictation', instruction: "Écrivez en Hangeul ce que vous entendez.", audio: "https://static.wixstatic.com/mp3/699687_f2dfa0a9f3e344b894bdeea46abf6e37.mp3", image: "https://static.wixstatic.com/media/699687_2b878251dd90430dbf0c35e829f7378a~mv2.png", answer: "토끼" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_66a6fc45d03d4ac19a06dd5dd017802e.mp3", image: "https://static.wixstatic.com/media/699687_649fc8a084724bdba11ce3f11e7cbada~mv2.png", options: ["어리", "머리", "무리"], answer: "머리" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_949674a509a740579d3235c9ad134bc3.mp3", image: "https://static.wixstatic.com/media/699687_27d0d7bdfcff483487efba4c0bf04d4e~mv2.png", options: ["누레", "너래", "노래"], answer: "노래" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_a321c2fc6d62477b99700315c3c69549.mp3", image: "https://static.wixstatic.com/media/699687_e4a63469e3cd4517a1f0b9d3e8e4f33f~mv2.png", options: ["그네", "구내", "거네"], answer: "그네" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_da09a3443b234b3d9416ba37ede44cd8.mp3", image: "https://static.wixstatic.com/media/699687_7496676897084028aaaae7868fd88a69~mv2.png",  options: ["여브다", "예쁘다", "에브다"], answer: "예쁘다" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_e0045d3288df496b8817d8beb0d79e87.mp3", image: "https://static.wixstatic.com/media/699687_ecf383f0783b492f8fbf6cc7412d40cb~mv2.png", options: ["위자", "의자", "의사"], answer: "의자" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_7414cd0d17d542708a9ca2f40319e6e6.mp3", image: "https://static.wixstatic.com/media/699687_f5bc124e2ace446ea1716f4b2953934c~mv2.png", options: ["고훼", "교회", "교화"], answer: "교회" },
+            { type: 'dictation', instruction: "Écrivez en Hangeul ce que vous entendez.", audio: "https://static.wixstatic.com/mp3/699687_3fca1fe78d4543c7b9ae42c4988f2bbf.mp3", image: "https://static.wixstatic.com/media/699687_ed3c8214b6ec448dacfa4c71f5980da9~mv2.png", answer: "의사" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_986518d8597f4b539d028283dce31765.mp3", image: "https://static.wixstatic.com/media/699687_cfa8999382d74b78b89c1710ef40882a~mv2.png", options: ["천생님", "선셍민", "선생님"], answer: "선생님" },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_864a5b7957db4083bea18f0e4b05b12e.mp3", image: "https://static.wixstatic.com/media/699687_541823c7e8e34c94aed311ec370a4583~mv2.png", options: ["병원", "변원", "병왼"], answer: "병원" },
+            { type: 'mcq-multi', instruction: "Choisissez toutes les affirmations correctes.", options: ["Le <ᄋ> est prononcé différemment selon sa position dans un caractère.", "On peut mettre le <ᄄ> en position finale.", "La consonne finale est obligatoire pour faire un caractère complet."], answer: ["Le <ᄋ> est prononcé différemment selon sa position dans un caractère."] },
+            { type: 'mcq-multi', instruction: "Choisissez toutes les lettres qui peuvent être placées dans le vide.", audio: "https://static.wixstatic.com/mp3/699687_eba77fa8573c464f89b29ea95b9f6908.mp3", image: "https://static.wixstatic.com/media/699687_0f653ac2b1034d17ae960900ae6fd31b~mv2.png", context: '<div style="display: flex; align-items: baseline; justify-content: center; gap: 0.2rem; font-size: 3rem; font-weight: bold;"><div style="text-align: center; line-height: 1;">가<br>_</div><div>다</div></div>', options: ["ㄷ", "ㄱ", "ㅌ", "ㅂ", "ㄸ"], answer: ["ㄷ", "ㅌ"] },
+            { type: 'mcq', instruction: "Quelle est la bonne orthographe ?", audio: "https://static.wixstatic.com/mp3/699687_7ad41a86a9f34760b0c2965346fc3da5.mp3", image: "https://static.wixstatic.com/media/699687_f4633d7bad844c769d02c61f994763e4~mv2.png", options: ["안국", "한국", "학눈"], answer: "한국" },
+            { type: 'mcq', instruction: "Cherchez un caractère qui se prononce différemment des autres.", options: ["헞", "헡", "헙", "헛"], answer: "헙" },
+            { type: 'dictation', instruction: "Écrivez en Hangeul ce que vous entendez.", audio: "https://static.wixstatic.com/mp3/699687_09246fa59e654f65bb041521ee803f57.mp3", image: "https://static.wixstatic.com/media/699687_54c259031a534a7f853427d6c2c3a2e3~mv2.png", answer: ["책", "첵", "챜", "챆", "쳌", "첶"] }
+        ];
+
+        const startScreen = document.getElementById('start-screen');
+        const quizArea = document.getElementById('quiz-area');
+        const resultArea = document.getElementById('result-area');
+        const startBtn = document.getElementById('start-btn');
+        const questionCounter = document.getElementById('question-counter');
+        const instructionText = document.getElementById('instruction-text');
+        const questionContext = document.getElementById('question-context');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const quizFooter = document.getElementById('quiz-footer');
+        const timerDisplay = document.getElementById('timer-display');
+        const timeoutModal = document.getElementById('timeout-modal');
+        const timeoutOkBtn = document.getElementById('timeout-ok-btn');
+        
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let overallTimer;
+
+        function init() {
+            startScreen.classList.remove('hidden');
+            quizArea.classList.add('hidden');
+            resultArea.classList.add('hidden');
+            quizFooter.classList.add('hidden');
+            clearInterval(overallTimer);
+            timerDisplay.textContent = `Temps restant : 30:00`;
+
+            // const emailSubmissionArea = document.getElementById('email-submission-area'); // 삭제
+            // const submissionConfirmMsg = document.getElementById('submission-confirm-msg'); // 삭제
+            // const sendResultBtn = document.getElementById('send-result-btn'); // 삭제
+
+            // if (emailSubmissionArea) emailSubmissionArea.classList.remove('hidden'); // 삭제
+            // if (submissionConfirmMsg) submissionConfirmMsg.classList.add('hidden'); // 삭제
+            // if (sendResultBtn) { // 삭제
+            //     sendResultBtn.disabled = false; // 삭제
+            //     sendResultBtn.textContent = "Envoyer mes résultats"; // 삭제
+            // } // 삭제
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            startScreen.classList.add('hidden');
+            quizArea.classList.remove('hidden');
+            quizFooter.classList.remove('hidden');
+            startOverallTimer();
+            displayQuestion();
+        }
+
+        function startOverallTimer() {
+            let duration = 30 * 60; // 30 minutes
+            
+            overallTimer = setInterval(() => {
+                duration--;
+                let minutes = Math.floor(duration / 60);
+                let seconds = duration % 60;
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                timerDisplay.textContent = `Temps restant : ${minutes}:${seconds}`;
+
+                if (duration <= 0) {
+                    handleOverallTimeout();
+                }
+            }, 1000);
+        }
+
+        function handleOverallTimeout() {
+            clearInterval(overallTimer);
+            quizArea.classList.add('hidden');
+            timeoutModal.classList.add('visible');
+        }
+
+        function displayQuestion() {
+            nextBtn.classList.add('hidden');
+            optionsContainer.innerHTML = '';
+            questionContext.innerHTML = '';
+
+            const q = questions[currentQuestionIndex];
+            questionCounter.textContent = `Question ${currentQuestionIndex + 1} / ${questions.length}`;
+            instructionText.textContent = q.instruction;
+
+            if (q.image) {
+                questionContext.innerHTML += `<img id="question-image" src="${q.image}" alt="Question Image">`;
+            }
+            if (q.audio) {
+                questionContext.innerHTML += `<audio controls src="${q.audio}">Your browser does not support the audio element.</audio>`;
+            }
+            if (q.context) {
+                questionContext.innerHTML += `<p class="text-3xl font-bold my-4">${q.context}</p>`;
+            }
+
+            switch (q.type) {
+                case 'mcq':
+                    displayMCQ(q);
+                    break;
+                case 'dictation':
+                    displayDictation(q);
+                    break;
+                case 'mcq-multi':
+                    displayMCQMulti(q);
+                    break;
+            }
+        }
+
+        function displayMCQ(q) {
+            q.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.onclick = () => handleAnswer(option);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function displayDictation(q) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'dictation-input';
+            input.placeholder = 'Écrivez ici...';
+            optionsContainer.appendChild(input);
+            nextBtn.classList.remove('hidden');
+            nextBtn.onclick = () => handleAnswer(input.value);
+        }
+
+        function displayMCQMulti(q) {
+            q.options.forEach(option => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = option;
+                label.appendChild(checkbox);
+                label.append(option);
+                optionsContainer.appendChild(label);
+            });
+            nextBtn.classList.remove('hidden');
+            nextBtn.onclick = () => {
+                const selectedOptions = Array.from(optionsContainer.querySelectorAll('input:checked')).map(cb => cb.value);
+                handleAnswer(selectedOptions);
+            };
+        }
+
+        function handleAnswer(answer) {
+            userAnswers[currentQuestionIndex] = { 
+                question_num: currentQuestionIndex + 1,
+                user_answer: answer,
+                correct_answer: questions[currentQuestionIndex].answer
+            };
+            
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            clearInterval(overallTimer);
+            quizArea.classList.add('hidden');
+            quizFooter.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            let score = 0;
+            userAnswers.forEach((item, index) => {
+                const q = questions[index];
+                if (Array.isArray(q.answer) && q.type === 'mcq-multi') {
+                    const userAnswerSorted = Array.isArray(item.user_answer) ? [...item.user_answer].sort().join(',') : "";
+                    const correctAnswerSorted = [...q.answer].sort().join(',');
+                    if (userAnswerSorted === correctAnswerSorted) {
+                        score++;
+                    }
+                } 
+                else if (Array.isArray(q.answer)) {
+                    if (q.answer.includes(item.user_answer)) {
+                        score++;
+                    }
+                }
+                else {
+                    if (item.user_answer === q.answer) {
+                        score++;
+                    }
+                }
+            });
+
+            const finalScoreDisplay = document.getElementById('final-score-display');
+            finalScoreDisplay.textContent = `${score} / ${questions.length}`;
+
+            // --- START: 부모 페이지로 결과 전송 ---
+            if (window.parent) {
+                // 1. 퀴즈 점수 전송
+                window.parent.postMessage({
+                    type: 'quiz_score',
+                    score: score,
+                    maxScore: questions.length
+                }, '*');
+
+                // 2. 레슨 완료 상태 전송
+                window.parent.postMessage({
+                    type: 'lesson_complete'
+                }, '*');
+            }
+            // --- END: 부모 페이지로 결과 전송 ---
+
+            const scoreFeedbackMessage = document.getElementById('score-feedback-message');
+            let feedbackHTML = '';
+            if (score >= 18) {
+                feedbackHTML = `<p class="font-bold">Félicitations !</p><p>Vous avez une excellente compréhension du programme "Bien Prononcer le coréen - Apprendre le Hangeul". Essayez d'autres programmes !</p>`;
+            } else if (score >= 10) {
+                feedbackHTML = `<p class="font-bold">Bien joué !</p><p>Avec un peu plus de pratique, vous obtiendrez de bien meilleurs résultats ! Suivez le cours "Bien Prononcer le coréen - Apprendre le Hangeul" et réessayez le test ! Vous ne pouvez passer le test qu'une fois tous les 3 jours.</p>`;
+            } else {
+                feedbackHTML = `<p class="font-bold">Merci pour vos efforts.</p><p>Le Hangeul est une écriture facile et scientifique, mais il peut être difficile à mémoriser et à utiliser parfaitement sans une pratique suffisante. Suivez le cours "Bien Prononcer le coréen - Apprendre le Hangeul" et réessayez le test ! Vous ne pouvez passer le test qu'une fois tous les 3 jours.</p>`;
+            }
+            scoreFeedbackMessage.innerHTML = feedbackHTML;
+
+            // const sendResultBtn = document.getElementById('send-result-btn'); // 삭제
+            // sendResultBtn.onclick = async () => { // 삭제
+                // ... 모든 이메일 전송 로직 삭제 ...
+            // }; // 삭제
+        }
+
+        startBtn.addEventListener('click', startQuiz);
+        restartBtn.addEventListener('click', init);
+        timeoutOkBtn.addEventListener('click', () => {
+            timeoutModal.classList.remove('visible');
+            showResults();
+        });
+        
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
+
