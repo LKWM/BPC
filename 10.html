@@ -522,9 +522,15 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 resetPageState(nextPage);
-            }
-        }
-        
+
+             if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+                
         function resetPageState(pageElement) {
             const pageNumStr = pageElement.id.replace('page-', '');
             const pageNum = parseInt(pageNumStr, 10);
