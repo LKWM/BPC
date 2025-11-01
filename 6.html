@@ -433,6 +433,14 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
+
+            if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
                 
                 // Reset all quizzes
                 for (let i = 1; i <= 7; i++) {
