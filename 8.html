@@ -181,7 +181,7 @@
              min-height: 50px;
              display: flex;
              align-items: center;
-        }
+         }
     </style>
 </head>
 <body>
@@ -240,7 +240,7 @@
             <div id="page-4" class="page">
                 <div class="page-content">
                     <button class="char-button" onclick="playSound('j')">ㅈ</button>
-                    <p class="lesson-text text-gray-700 mt-8">Pour prononcer <strong class="text-blue-600">&lt;ㅈ&gt;</strong> correctement, rapprochez la langue vers le palais dur puis produisez le son en retirant la langue. Il est acceptable que la langue frôle doucement la gencive, comme <strong class="text-blue-600">&lt;ㄷ&gt;</strong>, mais <strong class="text-blue-600">&lt;ㅈ&gt;</strong> est censé être prononcé un peu plus derrière, au palais dur, selon la prononciation standard.</p>
+                    <p class="lesson-text text-gray-700 mt-8">Pour prononcer <strong class="text-blue-600">&lt;ㅈ&gt;</strong> correctly, rapprochez la langue vers le palais dur puis produisez le son en retirant la langue. Il est acceptable que la langue frôle doucement la gencive, comme <strong class="text-blue-600">&lt;ㄷ&gt;</strong>, mais <strong class="text-blue-600">&lt;ㅈ&gt;</strong> est censé être prononcé un peu plus derrière, au palais dur, selon la prononciation standard.</p>
                 </div>
                 <div class="flex justify-between items-center">
                     <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
@@ -541,6 +541,16 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
+
+                // --- START: 완료 메시지 전송 ---
+                if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+                // --- END: 완료 메시지 전송 ---
 
                 const quizNumMatch = pageId.match(/page-(\d+)/);
                 if (quizNumMatch) {
