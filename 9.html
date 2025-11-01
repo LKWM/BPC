@@ -520,8 +520,14 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
-            }
-        }
+                
+            if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
 
         function nextQuestion(questionNumber) {
             const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
