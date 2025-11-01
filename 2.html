@@ -319,7 +319,7 @@
             <!-- Completion Message -->
             <div id="completion-message" class="page items-center justify-center text-center">
                 <div class="page-content flex flex-col items-center justify-center">
-                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <h2 class="text-3xl font-bold text-gray-800 mb-3">Leçon terminée !</h2>
                     <p class="text-gray-600 text-xl">Félicitations ! Vous avez terminé cette leçon.<br>Préparez-vous pour la leçon suivante !</p>
                 </div>
@@ -342,6 +342,15 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
 
+                // Si c'est la page de complétion, envoyer le message au parent
+                if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+
                 // Reset quiz state when showing a new page
                 const quizNavs = document.querySelectorAll('[id$="-nav"]');
                 quizNavs.forEach(nav => nav.classList.remove('hidden'));
@@ -357,7 +366,7 @@
                     opt.disabled = false;
                 });
                  const labels = document.querySelectorAll('.quiz-option');
-                labels.forEach(label => {
+                 labels.forEach(label => {
                     label.style.cursor = 'pointer';
                     label.classList.remove('opacity-50');
                 });
