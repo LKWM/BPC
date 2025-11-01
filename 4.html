@@ -389,6 +389,14 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
 
+                 if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+
                 // Reset all quizzes to their initial state when navigating to a new page
                 for (let i = 1; i <= 3; i++) {
                     // Reset options
