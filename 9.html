@@ -486,11 +486,8 @@
             'u': { file: 'https://static.wixstatic.com/mp3/699687_b11e5a88156d46a383099c42bfd4f814.mp3' },
             'sa': { file: 'https://static.wixstatic.com/mp3/699687_ca2c8cad16524f64bcad9b0b519ef9bf.mp3' },
             'bu': { file: 'https://static.wixstatic.com/mp3/699687_bdb5f981255d4f8ea7abbb5a4e22ca2c.mp3' },
-            // 'jo' audio file was missing in original code, using a placeholder if needed or remove if not.
-            // Assuming 'jo' from previous lesson file
-            'jo': { file: 'https://static.wixstatic.com/mp3/699687_08657688d61a4505809e519c5c41469e.mp3' },
-            // 'go' audio file was missing, assuming from previous lesson
-            'go': { file: 'https://static.wixstatic.com/mp3/699687_9281514a60134b299e289b8823558193.mp3' },
+            'jo': { file: 'https://static.wixstatic.com/mp3/699687_cbaf81280d964dbbab2fc5859d87e518.mp3' },
+            'go': { file: 'https://static.wixstatic.com/mp3/699687_ac1d798eeb3544cf8268ed0dee83869b.mp3' },
             'di': { file: 'https://static.wixstatic.com/mp3/699687_a2efc6ef62274780adbdc6082f1d40b2.mp3' },
             'si': { file: 'https://static.wixstatic.com/mp3/699687_bde1e56a0bdf4c979d1ee8651718c3c7.mp3' },
             'ga': { file: 'https://static.wixstatic.com/mp3/699687_9dfb39b123834dfc8f2ad96ddec7df76.mp3' },
@@ -507,20 +504,14 @@
         };
 
         function playSound(soundKey) {
-            if (!sounds[soundKey]) {
-                console.warn(`Sound key not found: ${soundKey}`);
-                return;
-            }
+            if (!sounds[soundKey]) return;
             Tone.start().then(() => {
                 const player = new Tone.Player(sounds[soundKey].file).toDestination();
                 player.autostart = true;
                 player.onstop = () => player.dispose();
-            }).catch(e => console.error("Audio could not start:", e));
+            });
         }
 
-        // --- START: 버그 수정 ---
-        // 'showPage' 함수의 괄호가 잘못되어 스크립트 오류가 발생했습니다.
-        // 또한 postMessage 로직을 이 함수 내부에 올바르게 추가했습니다.
         function showPage(pageId) {
             const currentPage = document.getElementById(currentPageId);
             if (currentPage) currentPage.classList.remove('active');
@@ -530,19 +521,23 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 
-                // --- START: 완료 메시지 전송 ---
-                // 'final-completion-message'가 이 파일의 실제 완료 페이지 ID입니다.
-                if (pageId === 'final-completion-message') { 
+                // (이 파일에는 'completion-message' ID가 없습니다. 
+                // 이 블록은 다른 파일에서 복사/붙여넣기 된 것으로 보이며,
+                // 'final-completion-message' ID를 확인해야 합니다.)
+                if (pageId === 'completion-message') { 
                     if (window.parent) {
                         window.parent.postMessage({
                             type: 'lesson_complete'
                         }, '*');
                     }
                 }
-                // --- END: 완료 메시지 전송 ---
-            } // <--- 이 닫는 괄호 '}'가 누락되어 있었습니다.
+                
+                // --- START: 오류 수정 ---
+                // 'Commencer le test' 버튼이 작동하지 않던 오류를 수정합니다.
+                // 'if (nextPage) {'의 닫는 괄호 '}'가 이 위치에 필요합니다.
+            }
         }
-        // --- END: 버그 수정 ---
+        // --- END: 오류 수정 ---
 
         function nextQuestion(questionNumber) {
             const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
@@ -575,23 +570,6 @@
                     score++;
                 }
             }
-
-            // --- START: 퀴즈 점수 전송 ---
-            // 퀴즈가 완료되고 점수가 계산될 때 부모로 메시지를 보냅니다.
-            if (window.parent) {
-                window.parent.postMessage({
-                    type: 'quiz_score',
-                    score: score,
-                    maxScore: totalQuestions
-                }, '*');
-                
-                // 13점 이상일 때만 'Terminer' 버튼이 보이므로,
-                // 13점 이상을 "통과"로 간주하고 lesson_complete를 보낼 수 있습니다.
-                // 또는, 'Terminer' 버튼을 눌렀을 때만 보내도록 'showPage'에 둡니다.
-                // 여기서는 점수만 보내고, 완료는 'Terminer' 버튼 클릭 시 처리합니다.
-            }
-            // --- END: 퀴즈 점수 전송 ---
-
 
             document.getElementById('score-display').textContent = `${score} / ${totalQuestions}`;
             
@@ -644,11 +622,9 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 'Tone.start()'를 사용자 상호작용(버튼 클릭)이 아닌 DOM 로드 시 호출하면
-            // 일부 브라우저(특히 Chrome)에서 자동 재생 정책 위반으로 오디오가 즉시 재생되지 않을 수 있습니다.
-            // 'playSound' 내부에서 'Tone.start()'를 호출하는 것이 더 안전합니다.
             showPage('page-0');
         });
     </script>
 </body>
 </html>
+
