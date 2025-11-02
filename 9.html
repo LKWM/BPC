@@ -521,21 +521,20 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 
-                // (이 파일에는 'completion-message' ID가 없습니다. 
-                // 이 블록은 다른 파일에서 복사/붙여넣기 된 것으로 보이며,
-                // 'final-completion-message' ID를 확인해야 합니다.)
-                if (pageId === 'completion-message') { 
+                // --- START: 오류 수정 ---
+                // 'if (pageId === 'completion-message')' 블록이
+                // 'if (nextPage)' 블록 안으로 이동되었고,
+                // 올바른 완료 페이지 ID('final-completion-message')를 사용하도록 수정되었습니다.
+                // 또한, 이전에 누락되었던 'if (nextPage)'의 닫는 괄호 '}'가 추가되었습니다.
+                
+                if (pageId === 'final-completion-message') { // 'completion-message'가 아닌 'final-completion-message'를 확인합니다.
                     if (window.parent) {
                         window.parent.postMessage({
                             type: 'lesson_complete'
                         }, '*');
                     }
                 }
-                
-                // --- START: 오류 수정 ---
-                // 'Commencer le test' 버튼이 작동하지 않던 오류를 수정합니다.
-                // 'if (nextPage) {'의 닫는 괄호 '}'가 이 위치에 필요합니다.
-            }
+            } // <-- 이 닫는 괄호 '}'가 누락되어 있었습니다.
         }
         // --- END: 오류 수정 ---
 
@@ -593,7 +592,8 @@
             } else {
                 finishButton.classList.add('hidden');
             }
-
+            
+            // 점수 전송 로직은 요청하지 않으셨으므로 추가하지 않았습니다.
             showPage('results-page');
         }
 
