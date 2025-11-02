@@ -261,27 +261,33 @@
                 currentPageId = pageId;
                 resetPageState(nextPage);
 
-              if (pageId === 'completion-message') {
+                // [FIX 1] 완료 페이지(page-9)에 postMessage 코드 추가
+                if (pageId === 'page-9') {
                     if (window.parent) {
                         window.parent.postMessage({
                             type: 'lesson_complete'
                         }, '*');
                     }
                 }
+            }
+        }
         
         function resetPageState(pageElement) {
             const pageNumStr = pageElement.id.replace('page-', '');
-            const pageNum = parseInt(pageNumStr, 10);
+            // const pageNum = parseInt(pageNumStr, 10); // [FIX 2] 이 변수(정수형)가 오류의 원인입니다.
             const nav = pageElement.querySelector('[id$="-nav"]');
             
             if(nav) {
-                const config = quizConfig[pageNum];
+                // [FIX 2.1] config를 찾을 때 정수(pageNum) 대신 문자열(pageNumStr)을 사용합니다.
+                const config = quizConfig[pageNumStr];
                 if (config) {
                     nav.innerHTML = `
                         <button onclick="showPage('${config.prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                         <div class="flex items-center gap-4">
-                            <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
-                            <button onclick="checkAnswer('${pageNum}', '${config.correctAnswer}', '${config.nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                            <!-- [FIX 2.2] pageNum 대신 pageNumStr을 사용합니다. -->
+                            <div id="quiz-${pageNumStr}-feedback" class="feedback-area"></div>
+                            <!-- [FIX 2.3] pageNum 대신 pageNumStr을 사용합니다. -->
+                            <button onclick="checkAnswer('${pageNumStr}', '${config.correctAnswer}', '${config.nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                         </div>
                     `;
                 }
@@ -336,18 +342,16 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-                nav.dataset.initialHtml = nav.innerHTML;
-            });
-            
-            const allPages = document.querySelectorAll('.page');
-            allPages.forEach(page => {
-                resetPageState(page);
-            });
-
-            showPage('page-0');
+        // [FIX 3] 불필요한 DOMContentLoaded 이벤트 리스너를 제거하고 초기화 코드를 바로 실행합니다.
+        
+        // 모든 페이지의 상태를 초기화하여 내비게이션 바를 빌드합니다.
+        const allPages = document.querySelectorAll('.page');
+        allPages.forEach(page => {
+            resetPageState(page);
         });
+
+        // 첫 페이지를 표시합니다.
+        showPage('page-0');
 
     </script>
 </body>
