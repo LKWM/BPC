@@ -137,7 +137,7 @@
             color: #1f2937;
         }
         .layout-horizontal { grid-template-columns: 1fr 1fr; } /* '사'처럼 세로 모음은 좌우 배치 */
-        .layout-vertical { grid-template-rows: 1fr 1fr; }   /* '두'처럼 가로 모음은 상하 배치 */
+        .layout-vertical { grid-template-rows: 1fr 1fr; }    /* '두'처럼 가로 모음은 상하 배치 */
         .drop-zone {
             border: 2px dashed #9ca3af;
             background-color: #f9fafb;
@@ -523,14 +523,18 @@
                 currentPageId = pageId;
                 resetPageState(nextPage);
 
-             if (pageId === 'completion-message') {
+                // --- START: 완료 메시지 전송 코드 추가 ---
+                if (pageId === 'completion-message') {
                     if (window.parent) {
                         window.parent.postMessage({
                             type: 'lesson_complete'
                         }, '*');
                     }
                 }
-                
+                // --- END: 완료 메시지 전송 코드 추가 ---
+            }
+        }
+        
         function resetPageState(pageElement) {
             const pageNumStr = pageElement.id.replace('page-', '');
             const pageNum = parseInt(pageNumStr, 10);
@@ -539,9 +543,9 @@
             if (nav && nav.dataset.initialHtml) {
                  nav.innerHTML = nav.dataset.initialHtml;
                  nav.querySelectorAll('button[onclick]').forEach(button => {
-                    const onclickAttr = button.getAttribute('onclick');
-                    button.onclick = new Function(onclickAttr);
-                });
+                     const onclickAttr = button.getAttribute('onclick');
+                     button.onclick = new Function(onclickAttr);
+                 });
             } else if (nav) {
                  if (quizConfig[pageNum]) {
                     const { name, correctAnswer, nextPageId, prevPageId } = quizConfig[pageNum];
@@ -725,6 +729,12 @@
 
             let userAnswer = '';
             const quizData = clickTypeQuizzes[quizNum];
+            
+            // Check if userSelections[quizNum] is defined, initialize if not
+            if (!userSelections[quizNum]) {
+                userSelections[quizNum] = [];
+            }
+            
             for (let i = 0; i < userSelections[quizNum].length; i++) {
                 userAnswer += composeHangul([userSelections[quizNum][i], quizData.prefilled[i]]);
             }
