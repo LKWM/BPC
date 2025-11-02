@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Chapitre (4) - Les diphtongues</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5vmin, 2rem);
+            --font-display: clamp(5rem, 20vmin, 8rem);
+            --font-char-btn: clamp(4rem, 15vmin, 5rem);
+            --font-jamo-key: clamp(1rem, 4vmin, 1.1rem);
+            --font-jamo-dropzone: clamp(2rem, 8vmin, 2.25rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+        }
+
+        /* --- Layout --- */
+        .course-wrapper { width: 100%; max-width: 600px; }
+        .course-container {
+            width: 100%; position: relative; aspect-ratio: 1 / 1;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem; overflow: hidden; background-color: white;
+        }
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
+            background-color: white; padding: var(--padding-lg); box-sizing: border-box;
+        }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content {
+            flex-grow: 1; overflow: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        
+        /* --- Mobile Responsive --- */
+        @media (max-width: 600px) {
+            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
+            .course-wrapper { height: 100%; max-width: 100%; }
+            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; border-radius: 0; }
+        }
+
+        /* --- Common Elements --- */
+        .title-text { font-size: var(--font-title); font-weight: 700; color: #1f2937; }
+        .lesson-text { font-size: var(--font-lg); color: #4b5563; line-height: 1.6; }
+        .phonetic-text { font-family: 'Inter', sans-serif; font-size: var(--font-lg); color: #6b7280; margin-top: 0.5rem; }
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        .char-button {
+            font-size: var(--font-char-btn); font-weight: 700; font-family: 'Noto Sans KR', sans-serif;
+            background-color: #eff6ff; border: 2px solid #93c5fd;
+            border-radius: 1rem; padding: var(--padding-sm) var(--padding-md);
+            cursor: pointer; transition: background-color 0.2s, transform 0.1s;
+            line-height: 1.1;
+        }
+        .char-button:hover { background-color: #dbeafe; }
+        .char-button:active { transform: scale(0.95); }
+
+        /* Combination Page */
+        .combination-content .char-button { font-size: clamp(2.5rem, 10vw, 3.5rem); padding: clamp(0.5rem, 2.5vmin, 1rem); }
+        .combination-content .symbol-text { font-size: clamp(2rem, 8vw, 3rem); font-weight: 700; color: #9ca3af; }
+
+        /* --- Quiz --- */
+        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; margin-bottom: 1rem; }
+        .audio-button { background: none; border: none; cursor: pointer; }
+        .audio-icon { width: clamp(2.5rem, 8vmin, 3rem); height: clamp(2.5rem, 8vmin, 3rem); color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+        .quiz-option {
+            display: inline-block; padding: var(--padding-sm) var(--padding-md);
+            border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.25rem; cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-family: 'Noto Sans KR', sans-serif; font-size: var(--font-xl); min-width: 60px;
+        }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
+
+        /* Writing Quiz */
+        .writing-quiz-content { gap: clamp(0.25rem, 1.5vh, 1rem); }
+        .writing-quiz-content .quiz-question { margin-bottom: 0; }
+        .writing-quiz-content .audio-button { margin-bottom: 0; }
+        .drop-area-container { display: flex; gap: 1rem; justify-content: center; align-items: center; min-height: clamp(80px, 22vmin, 100px); }
+        .syllable-constructor { position: relative; display: grid; gap: 2px; width: clamp(80px, 22vmin, 100px); height: clamp(80px, 22vmin, 100px); }
+        .layout-vertical { grid-template-rows: 1fr 1fr; }
+        .layout-horizontal { grid-template-columns: 1fr 1fr; }
+        .drop-zone {
+            border: 2px dashed #9ca3af; background-color: #f9fafb; transition: opacity 0.1s ease-in-out;
+            display: flex; align-items: center; justify-content: center;
+            font-size: var(--font-jamo-dropzone); font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 700; color: #1f2937;
+        }
+        .syllable-output {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            font-family: 'Noto Sans KR', sans-serif; font-size: clamp(4rem, 18vmin, 6rem);
+            font-weight: 700; color: #1f2937; transition: opacity 0.1s ease-in-out; opacity: 0;
+        }
+        .jamo-bank { 
+            display: flex; flex-wrap: wrap; justify-content: center; 
+            gap: 0.5rem; margin-top: 1rem; max-width: 400px;
+        }
+        .jamo-key { 
+            flex: 1 1 40px; max-width: 45px; height: clamp(40px, 11vmin, 45px); 
+            font-size: var(--font-jamo-key); border: 1px solid #d1d5db; 
+            border-radius: 0.25rem; background-color: #f9fafb; cursor: pointer; 
+            display:flex; align-items:center; justify-content:center; user-select: none; 
+            transition: background-color 0.2s; 
+        }
+        .jamo-key:hover { background-color: #e0e7ff; }
+        .jamo-delete-key { font-size: calc(var(--font-jamo-key) * 1.2); }
+        .jamo-delete-key:hover { background-color: #fca5a5; color: #b91c1c; }
+    </style>
+</head>
+<body>
+
+    <div class="course-wrapper">
+        <div class="course-container">
+            <!-- Content will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+        let userJamoSelections = {};
+
+        const sounds = {
+            'ya': { file: 'https://static.wixstatic.com/mp3/699687_d351afbac7384f7a9c9d6df826f45d77.mp3' },
+            'i': { file: 'https://static.wixstatic.com/mp3/699687_641a5e9958a8416a917cc0c267310c13.mp3' },
+            'a': { file: 'https://static.wixstatic.com/mp3/699687_23c826488a4041f488691d65bbecea21.mp3' },
+            'g': { file: 'https://static.wixstatic.com/mp3/699687_a14958ffc05243ccb827e78390a1c8ca.mp3' },
+            'gya': { file: 'https://static.wixstatic.com/mp3/699687_f1cd35a4db774b2085b002009a405a99.mp3' },
+            'yeo': { file: 'https://static.wixstatic.com/mp3/699687_93483a9eca854c18a7d92ac9ed5f1baa.mp3' },
+            'eo': { file: 'https://static.wixstatic.com/mp3/699687_0feeed8f7fb444f4bd33f62e7ebd20c0.mp3' },
+            'b': { file: 'https://static.wixstatic.com/mp3/699687_75717886fe7f4b1aacf95580bf551aa6.mp3' },
+            'byeo': { file: 'https://static.wixstatic.com/mp3/699687_6a38de6743b94a50aea140480b8cebb4.mp3' },
+            'yo': { file: 'https://static.wixstatic.com/mp3/699687_827ff50526b04b30bc3415b57f1ff267.mp3' },
+            'o': { file: 'https://static.wixstatic.com/mp3/699687_58ae738b4c2f4673bb8aace39a46b41b.mp3' },
+            'p': { file: 'https://static.wixstatic.com/mp3/699687_403dfbb707824b86a975912b14fe1bdc.mp3' },
+            'pyo': { file: 'https://static.wixstatic.com/mp3/699687_3925b30a26414b56a24bbf06f889e70d.mp3' },
+            'pyeo': { file: 'https://static.wixstatic.com/mp3/699687_91548cfe1d404d9ab006693df60d5a97.mp3' },
+            'gyo': { file: 'https://static.wixstatic.com/mp3/699687_0fbd14594128497ab25820ec10e672da.mp3' },
+            'kyeo': { file: 'https://static.wixstatic.com/mp3/699687_20fe479f1f0d4d65b60b28f01e266319.mp3' },
+            'hya': { file: 'https://static.wixstatic.com/mp3/699687_ddf5d2e0fd7c475d93725edd13fd1a34.mp3' },
+            'syo': { file: 'https://static.wixstatic.com/mp3/699687_10735098f1904eb1bf39a396e3c495a9.mp3' },
+        };
+        
+        const quizData = [
+            { id: 1, page: 12, type: 'mc', sound: 'pyeo', answer: '펴', options: { '벼': '벼', '펴': '펴', '뵤': '뵤', '표': '표', '피어': '피어', '퍼': '퍼' } },
+            { id: 2, page: 13, type: 'mc', sound: 'ya', answer: '야', options: { '아': '아', '야': '야', '하': '하', '햐': '햐', '쟈': '쟈' } },
+            { id: 3, page: 14, type: 'mc', sound: 'gya', answer: '갸', options: { '가': '가', '갸': '갸', '자': '자', '쟈': '쟈' } },
+            { id: 4, page: 15, type: 'mc', sound: 'gyo', answer: '교', options: { '고': '고', '구': '구', '교': '교', '규': '규', '코': '코', '쿄': '쿄' } },
+            { id: 5, page: 16, type: 'writing', sound: 'kyeo', answer: ['ㅋ', 'ㅕ'], layout: 'horizontal' },
+            { id: 6, page: 17, type: 'writing', sound: 'hya', answer: ['ㅎ', 'ㅑ'], layout: 'horizontal' },
+            { id: 7, page: 18, type: 'writing', sound: 'syo', answer: ['ㅅ', 'ㅛ'], layout: 'vertical' }
+        ];
+
+        const JAMO_MAP = {
+            initial: ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'],
+            vowel: ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'],
+        };
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey]) return;
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+                player.onstop = () => player.dispose();
+            }).catch(e => console.error("Audio could not start:", e));
+        }
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+
+                // [FIX 1] Add postMessage check for completion page
+                if (pageId === 'completion-page') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+                
+                if (pageId.startsWith('page-')) { 
+                    const quizNumMatch = pageId.match(/page-(\d+)/);
+                    if (quizNumMatch && quizData.some(q => q.page == quizNumMatch[1])) {
+                         resetPageState(pageId);
+                    }
+                }
+            }
+        }
+
+        function resetPageState(pageId) {
+            const pageElement = document.getElementById(pageId);
+            if (!pageElement) return;
+
+            const quizNav = pageElement.querySelector('[id$="-nav"]');
+            if (quizNav && quizNav.dataset.initialHtml) {
+                quizNav.innerHTML = quizNav.dataset.initialHtml;
+                const quizDataEntry = quizData.find(q => `page-${q.page}` === pageId);
+                if (quizDataEntry) {
+                    const quizNum = quizDataEntry.id;
+                    const newCheckButton = quizNav.querySelector('button[onclick^="check"]');
+                    if (newCheckButton) {
+                        newCheckButton.onclick = quizDataEntry.type === 'mc' ? () => checkAnswer(quizNum) : () => checkJamoAnswer(quizNum);
+                    }
+                }
+            }
+            
+            const options = pageElement.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                const radio = opt.querySelector('input');
+                if (radio) { radio.checked = false; radio.disabled = false; }
+            });
+
+            const quizInfo = quizData.find(q => `page-${q.page}` === pageId);
+            if (quizInfo && quizInfo.type === 'writing') {
+                setupJamoKeyboard(quizInfo.id);
+            }
+        }
+
+        function checkAnswer(quizNum) {
+            const data = quizData.find(q => q.id === quizNum);
+            const selectedOption = document.querySelector(`input[name="q${quizNum}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            
+            if (!selectedOption) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                return;
+            }
+            
+            navEl.querySelector('button[onclick^="check"]').style.display = 'none';
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'default';
+            });
+            
+            const isCorrect = selectedOption.value === data.answer;
+            selectedOption.parentElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            // Check if this is the last quiz
+            const isLastQuiz = data.id === quizData[quizData.length - 1].id;
+            const nextPageId = isLastQuiz ? 'completion-page' : `page-${data.page + 1}`;
+            const buttonText = isLastQuiz ? 'Terminer' : 'Suivant &rarr;';
+
+            if (isCorrect) {
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+        
+        function resetQuiz(quizNum) {
+            const pageId = `page-${quizData.find(q => q.id === quizNum).page}`;
+            resetPageState(pageId);
+        }
+
+        function combineJamo(jamoArray) {
+            if (!jamoArray || jamoArray.length < 2) return jamoArray.join('');
+            const initialIdx = JAMO_MAP.initial.indexOf(jamoArray[0]);
+            const vowelIdx = JAMO_MAP.vowel.indexOf(jamoArray[1]);
+            if (initialIdx === -1 || vowelIdx === -1) return jamoArray.join('');
+            const unicode = 0xAC00 + (initialIdx * 21 * 28) + (vowelIdx * 28);
+            return String.fromCharCode(unicode);
+        }
+
+        function setupJamoKeyboard(quizNum) {
+            const keyboardContainer = document.getElementById(`jamo-keyboard-${quizNum}`);
+            if (!keyboardContainer) return;
+            keyboardContainer.innerHTML = ''; 
+            userJamoSelections[quizNum] = [];
+            updateSyllableDisplay(quizNum);
+
+            const keyLayout = ['ㄱ', 'ㅋ', 'ㄷ', 'ㅌ', 'ㅂ', 'ㅍ', 'ㅈ', 'ㅊ', 'ㅅ', 'ㅎ', 'ㅇ', 'ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅒ', 'ㅔ', 'ㅖ', '←'];
+
+            keyLayout.forEach(item => {
+                const key = document.createElement('div');
+                key.className = 'jamo-key';
+                key.textContent = item;
+                if (item === '←') {
+                    key.classList.add('jamo-delete-key');
+                    key.onclick = () => handleBackspace(quizNum);
+                } else {
+                    key.onclick = () => handleJamoClick(quizNum, item);
+                }
+                keyboardContainer.appendChild(key);
+            });
+        }
+
+        function handleJamoClick(quizNum, jamo) {
+            const selection = userJamoSelections[quizNum] || [];
+            const answer = quizData.find(q => q.id === quizNum).answer;
+            if (selection.length >= answer.length) return;
+            selection.push(jamo);
+            userJamoSelections[quizNum] = selection;
+            updateSyllableDisplay(quizNum);
+        }
+
+        function handleBackspace(quizNum) {
+            const selection = userJamoSelections[quizNum] || [];
+            if (selection.length > 0) selection.pop();
+            userJamoSelections[quizNum] = selection;
+            updateSyllableDisplay(quizNum);
+        }
+
+        function updateSyllableDisplay(quizNum) {
+            const page = document.getElementById(`page-${quizData.find(q=>q.id === quizNum).page}`);
+            if (!page) return;
+            const constructor = page.querySelector('.syllable-constructor');
+            if(!constructor) return;
+            
+            const dropZones = constructor.querySelectorAll('.drop-zone');
+            const outputDiv = constructor.querySelector('.syllable-output');
+            const userSelection = userJamoSelections[quizNum] || [];
+            
+            if (userSelection.length === dropZones.length) {
+                outputDiv.textContent = combineJamo(userSelection);
+                outputDiv.style.opacity = '1';
+                dropZones.forEach(zone => zone.style.opacity = '0');
+            } else {
+                outputDiv.textContent = '';
+                outputDiv.style.opacity = '0';
+                dropZones.forEach((zone, index) => {
+                    zone.textContent = userSelection[index] || '';
+                    zone.style.opacity = '1';
+                });
+            }
+        }
+
+        function checkJamoAnswer(quizNum) {
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            navEl.querySelector('button[onclick^="check"]').style.display = 'none';
+
+            const userAnswer = userJamoSelections[quizNum] || [];
+            const data = quizData.find(q => q.id === quizNum);
+            const isCorrect = JSON.stringify(userAnswer) === JSON.stringify(data.answer);
+
+            // Check if this is the last quiz
+            const isLastQuiz = data.id === quizData[quizData.length - 1].id;
+            const nextPageId = isLastQuiz ? 'completion-page' : `page-${data.page + 1}`;
+            const buttonText = isLastQuiz ? 'Terminer' : 'Suivant &rarr;';
+            
+            if (isCorrect) {
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+
+        function createQuizPages() {
+            const container = document.querySelector('.course-container');
+            let pagesHtml = '';
+
+            quizData.forEach((data) => {
+                const { id: quizNum, page, type, sound, options, layout } = data;
+                let contentHtml = '';
+                let contentClass = '';
+                
+                if (type === 'mc') {
+                    contentHtml = `
+                        <p class="quiz-question mb-4">Écoutez et choisissez la bonne écriture.</p>
+                        <button class="audio-button" onclick="playSound('${sound}')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                        <div id="quiz-${quizNum}-options" class="flex flex-wrap gap-2 justify-center">
+                            ${Object.entries(options).map(([value, text]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${value}">${text}</label>`).join('')}
+                        </div>
+                    `;
+                } else if (type === 'writing') {
+                    contentClass = 'writing-quiz-content';
+                    contentHtml = `
+                        <p class="quiz-question">Écoutez et écrivez ce que vous entendez.</p>
+                        <button class="audio-button" onclick="playSound('${sound}')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                        <div class="drop-area-container">
+                            <div class="syllable-constructor ${layout === 'vertical' ? 'layout-vertical' : 'layout-horizontal'}">
+                                <div class="drop-zone"></div><div class="drop-zone"></div><div class="syllable-output"></div>
+                            </div>
+                        </div>
+                        <div id="jamo-keyboard-${quizNum}" class="jamo-bank"></div>
+                    `;
+                }
+
+                // [FIX] Corrected logic for previous button (page 12 is first quiz, links to page 11)
+                const prevButtonHtml = page === 12 ? `<button onclick="showPage('page-11')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>` : `<button onclick="showPage('page-${page - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>`;
+                const checkButtonAction = type === 'mc' ? `checkAnswer(${quizNum})` : `checkJamoAnswer(${quizNum})`;
+                const navButtonHtml = `
+                    <div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full">
+                        ${prevButtonHtml}
+                        <div class="flex items-center gap-4">
+                           <div id="quiz-${quizNum}-feedback" class="feedback-area"></div>
+                           <button onclick="${checkButtonAction}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        </div>
+                    </div>`;
+
+                pagesHtml += `
+                    <div id="page-${page}" class="page">
+                        <div class="page-content ${contentClass}">${contentHtml}</div>
+                        ${navButtonHtml}
+                    </div>
+                `;
+            });
+
+            const completionPageHtml = `<div id="completion-page" class="page"> <div class="page-content"> <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <h2 class="title-text font-bold text-gray-800 mb-3">Chapitre terminé !</h2> <p class="lesson-text text-gray-600">Félicitations, Êtes-vous prêt(e) pour l'étape suivante ? .</p> </div> <div class="w-full text-center pb-4"> <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button> </div> </div>`;
+            container.insertAdjacentHTML('beforeend', pagesHtml + completionPageHtml);
+        }
+
+        function initializeApp() {
+            const container = document.querySelector('.course-container');
+            // [FIX] Keep only page-0, the rest is generated
+            container.innerHTML = `
+                <div id="page-0" class="page active"> 
+                    <div class="page-content text-center"> 
+                        <h1 class="title-text font-bold text-gray-800">Chapitre (4) - Les diphtongues</br> L’ajout de trait </br> ㅑ/ㅕ/ㅛ </h1> 
+                        <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> 
+                    </div> 
+                    <div></div> 
+                </div>`;
+            
+            const lessonPages = `
+                <div id="page-1" class="page"> <div class="page-content items-center"> <p class="lesson-text text-center leading-relaxed">La diphtongue est une voyelle où deux sons sont prononcés en changeant de timbre en cours d’émission. Elle s’appelle aussi la voyelle complexe.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button> <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-2" class="page"> <div class="page-content items-center"> <p class="lesson-text text-center leading-relaxed">En coréen, beaucoup de diphtongues s’écrivent <strong class="font-semibold text-blue-600">en ajoutant un trait supplémentaire</strong> aux monophtongues. À l’oral, leurs prononciations commencent par le son /j/ (ou bien /i/) et se terminent par le son original de la monophtongue.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-3" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('ya')">ㅑ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ᅣ&gt;</strong> est une variation diphtonguée de &lt;ᅡ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-4" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('i')">ㅣ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('a')">ㅏ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('ya')">ㅑ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">C’est une diphtongue ouvrante postérieure. La prononciation commence par la position de /i/ (fermée - antérieure) et glisse à la position de &lt;ᅡ&gt; (/a/ ouverte - postérieure).</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-5" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-row items-center gap-x-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('g')">ㄱ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('ya')">ㅑ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('gya')">갸</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-6" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('yeo')">ㅕ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ㅕ&gt;</strong> est une variation diphtonguée de &lt;ㅓ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-7" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('i')">ㅣ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('eo')">ㅓ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('yeo')">ㅕ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">C’est une diphtongue ouvrante postérieure. La prononciation commence par la position de /i/ (fermée - antérieure) et glisse à la position de &lt;ㅓ&gt; (/ʌ/ ouverte - postérieure).</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-8')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-8" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-row items-center gap-x-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('b')">ㅂ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('yeo')">ㅕ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('byeo')">벼</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-7')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-9')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-9" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('yo')">ㅛ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ㅛ&gt;</strong> est une variation diphtonguée du &lt;ᅩ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-10')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-10" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('i')">ㅣ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('o')">ㅗ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('yo')">ㅛ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">C’est une diphtongue ouvrante postérieure. La prononciation commence par le son de /i/ et glisse à la position de &lt;ᅩ&gt; (/o/ moyenne - postérieure). Il faut arrondir les lèvres au cours de la prononciation.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-11')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-11" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-col items-center gap-y-2"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('p')">ㅍ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('yo')">ㅛ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('pyo')">표</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-10')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-12')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button> </div> </div>
+            `;
+            container.insertAdjacentHTML('beforeend', lessonPages);
+            createQuizPages();
+            
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
+                    if(e.target.checked) e.target.parentElement.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                nav.dataset.initialHtml = nav.innerHTML;
+            });
+
+            quizData.filter(q => q.type === 'writing').forEach(q => setupJamoKeyboard(q.id));
+            
+            showPage('page-0');
+        }
+        
+        // [FIX 2] Remove DOMContentLoaded wrapper and call initializeApp directly
+        initializeApp();
+    </script>
+</body>
+</html>
