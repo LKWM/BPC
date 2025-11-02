@@ -127,7 +127,7 @@
             color: #1f2937; /* Black color for composed character */
         }
         .layout-horizontal { grid-template-columns: 1fr 1fr; } /* '사'처럼 세로 모음은 좌우 배치 */
-        .layout-vertical { grid-template-rows: 1fr 1fr; }   /* '두'처럼 가로 모음은 상하 배치 */
+        .layout-vertical { grid-template-rows: 1fr 1fr; }    /* '두'처럼 가로 모음은 상하 배치 */
         .drop-zone {
             border: 2px dashed #9ca3af;
             background-color: #f9fafb;
@@ -165,11 +165,11 @@
     <div class="course-wrapper">
         <!-- Page 0: Title -->
        <div id="page-0" class="page active items-center justify-center text-center">
-                <div class="page-content">
-                    <h1 class="text-2xl font-bold text-gray-800 mb-6 leading-tight">Leçon supplémentaire 2<br>Vocabulaire (2)</h1>
-                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700 mx-auto">Commencer</button>
-                </div>
+            <div class="page-content">
+                <h1 class="text-2xl font-bold text-gray-800 mb-6 leading-tight">Leçon supplémentaire 2<br>Vocabulaire (2)</h1>
+                <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700 mx-auto">Commencer</button>
             </div>
+        </div>
 
         <!-- Page 1: ㄷ -->
         <div id="page-1" class="page">
@@ -783,7 +783,8 @@
                 currentPageId = pageId;
                 resetPage(nextPage);
             
-                if (pageId === 'completion-message') {
+                // [FIX 1] 'completion-message'가 아니라 'page-32'가 올바른 ID입니다.
+                if (pageId === 'page-32') {
                     if (window.parent) {
                         window.parent.postMessage({
                             type: 'lesson_complete'
@@ -1017,7 +1018,7 @@
         
         function resetClickTypeQuiz(quizNum) {
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-            if (navEl.dataset.initialHtml) {
+            if (navEl && navEl.dataset.initialHtml) {
                 navEl.innerHTML = navEl.dataset.initialHtml;
                 const newJamoButton = navEl.querySelector('button[onclick^="checkClickTypeAnswer"]');
                 if (newJamoButton) newJamoButton.onclick = new Function(newJamoButton.getAttribute('onclick'));
@@ -1025,30 +1026,32 @@
             setupClickTypeQuiz(quizNum);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Store initial state of nav bars to easily reset them
-            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-                nav.dataset.initialHtml = nav.innerHTML;
-            });
-            
-            // Add 'selected' class to radio button labels on change
-            document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
-                        opt.parentElement.classList.remove('selected');
-                    });
-                    if(e.target.checked) {
-                        e.target.parentElement.classList.add('selected');
-                    }
-                });
-            });
-
-            // Initialize all jamo quizzes
-            Object.keys(clickTypeQuizzes).forEach(quizNum => setupClickTypeQuiz(parseInt(quizNum)));
-
-            // Show the first page
-            showPage('page-0');
+        // [FIX 2] 스크립트가 <body> 끝에 있으므로 DOMContentLoaded를 기다릴 필요 없이
+        // 설정 코드를 바로 실행합니다.
+        
+        // Store initial state of nav bars to easily reset them
+        document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+            nav.dataset.initialHtml = nav.innerHTML;
         });
+        
+        // Add 'selected' class to radio button labels on change
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                    opt.parentElement.classList.remove('selected');
+                });
+                if(e.target.checked) {
+                    e.target.parentElement.classList.add('selected');
+                }
+            });
+        });
+
+        // Initialize all jamo quizzes
+        Object.keys(clickTypeQuizzes).forEach(quizNum => setupClickTypeQuiz(parseInt(quizNum)));
+
+        // Show the first page
+        showPage('page-0');
+        // End of setup code
     </script>
 </body>
 </html>
