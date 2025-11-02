@@ -509,13 +509,9 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
-                const quizNumMatch = pageId.match(/page-(\d+)/);
-                if (quizNumMatch) {
-                    const pageNum = parseInt(quizNumMatch[1]);
-                    if ((pageNum >= 8 && pageNum <= 11) || (pageNum >= 12 && pageNum <= 16)) {
-                         resetQuiz(String(pageNum));
 
-              if (pageId === 'completion-message') {
+                // [FIX 1] 완료 페이지(page-17) 확인 및 postMessage 전송
+                if (pageId === 'page-17') {
                     if (window.parent) {
                         window.parent.postMessage({
                             type: 'lesson_complete'
@@ -523,8 +519,18 @@
                     }
                 }
 
+                const quizNumMatch = pageId.match(/page-(\d+)/);
+                if (quizNumMatch) {
+                    const pageNumStr = quizNumMatch[1]; // Get page number as string
+                    const pageNum = parseInt(pageNumStr, 10);
+                    if ((pageNum >= 8 && pageNum <= 11) || (pageNum >= 12 && pageNum <= 16)) {
+                         resetQuiz(pageNumStr); // Pass the string version
+                    }
+                }
+            }
+        }
         
-        function resetQuiz(quizNum) {
+        function resetQuiz(quizNum) { // quizNum is a string
             const quizName = `q${quizNum}`;
             const feedbackEl = document.getElementById(`quiz-${quizNum}-feedback`);
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
@@ -534,7 +540,7 @@
                 const config = quizConfig[quizNum];
                 if (feedbackEl) feedbackEl.innerHTML = '';
                 navEl.innerHTML = `<button onclick="showPage('${config.prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
-                                   <button onclick="checkAnswer('${quizNum}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>`;
+                                    <button onclick="checkAnswer('${quizNum}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>`;
                 options.forEach(opt => {
                     opt.disabled = false;
                     opt.checked = false;
@@ -544,8 +550,8 @@
                  const config = jamoQuizzes[quizNum];
                  if (feedbackEl) feedbackEl.innerHTML = '';
                  navEl.innerHTML = `<button onclick="showPage('${config.prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
-                                    <button onclick="checkJamoAnswer('${quizNum}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>`;
-                setupJamoKeyboard(quizNum);
+                                      <button onclick="checkJamoAnswer('${quizNum}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>`;
+                 setupJamoKeyboard(quizNum);
             }
         }
 
@@ -581,17 +587,6 @@
             }
         }
         
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
-                    opt.parentElement.classList.remove('selected');
-                });
-                if(e.target.checked) {
-                    e.target.parentElement.classList.add('selected');
-                }
-            });
-        });
-
         // --- Jamo Typing Quiz Logic ---
         function composeHangul(jamoArray) {
             if (!jamoArray || jamoArray.length < 2) return '';
@@ -621,6 +616,7 @@
                  container.appendChild(constructor);
             });
 
+            // [FIX 2] Jamo 키보드 레이아웃 수정 (이전 파일과 동일하게)
             const keyLayout = ['ㄱ', 'ㄷ', 'ㅂ', 'ㅅ', 'ㅈ', 'ㅏ', 'ㅗ', 'ㅜ', 'ㅣ', 'ㅓ', 'ㅡ', '←'];
 
             keyLayout.forEach(item => {
@@ -703,15 +699,30 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-             Object.keys(jamoQuizzes).forEach(quizNum => {
-                const page = document.getElementById(`page-${quizNum}`);
-                if(page) {
-                    setupJamoKeyboard(quizNum);
+        // [FIX 3] DOMContentLoaded 래퍼를 제거하고 코드를 스크립트 끝에서 직접 실행합니다.
+        
+        // 1. 라디오 버튼 리스너를 먼저 연결합니다.
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                    opt.parentElement.classList.remove('selected');
+                });
+                if(e.target.checked) {
+                    e.target.parentElement.classList.add('selected');
                 }
             });
-            showPage('page-0');
         });
+
+        // 2. Jamo 퀴즈의 초기 레이아웃을 설정합니다.
+        Object.keys(jamoQuizzes).forEach(quizNum => {
+            const page = document.getElementById(`page-${quizNum}`);
+            if(page) {
+                setupJamoKeyboard(quizNum); // setupJamoKeyboard가 레이아웃을 빌드합니다.
+            }
+        });
+        
+        // 3. 앱을 시작합니다.
+        showPage('page-0');
 
     </script>
 </body>
