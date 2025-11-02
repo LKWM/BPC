@@ -86,7 +86,7 @@
         }
 
         /* --- Typography and Element Styling --- */
-        h1 { font-size: var(--font-title); font-weight: 700; text-align: center; }
+        h1 { font-size: var(--font-title); font-weight: 700; }
         .lesson-text { font-size: var(--font-lg); text-align: center; }
         .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
         
@@ -163,13 +163,13 @@
 <body>
 
     <div class="course-wrapper">
-        <!-- Page 0: Title -->
-       <div id="page-0" class="page active items-center justify-center text-center">
-            <div class="page-content">
-                <h1 class="text-2xl font-bold text-gray-800 mb-6 leading-tight">Leçon supplémentaire 2<br>Vocabulaire (2)</h1>
-                <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700 mx-auto">Commencer</button>
+           <!-- Page 0: Title -->
+            <div id="page-0" class="page active items-center justify-center text-center">
+                <div class="page-content">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-6 leading-tight">Leçon supplémentaire 2<br>Vocabulaire (2)</h1>
+                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700 mx-auto">Commencer</button>
+                </div>
             </div>
-        </div>
 
         <!-- Page 1: ㄷ -->
         <div id="page-1" class="page">
@@ -767,9 +767,19 @@
 
         function playSound(soundKey) {
             if (!sounds[soundKey]) return;
+            // Tone.start() is now called in startLesson()
+            const player = new Tone.Player(sounds[soundKey].file).toDestination();
+            player.autostart = true;
+        }
+
+        // MODIFICATION 1: Added startLesson() to initialize audio context on first click
+        // This fixes the issue where Tone.js might be blocked in an iframe
+        function startLesson() {
             Tone.start().then(() => {
-                const player = new Tone.Player(sounds[soundKey].file).toDestination();
-                player.autostart = true;
+                showPage('page-1');
+            }).catch(e => {
+                console.warn("Audio context failed to start, proceeding anyway.", e);
+                showPage('page-1'); // Proceed even if audio fails
             });
         }
 
@@ -782,18 +792,16 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 resetPage(nextPage);
-            
-                // [FIX 1] 'completion-message'가 아니라 'page-32'가 올바른 ID입니다.
+
+                // MODIFICATION 2: Add postMessage on lesson completion
                 if (pageId === 'page-32') {
-                    if (window.parent) {
-                        window.parent.postMessage({
-                            type: 'lesson_complete'
-                        }, '*');
-                    }
+                    window.parent.postMessage({
+                        type: 'lesson_complete'
+                    }, '*');
                 }
             }
         }
-                
+        
         function resetPage(pageElement) {
             // Reset navigation/feedback areas
             const nav = pageElement.querySelector('[id$="-nav"]');
@@ -801,7 +809,7 @@
                 nav.innerHTML = nav.dataset.initialHtml;
                 // Re-bind events for dynamically created buttons
                 const newCheckButton = nav.querySelector('button[onclick^="checkAnswer"]');
-                if (newCheckButton) newCheckButton.onclick = new Function(newCheckButton.getAttribute('onclick'));
+                if (newCheckButton) newCheckButton.onclick = new Function(newCheckBUtton.getAttribute('onclick'));
                 
                 const newJamoButton = nav.querySelector('button[onclick^="checkClickTypeAnswer"]');
                 if (newJamoButton) newJamoButton.onclick = new Function(newJamoButton.getAttribute('onclick'));
@@ -1018,7 +1026,7 @@
         
         function resetClickTypeQuiz(quizNum) {
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-            if (navEl && navEl.dataset.initialHtml) {
+            if (navEl.dataset.initialHtml) {
                 navEl.innerHTML = navEl.dataset.initialHtml;
                 const newJamoButton = navEl.querySelector('button[onclick^="checkClickTypeAnswer"]');
                 if (newJamoButton) newJamoButton.onclick = new Function(newJamoButton.getAttribute('onclick'));
@@ -1026,32 +1034,30 @@
             setupClickTypeQuiz(quizNum);
         }
 
-        // [FIX 2] 스크립트가 <body> 끝에 있으므로 DOMContentLoaded를 기다릴 필요 없이
-        // 설정 코드를 바로 실행합니다.
-        
-        // Store initial state of nav bars to easily reset them
-        document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-            nav.dataset.initialHtml = nav.innerHTML;
-        });
-        
-        // Add 'selected' class to radio button labels on change
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
-                    opt.parentElement.classList.remove('selected');
-                });
-                if(e.target.checked) {
-                    e.target.parentElement.classList.add('selected');
-                }
+        document.addEventListener('DOMContentLoaded', () => {
+            // Store initial state of nav bars to easily reset them
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                nav.dataset.initialHtml = nav.innerHTML;
             });
+            
+            // Add 'selected' class to radio button labels on change
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                        opt.parentElement.classList.remove('selected');
+                    });
+                    if(e.target.checked) {
+                        e.target.parentElement.classList.add('selected');
+                    }
+                });
+            });
+
+            // Initialize all jamo quizzes
+            Object.keys(clickTypeQuizzes).forEach(quizNum => setupClickTypeQuiz(parseInt(quizNum)));
+
+            // Show the first page
+            showPage('page-0');
         });
-
-        // Initialize all jamo quizzes
-        Object.keys(clickTypeQuizzes).forEach(quizNum => setupClickTypeQuiz(parseInt(quizNum)));
-
-        // Show the first page
-        showPage('page-0');
-        // End of setup code
     </script>
 </body>
 </html>
