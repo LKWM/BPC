@@ -506,14 +506,46 @@
         let userSelections = {};
 
         function playSound(soundKey) {
-            if (Tone.context.state !== 'running') {
-                Tone.start();
+            // 'Tone'이 정의되지 않았거나 'start' 함수가 없으면 아무것도 하지 않음
+            if (typeof Tone === 'undefined' || typeof Tone.start !== 'function') {
+                console.warn("Tone.js is not loaded or initialized.");
+                return;
             }
-            const player = new Tone.Player(sounds[soundKey].file).toDestination();
-            player.autostart = true;
+            
+            if (Tone.context.state !== 'running') {
+                Tone.start().catch(e => console.warn("Tone.start() failed:", e));
+            }
+            
+            // 'Player'가 정의되지 않았으면 아무것도 하지 않음
+            if (typeof Tone.Player !== 'function') {
+                 console.warn("Tone.Player is not defined.");
+                 return;
+            }
+
+            try {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+                // 메모리 누수 방지를 위해 재생이 끝나면 player 해제
+                player.onstop = () => {
+                    player.dispose();
+                };
+            } catch (e) {
+                console.error("Error playing sound:", e);
+            }
         }
 
         function showPage(pageId) {
+            // --- START: Audio Context Fix for iframe ---
+            // 사용자의 첫 번째 상호작용(예: 'Commencer' 버튼 클릭) 시 오디오 컨텍스트를 시작
+            if (typeof Tone !== 'undefined' && typeof Tone.start === 'function' && Tone.context.state !== 'running') {
+                try {
+                    Tone.start();
+                } catch (e) {
+                    console.warn("Could not start audio context on page show: ", e);
+                }
+            }
+            // --- END: Audio Context Fix ---
+
             const currentPage = document.getElementById(currentPageId);
             if (currentPage) currentPage.classList.remove('active');
             
@@ -523,7 +555,7 @@
                 currentPageId = pageId;
                 resetPageState(nextPage);
 
-                // --- START: 완료 메시지 전송 코드 추가 ---
+                // --- START: 완료 메시지 전송 코드 ---
                 if (pageId === 'completion-message') {
                     if (window.parent) {
                         window.parent.postMessage({
@@ -531,7 +563,7 @@
                         }, '*');
                     }
                 }
-                // --- END: 완료 메시지 전송 코드 추가 ---
+                // --- END: 완료 메시지 전송 코드 ---
             }
         }
         
@@ -540,32 +572,35 @@
             const pageNum = parseInt(pageNumStr, 10);
             const nav = pageElement.querySelector('[id$="-nav"]');
             
-            if (nav && nav.dataset.initialHtml) {
+            // nav.dataset.initialHtml를 확인하는 로직은 그대로 두어도,
+            // DOMContentLoaded에서 더 이상 설정하지 않으므로 'else if (nav)' 블록이 올바르게 실행됩니다.
+            if (nav && nav.dataset.initialHtml) { 
                  nav.innerHTML = nav.dataset.initialHtml;
                  nav.querySelectorAll('button[onclick]').forEach(button => {
                      const onclickAttr = button.getAttribute('onclick');
                      button.onclick = new Function(onclickAttr);
                  });
             } else if (nav) {
+                // 이 블록이 이제 퀴즈 페이지에 대해 올바르게 실행됩니다.
                  if (quizConfig[pageNum]) {
-                    const { name, correctAnswer, nextPageId, prevPageId } = quizConfig[pageNum];
-                    nav.innerHTML = `
-                        <button onclick="showPage('${prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
-                        <div class="flex items-center gap-4">
-                            <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
-                            <button onclick="checkAnswer('${name}', '${correctAnswer}', '${nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
-                        </div>
-                    `;
-                } else if (clickTypeQuizzes[pageNum]) {
-                    const prevPage = pageNum === 18 ? 'page-17' : `page-${pageNum - 1}`;
-                    const nextPage = pageNum === 21 ? 'completion-message' : `page-${pageNum + 1}`;
-                    nav.innerHTML = `
-                        <button onclick="showPage('${prevPage}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
-                        <div class="flex items-center gap-4">
-                            <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
-                            <button onclick="checkClickTypeAnswer(${pageNum}, '${nextPage}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
-                        </div>
-                    `;
+                     const { name, correctAnswer, nextPageId, prevPageId } = quizConfig[pageNum];
+                     nav.innerHTML = `
+                         <button onclick="showPage('${prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                         <div class="flex items-center gap-4">
+                             <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
+                             <button onclick="checkAnswer('${name}', '${correctAnswer}', '${nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                         </div>
+                     `;
+                 } else if (clickTypeQuizzes[pageNum]) {
+                     const prevPage = pageNum === 18 ? 'page-17' : `page-${pageNum - 1}`;
+                     const nextPage = pageNum === 21 ? 'completion-message' : `page-${pageNum + 1}`;
+                     nav.innerHTML = `
+                         <button onclick="showPage('${prevPage}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                         <div class="flex items-center gap-4">
+                             <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
+                             <button onclick="checkClickTypeAnswer(${pageNum}, '${nextPage}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                         </div>
+                     `;
                  }
             }
 
@@ -753,15 +788,24 @@
         }
         
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-                nav.dataset.initialHtml = nav.innerHTML;
-            });
+            // <!-- 
+            //   BUG FIX: Removed the incorrect initialization loops.
+            //   The loops below were caching the empty state of the quiz-nav divs
+            //   and then incorrectly resetting all pages, which prevented 
+            //   the quiz navigation from ever being built.
+            // -->
             
-            const allPages = document.querySelectorAll('.page');
-            allPages.forEach(page => {
-                resetPageState(page);
-            });
+            // document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+            //     nav.dataset.initialHtml = nav.innerHTML;
+            // });
+            
+            // const allPages = document.querySelectorAll('.page');
+            // allPages.forEach(page => {
+            //     resetPageState(page);
+            // });
 
+            // This is the only call needed. 
+            // It will show page-0 and correctly call resetPageState for page-0.
             showPage('page-0');
         });
 
