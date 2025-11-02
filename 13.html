@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Chapitre (2) - Comment positionner une voyelle ?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-2xl: clamp(1.25rem, 5vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5.5vmin, 2.25rem);
+            --font-vowel-list: clamp(2rem, 8vw, 3.5rem);
+            --font-vowel-card: clamp(4rem, 18vmin, 6rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1.5rem, 4vmin, 2.5rem);
+        }
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; min-height: 100dvh;
+            padding: 1rem; background-color: #f3f4f6;
+        }
+        .course-wrapper {
+            width: 100%; max-width: 600px; height: 100%; max-height: 600px;
+            position: relative; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem; overflow: hidden; background-color: white;
+        }
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
+            background-color: white; padding: var(--padding-lg); box-sizing: border-box;
+        }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content {
+            flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        h1 { font-size: var(--font-title); font-weight: 700; text-align: center; }
+        .text-2xl { font-size: var(--font-2xl); }
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        .vowel-list { font-family: 'Noto Sans KR', sans-serif; font-size: var(--font-vowel-list); font-weight: 700; color: #374151; letter-spacing: 0.5rem; text-align: center; }
+        .vowel-card { font-family: 'Noto Sans KR', sans-serif; font-size: var(--font-vowel-card); font-weight: 700; color: #1f2937; cursor: pointer; text-align: center; margin-bottom: 1.5rem; border: 2px solid #d1d5db; border-radius: 0.75rem; background-color: #f9fafb; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 1rem; display: inline-block; }
+        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; margin-bottom: 1.5rem; text-align: center; }
+        .quiz-option { display: inline-block; padding: var(--padding-sm) var(--padding-md); border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.25rem; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; font-size: var(--font-base); text-align: center; }
+        .quiz-option-kr { font-family: 'Noto Sans KR', sans-serif; font-size: var(--font-xl); }
+        .audio-button { background: none; border: none; cursor: pointer; margin: 1rem 0; }
+        .audio-icon { width: clamp(3rem, 10vmin, 4rem); height: clamp(3rem, 10vmin, 4rem); color: #6b7280; transition: color 0.2s; }
+        .vowel-card:hover, .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+        @media (max-width: 600px) {
+            body { padding: 0; }
+            .course-wrapper { width: 100%; height: 100%; max-height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center">
+
+    <div class="course-wrapper">
+        <div class="course-container">
+            
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active items-center justify-center text-center">
+                <div class="page-content">
+                    <h1 class="text-4xl font-bold text-gray-800 mb-6 leading-tight">Chapitre (2) - Comment positionner une voyelle ?</h1>
+                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Page 1: Intro -->
+            <div id="page-1" class="page">
+                <div class="page-content">
+                    <p class="text-gray-700 text-2xl text-center">Les voyelles se forment avec des traits verticaux et horizontaux et leur position varie en fonction de leur forme : au-dessous ou à la droite d’une consonne.</p>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 2: Horizontal Vowels -->
+            <div id="page-2" class="page">
+                <div class="page-content gap-8">
+                    <p class="text-gray-700 text-2xl text-center">Les voyelles qui ont un long trait horizontal se placent au-dessous d’une consonne.</p>
+                    <div>
+                        <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Les voyelles horizontales</h2>
+                        <p class="vowel-list">ㅗ ㅛ ㅜ ㅠ ㅡ</p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 3: Vertical Vowels -->
+            <div id="page-3" class="page">
+                <div class="page-content gap-8">
+                    <p class="text-gray-700 text-2xl text-center">Les voyelles qui ont un long trait vertical se placent à la droite d’une consonne.</p>
+                    <div>
+                        <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Les voyelles verticales</h2>
+                        <p class="vowel-list">ㅏ ㅑ ㅓ ㅕ ㅣ ㅐ ㅒ ㅔ ㅖ</p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Page 4: Quiz -->
+            <div id="page-4" class="page">
+                <div class="page-content">
+                    <p class="quiz-question">Où se place cette voyelle ?</p>
+                    <div class="text-center"><div class="vowel-card" onclick="playSound('a')">ㅏ</div></div>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q4" value="right">À droite de la consonne</label>
+                        <label class="quiz-option"><input type="radio" name="q4" value="below">Au-dessous de la consonne</label>
+                        <label class="quiz-option"><input type="radio" name="q4" value="left">À gauche de la consonne</label>
+                    </div>
+                </div>
+                <div id="quiz-4-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <!-- Page 5: Quiz -->
+            <div id="page-5" class="page">
+                <div class="page-content">
+                    <p class="quiz-question">Où se place cette voyelle ?</p>
+                    <div class="text-center"><div class="vowel-card" onclick="playSound('u')">ㅜ</div></div>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q5" value="right">À droite de la consonne</label>
+                        <label class="quiz-option"><input type="radio" name="q5" value="below">Au-dessous de la consonne</label>
+                        <label class="quiz-option"><input type="radio" name="q5" value="left">À gauche de la consonne</label>
+                    </div>
+                </div>
+                <div id="quiz-5-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+            
+            <!-- Page 6: Quiz -->
+            <div id="page-6" class="page">
+                <div class="page-content">
+                    <p class="quiz-question">Où se place cette voyelle ?</p>
+                    <div class="text-center"><div class="vowel-card" onclick="playSound('o')">ㅗ</div></div>
+                    <div class="w-full text-center">
+                        <label class="quiz-option"><input type="radio" name="q6" value="right">À droite de la consonne</label>
+                        <label class="quiz-option"><input type="radio" name="q6" value="below">Au-dessous de la consonne</label>
+                        <label class="quiz-option"><input type="radio" name="q6" value="left">À gauche de la consonne</label>
+                    </div>
+                </div>
+                <div id="quiz-6-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <!-- Page 7: Quiz (Audio Only) -->
+            <div id="page-7" class="page">
+                <div class="page-content">
+                    <p class="quiz-question">Écoutez et choisissez la bonne écriture.</p>
+                    <div class="text-center">
+                        <button class="audio-button" onclick="playSound('ga')">
+                            <svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                        </button>
+                    </div>
+                    <div class="w-full text-center">
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q7" value="ga">가</label>
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q7" value="ak">ㅏㄱ</label>
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q7" value="na">나</label>
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q7" value="go">고</label>
+                    </div>
+                </div>
+                <div id="quiz-7-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <!-- Page 8: Quiz (Audio Only & Updated) -->
+            <div id="page-8" class="page">
+                <div class="page-content">
+                    <p class="quiz-question">Écoutez et choisissez la bonne écriture.</p>
+                        <div class="text-center">
+                            <button class="audio-button" onclick="playSound('jo')">
+                                <svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                            </button>
+                        </div>
+                    <div class="w-full text-center">
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q8" value="jo_char">ㅈㅗ</label>
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q8" value="so">소</label>
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q8" value="jo">조</label>
+                        <label class="quiz-option quiz-option-kr"><input type="radio" name="q8" value="seo">서</label>
+                    </div>
+                </div>
+                <div id="quiz-8-nav" class="flex justify-between items-center w-full"></div>
+            </div>
+
+            <!-- Page 9: Completion Message -->
+            <div id="page-9" class="page items-center justify-center text-center">
+                <div class="page-content">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Chapitre terminé !</h2>
+                    <p class="text-gray-600">Félicitations, vous avez terminé le chapitre.</p>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+        
+        const sounds = {
+            'a': { file: 'https://static.wixstatic.com/mp3/699687_23c826488a4041f488691d65bbecea21.mp3' },
+            'o': { file: 'https://static.wixstatic.com/mp3/699687_58ae738b4c2f4673bb8aace39a46b41b.mp3' },
+            'u': { file: 'https://static.wixstatic.com/mp3/699687_b11e5a88156d46a383099c42bfd4f814.mp3' },
+            'eo': { file: 'https://static.wixstatic.com/mp3/699687_8718a8a6825543689191830523b80058.mp3' },
+            'ga': { file: 'https://static.wixstatic.com/mp3/699687_9dfb39b123834dfc8f2ad96ddec7df76.mp3' },
+            'du': { file: 'https://static.wixstatic.com/mp3/699687_9f1d9eecb14e4450aebbb20a3e247e22.mp3' },
+            'jo': { file: 'https://static.wixstatic.com/mp3/699687_cbaf81280d964dbbab2fc5859d87e518.mp3' },
+        };
+
+        const quizConfig = {
+            '4': { name: 'q4', correctAnswer: 'right', nextPageId: 'page-5', prevPageId: 'page-3' },
+            '5': { name: 'q5', correctAnswer: 'below', nextPageId: 'page-6', prevPageId: 'page-4' },
+            '6': { name: 'q6', correctAnswer: 'below', nextPageId: 'page-7', prevPageId: 'page-5' },
+            '7': { name: 'q7', correctAnswer: 'ga', nextPageId: 'page-8', prevPageId: 'page-6' },
+            '8': { name: 'q8', correctAnswer: 'jo', nextPageId: 'page-9', prevPageId: 'page-7' },
+        };
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey]) return;
+            if (Tone.context.state !== 'running') {
+                Tone.start();
+            }
+            const player = new Tone.Player(sounds[soundKey].file).toDestination();
+            player.autostart = true;
+        }
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+                resetPageState(nextPage);
+
+              if (pageId === 'completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+        
+        function resetPageState(pageElement) {
+            const pageNumStr = pageElement.id.replace('page-', '');
+            const pageNum = parseInt(pageNumStr, 10);
+            const nav = pageElement.querySelector('[id$="-nav"]');
+            
+            if(nav) {
+                const config = quizConfig[pageNum];
+                if (config) {
+                    nav.innerHTML = `
+                        <button onclick="showPage('${config.prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                        <div class="flex items-center gap-4">
+                            <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
+                            <button onclick="checkAnswer('${pageNum}', '${config.correctAnswer}', '${config.nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        </div>
+                    `;
+                }
+            }
+
+            const options = pageElement.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                const radio = opt.querySelector('input');
+                if (radio) { radio.checked = false; radio.disabled = false; }
+            });
+        }
+        
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                    opt.parentElement.classList.remove('selected');
+                });
+                if (e.target.checked) {
+                    e.target.parentElement.classList.add('selected');
+                }
+            });
+        });
+
+        function checkAnswer(quizNum, correctAnswer, nextPageId) {
+            const selectedOption = document.querySelector(`input[name="q${quizNum}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            
+            if (!selectedOption) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-semibold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                return;
+            }
+            
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'default';
+            });
+            navEl.querySelector('button[onclick^="checkAnswer"]').style.display = 'none';
+
+            const selectedLabel = selectedOption.parentElement;
+            
+            if (selectedOption.value === correctAnswer) {
+                selectedLabel.classList.add('correct');
+                const buttonText = nextPageId === 'page-9' ? 'Terminer' : 'Suivant &rarr;';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                const pageId = navEl.closest('.page').id;
+                selectedLabel.classList.add('incorrect');
+                feedbackContainer.innerHTML = `<button onclick="resetPageState(document.getElementById('${pageId}'))" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                nav.dataset.initialHtml = nav.innerHTML;
+            });
+            
+            const allPages = document.querySelectorAll('.page');
+            allPages.forEach(page => {
+                resetPageState(page);
+            });
+
+            showPage('page-0');
+        });
+
+    </script>
+</body>
+</html>
