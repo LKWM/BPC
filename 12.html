@@ -363,6 +363,7 @@
             '4': { name: 'q4', correctAnswer: 'gada', nextPageId: 'page-5', prevPageId: 'page-3' },
             '5': { name: 'q5', correctAnswer: 'gaji', nextPageId: 'page-6', prevPageId: 'page-4' },
             '6': { name: 'q6', correctAnswer: 'baji', nextPageId: 'page-7', prevPageId: 'page-5' },
+            '7V': { name: 'q7', correctAnswer: 'gasu', nextPageId: 'page-8', prevPageId: 'page-6' }, // 7V -> 7로 수정 필요
             '7': { name: 'q7', correctAnswer: 'gasu', nextPageId: 'page-8', prevPageId: 'page-6' },
             '8': { name: 'q8', correctAnswer: 'dubu', nextPageId: 'page-9', prevPageId: 'page-7' },
             '9': { name: 'q9', correctAnswer: 'aller', nextPageId: 'page-10', prevPageId: 'page-8' },
@@ -393,28 +394,33 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 resetPageState(nextPage);
-         
-            if (pageId === 'completion-message') {
+            
+                // [FIX 1] 완료 페이지 ID를 'page-17'로 수정
+                if (pageId === 'page-17') {
                     if (window.parent) {
                         window.parent.postMessage({
                             type: 'lesson_complete'
                         }, '*');
                     }
                 }
-        
+            }
+        }
+            
         function resetPageState(pageElement) {
             const pageNumStr = pageElement.id.replace('page-', '');
-            const pageNum = parseInt(pageNumStr, 10);
             const nav = pageElement.querySelector('[id$="-nav"]');
             
             if(nav) {
-                const config = quizConfig[pageNum];
+                // [FIX 2] config를 찾을 때 숫자가 아닌 문자열(pageNumStr)을 사용
+                const config = quizConfig[pageNumStr]; 
                 if (config) {
                     nav.innerHTML = `
                         <button onclick="showPage('${config.prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                         <div class="flex items-center gap-4">
-                            <div id="quiz-${pageNum}-feedback" class="feedback-area"></div>
-                            <button onclick="checkAnswer('${pageNum}', '${config.correctAnswer}', '${config.nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                            <!-- [FIX 2.1] pageNum 대신 pageNumStr 사용 -->
+                            <div id="quiz-${pageNumStr}-feedback" class="feedback-area"></div>
+                            <!-- [FIX 2.2] pageNum 대신 pageNumStr 사용 -->
+                            <button onclick="checkAnswer('${pageNumStr}', '${config.correctAnswer}', '${config.nextPageId}')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                         </div>
                     `;
                 }
@@ -469,18 +475,16 @@
             }
         }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-                nav.dataset.initialHtml = nav.innerHTML;
-            });
-            
-            const allPages = document.querySelectorAll('.page');
-            allPages.forEach(page => {
-                resetPageState(page);
-            });
-
-            showPage('page-0');
+        // [FIX 3] 불필요한 DOMContentLoaded 래퍼 제거 및 관련 없는 코드(dataset.initialHtml) 삭제
+        
+        // 모든 페이지의 상태를 초기화하여 내비게이션 바를 빌드
+        const allPages = document.querySelectorAll('.page');
+        allPages.forEach(page => {
+            resetPageState(page);
         });
+
+        // 첫 페이지 표시
+        showPage('page-0');
 
     </script>
 </body>
