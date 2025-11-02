@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Récapitulatif - Chapitre 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5vmin, 2rem);
+            --font-jamo-key: clamp(1rem, 4vmin, 1.1rem);
+            --font-jamo-dropzone: clamp(2rem, 8vmin, 2.25rem);
+            --font-char-btn: clamp(4rem, 15vmin, 5rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+        }
+
+        .course-wrapper {
+            width: 100%;
+            max-width: 600px;
+        }
+        .course-container {
+            width: 100%;
+            position: relative;
+            aspect-ratio: 1 / 1;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
+            background-color: white; padding: var(--padding-lg);
+            border-radius: 0.75rem;
+        }
+        #page-0 {
+            justify-content: center;
+        }
+        #page-0 .page-content {
+            flex-grow: 0;
+        }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content {
+            flex-grow: 1; overflow: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
+            .course-wrapper { height: 100%; max-width: 100%; }
+            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; border-radius: 0; }
+        }
+
+        .title-text { font-size: var(--font-title); }
+        .lesson-text { font-size: var(--font-lg); }
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        .page-header {
+            text-align: center; color: #4b5563; font-size: var(--font-lg);
+            font-weight: 600; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5rem; flex-shrink: 0;
+        }
+        .audio-button { background: none; border: none; cursor: pointer; }
+        .audio-icon { width: 3rem; height: 3rem; color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+
+        .quiz-question { font-size: var(--font-lg); font-weight: 600; margin-bottom: 1rem; }
+        .quiz-option {
+            display: inline-block; padding: var(--padding-sm) var(--padding-md);
+            border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.25rem;
+            cursor: pointer; transition: background-color 0.2s, border-color 0.2s;
+            font-family: 'Noto Sans KR', sans-serif; text-align: center; min-width: 60px;
+        }
+        .quiz-option span { font-size: var(--font-xl); }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option input { display: none; }
+        .feedback-area {
+            text-align: center; min-height: 50px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        
+        .syllable-container { display: flex; flex-wrap: wrap; gap: 0.25rem; justify-content: center; align-items: center; margin-bottom: 0.5rem; min-height: clamp(80px, 22vmin, 100px); }
+        .syllable-constructor {
+            position: relative;
+            width: clamp(80px, 22vmin, 100px);
+            height: clamp(80px, 22vmin, 100px);
+            display: grid;
+        }
+        .layout-vertical { grid-template-rows: 1fr 1fr; }
+        .layout-horizontal { grid-template-columns: 1fr 1fr; }
+        .drop-zone {
+            border: 2px dashed #9ca3af;
+            background-color: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-jamo-dropzone);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 700;
+            color: #3b82f6;
+            transition: opacity 0.2s;
+        }
+        .syllable-output {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-char-btn);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 700;
+            color: #1f2937;
+            opacity: 0;
+            transition: opacity 0.2s;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            background-color: #f9fafb; /* Added for consistency */
+        }
+        .syllable-output.correct { background-color: #dcfce7; border-color: #4ade80; }
+        .syllable-output.incorrect { background-color: #fee2e2; border-color: #f87171; }
+
+        .jamo-bank { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 0.5rem; 
+            margin-top: 1rem;
+            max-width: 350px;
+        }
+        .jamo-key { 
+            flex: 1 1 40px;
+            max-width: 45px;
+            height: clamp(40px, 11vmin, 45px); 
+            font-size: var(--font-jamo-key); 
+            border: 1px solid #d1d5db; 
+            border-radius: 0.25rem; 
+            background-color: #f9fafb; 
+            cursor: pointer; 
+            display:flex; 
+            align-items:center; 
+            justify-content:center; 
+            user-select: none; 
+            transition: background-color 0.2s; 
+        }
+        .jamo-key:hover { background-color: #e0e7ff; }
+        .jamo-delete-key { font-size: calc(var(--font-jamo-key) * 1.2); }
+        .jamo-delete-key:hover { background-color: #fca5a5; color: #b91c1c; }
+    </style>
+</head>
+<body>
+
+    <div class="course-wrapper">
+        <div class="course-container">
+            
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active">
+                <div class="page-content">
+                    <h1 class="title-text font-bold text-gray-800 mb-6 leading-tight">Chapitre 2 - Récapitulatif</h1>
+                    <p class="lesson-text text-gray-600">Vérifiez ce que vous avez appris au Chapitre 2.<br>C'est un test composé de 20 questions.</p>
+                    <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-10">Commencer le test</button>
+                </div>
+                <div></div>
+            </div>
+
+            <!-- QUIZ AND RESULT PAGES WILL BE GENERATED HERE -->
+
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+        const totalQuestions = 20;
+        let questionResults = new Array(totalQuestions).fill(false);
+        let userJamoSelections = {};
+
+        const sounds = {
+            'a': { file: 'https://static.wixstatic.com/mp3/699687_23c826488a4041f488691d65bbecea21.mp3' }, 'u': { file: 'https://static.wixstatic.com/mp3/699687_b11e5a88156d46a383099c42bfd4f814.mp3' }, 'ae': { file: 'https://static.wixstatic.com/mp3/699687_4c058646929d40e7bd0ecb54bcd4bef2.mp3' }, 'eo': { file: 'https://static.wixstatic.com/mp3/699687_0feeed8f7fb444f4bd33f62e7ebd20c0.mp3' }, 'eu': { file: 'https://static.wixstatic.com/mp3/699687_eb9d67f6852c4319a308d12d7a4c1a4a.mp3' }, 'g': { file: 'https://static.wixstatic.com/mp3/699687_a14958ffc05243ccb827e78390a1c8ca.mp3' }, 'j': { file: 'https://static.wixstatic.com/mp3/699687_5b225746266e4329ad05d50b82a6b6e9.mp3' }, 'i': { file: 'https://static.wixstatic.com/mp3/699687_641a5e9958a8416a917cc0c267310c13.mp3' }, 's': { file: 'https://static.wixstatic.com/mp3/699687_88ce9d0e984d41989f3bd6c61cbc7219.mp3' }, 'd': { file: 'https://static.wixstatic.com/mp3/699687_87a9f8b74219436d93beb9b795320bc7.mp3' }, 'b': { file: 'https://static.wixstatic.com/mp3/699687_75717886fe7f4b1aacf95580bf551aa6.mp3' }, 'e': { file: 'https://static.wixstatic.com/mp3/699687_d7b6e67bca704af08dfbc519c7b8481f.mp3' }, 'o': { file: 'https://static.wixstatic.com/mp3/699687_58ae738b4c2f4673bb8aace39a46b41b.mp3' }, 'geu': { file: 'https://static.wixstatic.com/mp3/699687_f70f981a68ea4f3abab94c75901ad6f9.mp3' }, 'jo': { file: 'https://static.wixstatic.com/mp3/699687_cbaf81280d964dbbab2fc5859d87e518.mp3' }, 'se': { file: 'https://static.wixstatic.com/mp3/699687_e55e56d8f6fc43f191561579ed301201.mp3' }, 'beo': { file: 'https://static.wixstatic.com/mp3/699687_fc287785a9854bcab15608d465e106f2.mp3' }, 'ji': { file: 'https://static.wixstatic.com/mp3/699687_2710e03608e14d0889ae796020400cfc.mp3' }, 'de': { file: 'https://static.wixstatic.com/mp3/699687_795efc94d8c54e47843c413ef3440aa6.mp3' }, 'so': { file: 'https://static.wixstatic.com/mp3/699687_e2ea874a6d614f219d82f3de054657da.mp3' },
+        };
+        
+        const quizData = [
+            { type: 'char', sound: 'a', answer: 'a' }, { type: 'char', sound: 'u', answer: 'u' }, { type: 'char', sound: 'ae', answer: 'ae' }, { type: 'char', sound: 'eo', answer: 'eo' }, { type: 'char', sound: 'eu', answer: 'eu' }, { type: 'char', sound: 'g', answer: 'g' }, { type: 'char', sound: 'j', answer: 'j' }, { type: 'char', sound: 'i', answer: 'i' }, { type: 'char', sound: 's', answer: 's' }, { type: 'char', sound: 'd', answer: 'd' }, { type: 'char', sound: 'b', answer: 'b' }, { type: 'char', sound: 'e', answer: 'e' }, { type: 'char', sound: 'o', answer: 'o' },
+            { type: 'syllable', sound: 'geu', answer: 'geu', options: { geu: '그', gi: '기', deu: '드', 'g-eu': 'ㄱㅡ' } },
+            { type: 'syllable', sound: 'jo', answer: 'jo', options: { ju: '주', gu: '구', jo: '조', go: '고' } },
+            { type: 'syllable', sound: 'se', answer: 'se', options: { je: '제', se: '세', seo: '서', su: '수' } },
+            { type: 'writing', sound: 'beo', answer: ['ㅂ', 'ㅓ'], layout: 'horizontal' },
+            { type: 'writing', sound: 'ji', answer: ['ㅈ', 'ㅣ'], layout: 'horizontal' },
+            { type: 'writing', sound: 'de', answer: ['ㄷ', 'ㅔ'], layout: 'horizontal' },
+            { type: 'writing', sound: 'so', answer: ['ㅅ', 'ㅗ'], layout: 'vertical' }
+        ];
+
+        const JAMO_MAP = {
+            initial: ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'],
+            vowel: ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'],
+            final: ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+        };
+
+        // Helper function to check if a character is an initial consonant
+        function isInitial(char) {
+            return JAMO_MAP.initial.includes(char);
+        }
+
+        // Helper function to check if a character is a vowel
+        function isVowel(char) {
+            return JAMO_MAP.vowel.includes(char);
+        }
+
+        function combineJamo(jamoArray) {
+            if (!jamoArray || jamoArray.length < 2) return '';
+            const initialIdx = JAMO_MAP.initial.indexOf(jamoArray[0]);
+            const vowelIdx = JAMO_MAP.vowel.indexOf(jamoArray[1]);
+            if (initialIdx === -1 || vowelIdx === -1) return '';
+            const unicode = 0xAC00 + (initialIdx * 21 * 28) + (vowelIdx * 28);
+            return String.fromCharCode(unicode);
+        }
+
+        function createQuizPages() {
+            const container = document.querySelector('.course-container');
+            let pagesHtml = '';
+
+            quizData.forEach((data, index) => {
+                const questionNumber = index + 1;
+                let contentHtml = '';
+
+                if (data.type === 'char' || data.type === 'syllable') {
+                    const questionText = data.type === 'char' ? 'Choisissez le bon caractère.' : 'Choisissez la bonne syllabe.';
+                    contentHtml = `
+                        <p class="quiz-question">${questionText}</p>
+                        <button class="audio-button mb-8" onclick="playSound('${data.sound}')">
+                            <svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                        </button>
+                        ${generateOptions(questionNumber, data)}
+                    `;
+                } else if (data.type === 'writing') {
+                    contentHtml = `
+                        <p class="quiz-question">Écoutez et écrivez ce que vous entendez.</p>
+                        <button class="audio-button" onclick="playSound('${data.sound}')">
+                           <svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
+                        </button>
+                        <div class="syllable-container" id="syllable-container-${questionNumber}"></div>
+                        <div id="jamo-bank-${questionNumber}" class="jamo-bank"></div>
+                    `;
+                }
+
+                const nextButtonText = questionNumber === totalQuestions ? 'Terminer le test' : 'Suivant &rarr;';
+                const prevButtonHtml = questionNumber > 1 ? `<button onclick="showPage('quiz-page-${questionNumber - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>` : `<div></div>`;
+
+                const navButtonHtml = `
+                    <div id="quiz-${questionNumber}-nav" class="flex justify-between items-center w-full">
+                        ${prevButtonHtml}
+                        <div class="flex items-center gap-4">
+                           <div id="q${questionNumber}-feedback" class="feedback-area" style="min-height: 40px; padding: 0;"></div>
+                           <button onclick="submitAnswerAndProceed(${questionNumber})" class="nav-button text-white bg-blue-600 hover:bg-blue-700">${nextButtonText}</button>
+                        </div>
+                    </div>`;
+
+                pagesHtml += `
+                    <div id="quiz-page-${questionNumber}" class="page">
+                        <div class="page-header w-full">${questionNumber} / ${totalQuestions}</div>
+                        <div class="page-content flex flex-col justify-center items-center">
+                            ${contentHtml}
+                        </div>
+                        ${navButtonHtml}
+                    </div>
+                `;
+            });
+            
+            pagesHtml += `
+                <div id="results-page" class="page items-center justify-center text-center">
+                    <div class="page-content flex flex-col items-center justify-center">
+                        <h2 class="title-text font-bold text-gray-800 mb-4">Résultats du test</h2>
+                        <p id="score-display" class="text-5xl font-bold text-blue-600 mb-6"></p>
+                        <p id="score-message" class="lesson-text text-gray-600"></p>
+                    </div>
+                    <div class="flex justify-center items-center gap-4">
+                        <button onclick="retakeQuiz()" class="nav-button bg-gray-500 text-white hover:bg-gray-600">Réessayer</button>
+                        <button id="finish-button" onclick="showPage('final-completion-message')" class="nav-button bg-green-600 text-white hover:bg-green-700 hidden">Terminer</button>
+                    </div>
+                </div>
+                <div id="final-completion-message" class="page items-center justify-center text-center">
+                    <div class="page-content flex flex-col items-center justify-center">
+                         <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                         <h2 class="title-text font-bold text-gray-800 mb-3">Félicitations !</h2>
+                         <p class="lesson-text text-gray-600">Vous avez terminé le Chapitre 2.</p>
+                    </div>
+                    <div class="w-full text-center pb-4">
+                         <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML += pagesHtml;
+        }
+
+        function generateOptions(questionNumber, data) {
+            let optionsHtml = '';
+            if (data.type === 'char') {
+                const consonants = { g: 'ㄱ', d: 'ㄷ', b: 'ㅂ', s: 'ㅅ', j: 'ㅈ', ' ': 'ㅇ' };
+                const vowels = { a: 'ㅏ', eo: 'ㅓ', o: 'ㅗ', u: 'ㅜ', eu: 'ㅡ', i: 'ㅣ', ae: 'ㅐ', e: 'ㅔ' };
+                optionsHtml += '<div class="flex flex-wrap justify-center">';
+                for (const [val, char] of Object.entries(consonants)) {
+                    optionsHtml += `<label class="quiz-option"><input type="radio" name="q${questionNumber}" value="${val}"><span>${char}</span></label>`;
+                }
+                optionsHtml += '</div><div class="flex flex-wrap justify-center mt-2">';
+                 for (const [val, char] of Object.entries(vowels)) {
+                    optionsHtml += `<label class="quiz-option"><input type="radio" name="q${questionNumber}" value="${val}"><span>${char}</span></label>`;
+                }
+                optionsHtml += '</div>';
+            } else { // syllable
+                optionsHtml += '<div class="flex gap-4 flex-wrap justify-center">';
+                for (const [val, char] of Object.entries(data.options)) {
+                    optionsHtml += `<label class="quiz-option"><input type="radio" name="q${questionNumber}" value="${val}"><span>${char}</span></label>`;
+                }
+                optionsHtml += '</div>';
+            }
+            return optionsHtml;
+        }
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey]) return;
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+            });
+        }
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+
+                // [FIX 1] Added postMessage for the final completion page
+                if (pageId === 'final-completion-message') {
+                    if (window.parent) {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    }
+                }
+            }
+        }
+
+        function submitAnswerAndProceed(questionNumber) {
+            const data = quizData[questionNumber - 1];
+            let isAnswered = false;
+            
+            if (data.type === 'char' || data.type === 'syllable') {
+                const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
+                if(selectedOption){
+                    const userAnswer = selectedOption.value;
+                    questionResults[questionNumber - 1] = (userAnswer === data.answer);
+                    isAnswered = true;
+                }
+            } else if (data.type === 'writing') {
+                const userJamoAnswer = userJamoSelections[questionNumber] || [];
+                if(userJamoAnswer.length === data.answer.length){
+                    questionResults[questionNumber - 1] = (JSON.stringify(userJamoAnswer) === JSON.stringify(data.answer));
+                    isAnswered = true;
+                }
+            }
+
+            if (!isAnswered) {
+                 const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
+                 if(feedbackEl) feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez répondre.</p>`;
+                 setTimeout(() => { if(feedbackEl) feedbackEl.innerHTML = ''; }, 2000);
+                 return;
+            }
+
+            if (questionNumber < totalQuestions) {
+                showPage(`quiz-page-${questionNumber + 1}`);
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const score = questionResults.filter(Boolean).length;
+            document.getElementById('score-display').textContent = `${score} / ${totalQuestions}`;
+            
+            const messageEl = document.getElementById('score-message');
+            const finishButton = document.getElementById('finish-button');
+            
+            if (score === 20) messageEl.textContent = "Très bien ! Êtes-vous prêt(e) pour la suite ?";
+            else if (score >= 17) messageEl.textContent = "Bien joué ! Vous y êtes presque !";
+            else if (score >= 13) messageEl.textContent = "Bien joué ! Entraînons-nous encore un peu.";
+            else if (score >= 10) messageEl.textContent = "Bien joué ! Essayez de revoir la leçon.";
+            else messageEl.textContent = "Bon travail. Essayez de revoir la leçon et de refaire le test.";
+
+            if (score >= 17) finishButton.classList.remove('hidden');
+            else finishButton.classList.add('hidden');
+
+            showPage('results-page');
+        }
+
+        function retakeQuiz() {
+            questionResults.fill(false);
+            userJamoSelections = {};
+            // Reset the container to only the title page
+            document.querySelector('.course-container').innerHTML = `
+                <div id="page-0" class="page active items-center justify-center text-center">
+                    <div class="page-content">
+                        <h1 class="title-text font-bold text-gray-800 mb-6 leading-tight">Chapitre 2 - Récapitulatif</h1>
+                        <p class="lesson-text text-gray-600">Vérifiez ce que vous avez appris au Chapitre 2.<br>C'est un test composé de 20 questions.</p>
+                        <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-10">Commencer le test</button>
+                    </div>
+                     <div></div>
+                </div>`;
+            // Re-initialize the quiz (creates pages, adds listeners)
+            initializeQuiz();
+            // Set the current page ID back to 0
+            currentPageId = 'page-0';
+        }
+        
+        function addOptionListeners() {
+             document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                 radio.addEventListener('change', (e) => {
+                     document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
+                     if(e.target.checked) e.target.parentElement.classList.add('selected');
+                 });
+             });
+        }
+
+        function setupJamoKeyboard(quizNum) {
+            const keyboardContainer = document.getElementById(`jamo-bank-${quizNum}`);
+            if (!keyboardContainer) return;
+            keyboardContainer.innerHTML = ''; 
+            userJamoSelections[quizNum] = [];
+            
+            const keyLayout = ['ㄱ', 'ㄷ', 'ㅂ', 'ㅅ', 'ㅈ', 'ㅇ', 'ㅏ', 'ㅐ', 'ㅓ', 'ㅔ', 'ㅗ', 'ㅜ', 'ㅡ', 'ㅣ', '←'];
+
+            keyLayout.forEach(item => {
+                const key = document.createElement('div');
+                key.className = 'jamo-key';
+                key.textContent = item;
+                if (item === '←') {
+                    key.classList.add('jamo-delete-key');
+                    key.onclick = () => handleBackspace(quizNum);
+                } else {
+                    key.onclick = () => handleJamoClick(quizNum, item);
+                }
+                keyboardContainer.appendChild(key);
+            });
+            updateSyllableDisplay(quizNum);
+        }
+
+        function handleJamoClick(quizNum, jamo) {
+            const selection = userJamoSelections[quizNum];
+            const answer = quizData[quizNum - 1].answer;
+            if (selection.length >= answer.length) return;
+            selection.push(jamo);
+            updateSyllableDisplay(quizNum);
+        }
+
+        function handleBackspace(quizNum) {
+            const selection = userJamoSelections[quizNum];
+            if (selection.length > 0) {
+                selection.pop();
+            }
+            updateSyllableDisplay(quizNum);
+        }
+
+        /**
+         * [MODIFIED] This function updates the display for the writing exercises.
+         * It now correctly handles showing the combined syllable or the individual jamo.
+         */
+        function updateSyllableDisplay(quizNum) {
+            const container = document.getElementById(`syllable-container-${quizNum}`);
+            if (!container) return;
+
+            const selection = userJamoSelections[quizNum] || [];
+            const quizInfo = quizData[quizNum - 1];
+            const layout = quizInfo.layout;
+
+            // If the constructor structure doesn't exist yet, create it once.
+            if (container.innerHTML.trim() === '') {
+                const constructor = document.createElement('div');
+                constructor.className = `syllable-constructor layout-${layout}`;
+                
+                const dropZone1 = document.createElement('div');
+                dropZone1.className = 'drop-zone';
+                
+                const dropZone2 = document.createElement('div');
+                dropZone2.className = 'drop-zone';
+                
+                const output = document.createElement('div');
+                output.className = 'syllable-output';
+
+                constructor.appendChild(dropZone1);
+                constructor.appendChild(dropZone2);
+                constructor.appendChild(output);
+                container.appendChild(constructor);
+            }
+
+            // Now, just update the contents based on the selection
+            const dropZones = container.querySelectorAll('.drop-zone');
+            const output = container.querySelector('.syllable-output');
+
+            if (!dropZones.length || !output) return; // Safety check
+
+            // Update dropzone text content regardless of completion
+            dropZones[0].textContent = selection[0] || '';
+            dropZones[1].textContent = selection[1] || '';
+
+            const isComplete = selection.length === 2 && isInitial(selection[0]) && isVowel(selection[1]);
+
+            if (isComplete) {
+                // If complete, show the combined character in the output layer
+                const combinedChar = combineJamo(selection);
+                output.textContent = combinedChar;
+                output.style.opacity = '1';
+                // Hide the dropzone layer
+                dropZones.forEach(dz => dz.style.opacity = '0');
+            } else {
+                // If not complete, hide the output layer and show the dropzones
+                output.textContent = '';
+                output.style.opacity = '0';
+                dropZones.forEach(dz => dz.style.opacity = '1');
+            }
+        }
+
+
+        function initializeQuiz() {
+            createQuizPages();
+            addOptionListeners();
+            quizData.forEach((data, index) => {
+                if (data.type === 'writing') {
+                    setupJamoKeyboard(index + 1);
+                }
+            });
+        }
+        
+        // [FIX 2] Removed DOMContentLoaded wrapper and call initialization directly
+        initializeQuiz();
+        showPage('page-0');
+
+    </script>
+</body>
+</html>
