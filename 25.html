@@ -220,19 +220,23 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
 
-                // [FIX 1] Add postMessage check for completion page
+                // postMessage check for completion page
                 if (pageId === 'completion-page') {
                     if (window.parent) {
-                        window.parent.postMessage({
-                            type: 'lesson_complete'
-                        }, '*');
+                        try {
+                            window.parent.postMessage({
+                                type: 'lesson_complete'
+                            }, '*');
+                        } catch (e) {
+                            console.error("postMessage failed:", e);
+                        }
                     }
                 }
                 
                 if (pageId.startsWith('page-')) { 
                     const quizNumMatch = pageId.match(/page-(\d+)/);
                     if (quizNumMatch && quizData.some(q => q.page == quizNumMatch[1])) {
-                         resetPageState(pageId);
+                        resetPageState(pageId);
                     }
                 }
             }
@@ -399,8 +403,9 @@
 
         function createPages() {
             const container = document.querySelector('.course-container');
+            // [FIX 3] Removed stray </p> tag
             let pagesHtml = `
-                <div id="page-0" class="page active"> <div class="page-content text-center"> <h1 class="title-text font-bold text-gray-800">Chapitre (4) </br> Les diphtongues</br> L’ajout de trait (2)</h1> </p> <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> </div> <div></div> </div>
+                <div id="page-0" class="page active"> <div class="page-content text-center"> <h1 class="title-text font-bold text-gray-800">Chapitre (4) </br> Les diphtongues</br> L’ajout de trait (2)</h1> <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> </div> <div></div> </div>
                 <div id="page-1" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('yu')">ㅠ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ᅲ&gt;</strong> est une variation diphtonguée de &lt;ᅮ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button> <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
                 <div id="page-2" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('i')">ㅣ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('u')">ㅜ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('yu')">ㅠ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">C’est une diphtongue postérieure. La prononciation commence par le son de /i/ et glisse à la position de &lt;ᅮ&gt; (/u/ fermée - postérieure). Il faut arrondir les lèvres tout au long de la prononciation.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
                 <div id="page-3" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-col items-center gap-y-2"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('h')">ㅎ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('yu')">ㅠ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('hyu')">휴</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
@@ -439,7 +444,6 @@
                     `;
                 }
 
-                // Updated: The first quiz page is 10, not 12
                 const prevButtonHtml = page === 10 ? `<button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>` : `<button onclick="showPage('page-${page - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>`;
                 const checkButtonAction = type === 'mc' ? `checkAnswer(${quizNum})` : `checkJamoAnswer(${quizNum})`;
                 const navButtonHtml = `
@@ -460,7 +464,9 @@
             });
 
             const completionPageHtml = `<div id="completion-page" class="page"> <div class="page-content"> <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <h2 class="title-text font-bold text-gray-800 mb-3">Chapitre terminé !</h2> <p class="lesson-text text-gray-600">Félicitations, vous avez terminé le chapitre.</p> </div> <div class="w-full text-center pb-4"> <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button> </div> </div>`;
-            container.innerHTML = lessonPages + pagesHtml + completionPageHtml;
+            
+            // [FIX 2] Changed 'lessonPages + pagesHtml' to just 'pagesHtml'
+            container.innerHTML = pagesHtml + completionPageHtml;
         }
 
         function initializeApp() {
@@ -482,7 +488,7 @@
             showPage('page-0');
         }
         
-        // [FIX 2] Removed DOMContentLoaded wrapper, run setup directly
+        // [FIX 1] Moved initializeApp() call outside of its own definition
         initializeApp();
     </script>
 </body>
