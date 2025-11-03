@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Chapitre (6) - Les diphtongues - Combinaison (2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5vmin, 2rem);
+            --font-display: clamp(5rem, 20vmin, 8rem);
+            --font-char-btn: clamp(4rem, 15vmin, 5rem);
+            --font-jamo-key: clamp(1rem, 4vmin, 1.1rem);
+            --font-jamo-dropzone: clamp(2rem, 8vmin, 2.25rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+        }
+
+        /* --- Layout --- */
+        .course-wrapper { width: 100%; max-width: 600px; }
+        .course-container {
+            width: 100%; position: relative; aspect-ratio: 1 / 1;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem; overflow: hidden; background-color: white;
+        }
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
+            background-color: white; padding: var(--padding-lg); box-sizing: border-box;
+        }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content {
+            flex-grow: 1; overflow: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        
+        /* --- Mobile Responsive --- */
+        @media (max-width: 600px) {
+            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
+            .course-wrapper { height: 100%; max-width: 100%; }
+            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; border-radius: 0; }
+        }
+
+        /* --- Common Elements --- */
+        .title-text { font-size: var(--font-title); }
+        .lesson-text { font-size: var(--font-lg); color: #4b5563; line-height: 1.6; }
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        .char-button {
+            font-size: var(--font-char-btn); font-weight: 700; font-family: 'Noto Sans KR', sans-serif;
+            background-color: #eff6ff; border: 2px solid #93c5fd;
+            border-radius: 1rem; padding: var(--padding-sm) var(--padding-md);
+            cursor: pointer; transition: background-color 0.2s, transform 0.1s;
+            line-height: 1.1;
+        }
+        .char-button:hover { background-color: #dbeafe; }
+        .char-button:active { transform: scale(0.95); }
+
+        /* Combination Page */
+        .combination-content .char-button { font-size: clamp(2.5rem, 10vw, 3.5rem); padding: clamp(0.5rem, 2.5vmin, 1rem); }
+        .combination-content .symbol-text { font-size: clamp(2rem, 8vw, 3rem); font-weight: 700; color: #9ca3af; }
+
+        /* --- Quiz --- */
+        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; margin-bottom: 1rem; }
+        .audio-button { background: none; border: none; cursor: pointer; }
+        .audio-icon { width: clamp(2.5rem, 8vmin, 3rem); height: clamp(2.5rem, 8vmin, 3rem); color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+        .quiz-option {
+            display: inline-block; padding: var(--padding-sm) var(--padding-md);
+            border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.25rem; cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-family: 'Noto Sans KR', sans-serif; font-size: var(--font-xl); min-width: 60px;
+        }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
+    </style>
+</head>
+<body>
+
+    <div class="course-wrapper">
+        <div class="course-container">
+            <!-- Content will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        let currentPageId = 'page-0';
+
+        const sounds = {
+            'weo': { file: 'https://static.wixstatic.com/mp3/699687_f44e3c19d4e44015851843bdd944bda9.mp3' },
+            'u': { file: 'https://static.wixstatic.com/mp3/699687_b11e5a88156d46a383099c42bfd4f814.mp3' },
+            'eo': { file: 'https://static.wixstatic.com/mp3/699687_0feeed8f7fb444f4bd33f62e7ebd20c0.mp3' },
+            'j': { file: 'https://static.wixstatic.com/mp3/699687_5b225746266e4329ad05d50b82a6b6e9.mp3' },
+            'jweo': { file: 'https://static.wixstatic.com/mp3/699687_dbb0cf0bdb38416ab79e80cea3937006.mp3' },
+            'wi': { file: 'https://static.wixstatic.com/mp3/699687_d89d5a5928f64b59a2e6c5ce8cbd662a.mp3' },
+            'i': { file: 'https://static.wixstatic.com/mp3/699687_641a5e9958a8416a917cc0c267310c13.mp3' },
+            'g': { file: 'https://static.wixstatic.com/mp3/699687_a14958ffc05243ccb827e78390a1c8ca.mp3' },
+            'gwi': { file: 'https://static.wixstatic.com/mp3/699687_d4acb7b49215453ca78a72b71b2f217d.mp3' },
+            'we': { file: 'https://static.wixstatic.com/mp3/699687_1df297ed51074c9587d83b85f6b79ea3.mp3' },
+            'e': { file: 'https://static.wixstatic.com/mp3/699687_d7b6e67bca704af08dfbc519c7b8481f.mp3' },
+            'k': { file: 'https://static.wixstatic.com/mp3/699687_1ae51315c24f4d72bcb16ca5a9de4aa8.mp3' },
+            'kwe': { file: 'https://static.wixstatic.com/mp3/699687_5776359018f64490b803154cdee0392d.mp3' },
+            'ui': { file: 'https://static.wixstatic.com/mp3/699687_f0383fe2fe5b4553b12b8a8516886075.mp3' },
+            'eu': { file: 'https://static.wixstatic.com/mp3/699687_eb9d67f6852c4319a308d12d7a4c1a4a.mp3' },
+            'h': { file: 'https://static.wixstatic.com/mp3/699687_465b64ac84e94f5eb10feebc6ac0027a.mp3' },
+            'hui': { file: 'https://static.wixstatic.com/mp3/699687_12d70f640e034c529297536d744dd05c.mp3' },
+            'wa': { file: 'https://static.wixstatic.com/mp3/699687_b89b465f6bef48bdb5327ddb6f0df679.mp3' },
+            'wae': { file: 'https://static.wixstatic.com/mp3/699687_a8e098c18ed146108dfdc60f67e3b358.mp3' },
+            'oe': { file: 'https://static.wixstatic.com/mp3/699687_33c4575eca7a4e389f7b4ce17bd18868.mp3' },
+            'yu': { file: 'https://static.wixstatic.com/mp3/699687_1c184aa8e8744e4899f62292ca5dd805.mp3' },
+        };
+        
+        const quizData = [
+            { id: 1, page: 13, type: 'mc', sound: 'we', answer: 'ㅞ', options: { 'ㅜㅐ': 'ㅜㅐ', 'ㅞ': 'ㅞ', 'ㅗㅔ': 'ㅗㅔ' } },
+            { id: 2, page: 14, type: 'mc', sound: 'weo', answer: 'ㅝ', options: { 'ㅝ': 'ㅝ', 'ㅜ ㅓ': 'ㅜ ㅓ', 'ㅓㅜ': 'ㅓㅜ', 'ㅗㅓ': 'ㅗㅓ' } },
+            { id: 3, page: 15, type: 'mc', sound: 'wi', answer: 'ㅟ', options: { 'ㅣㅜ': 'ㅣㅜ', 'ㅜ ㅣ': 'ㅜ ㅣ', 'ㅟ': 'ㅟ', '휘': '휘' } },
+            { id: 4, page: 16, type: 'mc', sound: 'oe', answer: 'ㅚ', options: { '애': '애', '에': '에', 'ㅗㅔ': 'ㅗㅔ', 'ㅚ': 'ㅚ', '오ㅔ': '오ㅔ' } },
+            { id: 5, page: 17, type: 'mc', sound: 'ui', answer: '의', options: { 'ㅟ': 'ㅟ', '의': '의', 'ㅣㅡ': 'ㅣㅡ', 'ㅞ': 'ㅞ' } }
+        ];
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey]) return;
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+                player.onstop = () => player.dispose();
+            }).catch(e => console.error("Audio could not start:", e));
+        }
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+                if (pageId.startsWith('page-')) { 
+                    const quizNumMatch = pageId.match(/page-(\d+)/);
+                    if (quizNumMatch && quizData.some(q => q.page == quizNumMatch[1])) {
+                         resetPageState(pageId);
+                    }
+                }
+            }
+
+            // [ADDED] postMessage logic for completion page
+            if (pageId === 'completion-page') {
+                if (window.parent) {
+                    try {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    } catch (e) {
+                        console.error('postMessage failed:', e);
+                    }
+                }
+            }
+        }
+
+        function resetPageState(pageId) {
+            const pageElement = document.getElementById(pageId);
+            if (!pageElement) return;
+
+            const quizNav = pageElement.querySelector('[id$="-nav"]');
+            if (quizNav && quizNav.dataset.initialHtml) {
+                quizNav.innerHTML = quizNav.dataset.initialHtml;
+                const quizDataEntry = quizData.find(q => `page-${q.page}` === pageId);
+                if (quizDataEntry) {
+                    const quizNum = quizDataEntry.id;
+                    const newCheckButton = quizNav.querySelector('button[onclick^="check"]');
+                    if (newCheckButton) {
+                        newCheckButton.onclick = () => checkAnswer(quizNum);
+                    }
+                }
+            }
+            
+            const options = pageElement.querySelectorAll('.quiz-option');
+            options.forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                const radio = opt.querySelector('input');
+                if (radio) { radio.checked = false; radio.disabled = false; }
+            });
+        }
+
+        function checkAnswer(quizNum) {
+            const data = quizData.find(q => q.id === quizNum);
+            const selectedOption = document.querySelector(`input[name="q${quizNum}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            
+            if (!selectedOption) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                return;
+            }
+            
+            navEl.querySelector('button[onclick^="check"]').style.display = 'none';
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'default';
+            });
+            
+            const isCorrect = selectedOption.value === data.answer;
+            selectedOption.parentElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+            
+            // [OPTIMIZED] Check if it's the last quiz by comparing ID
+            const isLastQuiz = data.id === quizData[quizData.length - 1].id;
+            const nextPageId = isLastQuiz ? 'completion-page' : `page-${data.page + 1}`;
+            const buttonText = isLastQuiz ? 'Terminer' : 'Suivant &rarr;';
+
+            if (isCorrect) {
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+        
+        function resetQuiz(quizNum) {
+            const pageId = `page-${quizData.find(q => q.id === quizNum).page}`;
+            resetPageState(pageId);
+        }
+
+        function createPages() {
+            const container = document.querySelector('.course-container');
+            // [FIXED] Changed stray </p> tag to </h1>
+            let pagesHtml = `
+                <div id="page-0" class="page active"> <div class="page-content text-center"> <h1 class="title-text font-bold text-gray-800">Chapitre (6) </br> Les diphtongues </br> - Combinaison des voyelles (2)</h1> <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> </div> <div></div> </div>
+                <div id="page-1" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('weo')">ㅝ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ㅝ&gt;</strong> est une combinaison de &lt;ᅮ&gt; et &lt;ᅥ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button> <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-2" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('u')">ㅜ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('eo')">ㅓ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('weo')">ㅝ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">La prononciation commence par le son arrondi &lt;ᅮ&gt; et se termine par le son non-arrondi &lt;ᅥ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-3" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-row items-center gap-x-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('j')">ㅈ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('weo')">ㅝ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('jweo')">줘</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-4" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('wi')">ㅟ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ㅟ&gt;</strong> est une combinaison de &lt;ᅮ&gt; et &lt;ᅵ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-5" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('u')">ㅜ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('i')">ㅣ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('wi')">ㅟ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">La prononciation commence par le son arrondi &lt;ᅮ&gt; et se termine par le son non-arrondi &lt;ᅵ&gt;. Les francophones ont tendance à monophtonguer et prononcer les deux sons en même temps comme /y/, comme &lt;u&gt; dans le mot &lt;Tu&gt; ou &lt;Lu&gt;. Mais le &lt;ᅮ&gt; et le &lt;l&gt; doivent être bien séparés et se prononcer l’un après l’autre, plutôt comme &lt;Oui&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-6" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-row items-center gap-x-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('g')">ㄱ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('wi')">ㅟ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('gwi')">귀</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-7" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('we')">ㅞ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ㅞ&gt;</strong> est une combinaison de &lt;ᅮ&gt; et &lt;ᅦ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-8')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-8" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('u')">ㅜ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('e')">ㅔ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('we')">ㅞ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">La prononciation commence par le son arrondi &lt;ᅮ&gt; et se termine par le son non-arrondi &lt;ᅦ&gt;. La distinction entre &lt;ᅬ&gt;, &lt;ᅫ&gt; et &lt;ᅰ&gt; n’est pas bien réalisée dans la langue moderne et ils sont prononcés de manière identique.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-7')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-9')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-9" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-row items-center gap-x-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('k')">ㅋ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('we')">ㅞ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('kwe')">퀘</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-10')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-10" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('ui')">ㅢ</button> <p class="lesson-text mt-8"><strong class="font-semibold text-blue-600">&lt;ㅢ&gt;</strong> est une combinaison de &lt;ᅳ&gt; et &lt;ᅵ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-11')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
+                <div id="page-11" class="page"> <div class="page-content combination-content"> <div class="flex flex-col items-center justify-center gap-4"> <div class="flex items-center justify-center gap-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('eu')">ㅡ</button> <span class="symbol-text">+</span> <button class="char-button" style="color: #ef4444;" onclick="playSound('i')">ㅣ</button> </div> <div class="flex items-center justify-center gap-4"> <span class="symbol-text">=</span> <button class="char-button" style="color: #1f2937;" onclick="playSound('ui')">ㅢ</button> </div> </div> <p class="lesson-text mt-6 leading-relaxed">La prononciation commence par &lt;ᅳ&gt; et se termine par le son &lt;ᅵ&gt;. Comme &lt;ᅳ&gt; n’existe pas en français, les francophones ont tendance à arrondir les lèvres quand ils prononcent &lt;ᅴ&gt;. Pourtant, les luvres doivent rester allongées tout au long de la prononciation et il faut entendre les deux sons &lt;ᅳ&gt; et &lt;ᅵ&gt; bien séparément. C’est clairement distinct de &lt;ᅱ&gt;.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-10')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-12')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button> </div> </div>
+                <div id="page-12" class="page"> <div class="page-content combination-content"> <div class="flex flex-row flex-wrap justify-center items-center gap-x-4 gap-y-2"> <div class="flex flex-row items-center gap-x-4"> <button class="char-button" style="color: #3b82f6;" onclick="playSound('h')">ㅎ</button> <div class="symbol-text">+</div> <button class="char-button" style="color: #ef4444;" onclick="playSound('ui')">ㅢ</button> </div> <div class="flex flex-row items-center gap-x-2"> <div class="symbol-text">=</div> <button class="char-button" style="color: #1f2937;" onclick="playSound('hui')">희</button> </div> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-11')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-13')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button> </div> </div>
+            `;
+            
+            quizData.forEach((data) => {
+                const { id: quizNum, page, sound, options } = data;
+                let contentHtml = `
+                    <p class="quiz-question mb-4">Écoutez et choisissez la bonne écriture.</p>
+                    <button class="audio-button" onclick="playSound('${sound}')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-${quizNum}-options" class="flex flex-wrap gap-2 justify-center">
+                        ${Object.entries(options).map(([key, text]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${text}">${text}</label>`).join('')}
+                    </div>
+                `;
+
+                const prevButtonHtml = page === 13 ? `<button onclick="showPage('page-12')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>` : `<button onclick="showPage('page-${page - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>`;
+                const navButtonHtml = `
+                    <div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full">
+                        ${prevButtonHtml}
+                        <div class="flex items-center gap-4">
+                           <div id="quiz-${quizNum}-feedback" class="feedback-area"></div>
+                           <button onclick="checkAnswer(${quizNum})" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        </div>
+                    </div>`;
+
+                pagesHtml += `
+                    <div id="page-${page}" class="page">
+                        <div class="page-content">${contentHtml}</div>
+                        ${navButtonHtml}
+                    </div>
+                `;
+            });
+
+            const completionPageHtml = `<div id="completion-page" class="page"> <div class="page-content"> <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <h2 class="title-text font-bold text-gray-800 mb-3">Chapitre terminé !</h2> <p class="lesson-text text-gray-600">Félicitations, vous avez terminé le chapitre.</p> </div> <div class="w-full text-center pb-4"> <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button> </div> </div>`;
+            container.innerHTML = pagesHtml + completionPageHtml;
+        }
+
+        function initializeApp() {
+            createPages();
+            
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
+                    if(e.target.checked) e.target.parentElement.classList.add('selected');
+                });
+            });
+
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                nav.dataset.initialHtml = nav.innerHTML;
+            });
+            
+            showPage('page-0');
+        }
+        
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
+
