@@ -86,7 +86,8 @@
         }
 
         /* --- Typography and Element Styling --- */
-        h1 { font-size: var(--font-title); font-weight: 700; }
+        /* h1 { font-size: var(--font-title); font-weight: 700; } */
+        .title-text { font-size: var(--font-title); font-weight: 700; }
         .lesson-text { font-size: var(--font-lg); text-align: center; }
         .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
         
@@ -166,7 +167,7 @@
         <!-- Page 0: Title -->
         <div id="page-0" class="page active items-center justify-center text-center">
             <div class="page-content">
-                <h1 class="text-gray-800 mb-6 leading-tight">Leçon supplémentaire 6 - Vocabulaire (5)</h1>
+                <h1 class="title-text font-bold text-gray-800 mb-6">Leçon supplémentaire 6 - Vocabulaire (5)</h1>
                 <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
             </div>
         </div>
@@ -958,3 +959,4 @@
     </script>
 </body>
 </html>
+
