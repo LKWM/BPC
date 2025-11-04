@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon supplémentaire 13 - Vocabulaire (11)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        /* CSS Custom Properties for Fluid Scaling */
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            /* [MODIFIED] Using consistent title variable from other files */
+            --font-title: clamp(1.5rem, 5.5vmin, 2.25rem);
+            --font-vocab: clamp(2.5rem, 10vmin, 3rem);
+            --font-jamo-key: clamp(0.8rem, 2.5vmin, 1rem);
+            --font-jamo-dropzone: clamp(2rem, 8vmin, 2.25rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 1rem;
+            background-color: #f3f4f6;
+        }
+
+        /* --- Main Container Styles --- */
+        .course-wrapper {
+            width: 100%;
+            max-width: 600px;
+            height: 100%;
+            max-height: 600px;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: white;
+            transition: transform 0.4s ease-in-out; 
+            transform-origin: center center;
+        }
+        .course-wrapper.mobile-view { transform: scale(0.6); }
+
+
+        .page {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out;
+            background-color: white;
+            padding: var(--padding-lg);
+            box-sizing: border-box;
+        }
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .page-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .vocab-card-container { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 2rem 0; }
+        .vocab-card { border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; width: clamp(100px, 38vw, 200px); height: clamp(100px, 38vw, 200px); display: flex; align-items: center; justify-content: center; background-color: #f9fafb; flex-shrink: 1; }
+        .vocab-card img { width: 100%; height: 100%; object-fit: cover; }
+        .vocab-card .vocab-text { font-family: 'Noto Sans KR', sans-serif; font-size: clamp(2.5rem, 12vw, 3rem); font-weight: 700; cursor: pointer; }
+        
+        #mobile-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background-color: #1f2937; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .quiz-question { font-weight: 600; font-size: var(--font-xl); color: #1f2937; margin-bottom: 1rem; text-align: center; }
+        .quiz-option { display: inline-flex; flex-direction: column; align-items:center; gap: 0.5rem; padding: 1rem; border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.25rem; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; font-size: 1.5rem; font-family: 'Inter', sans-serif; text-align: center; min-width: 120px; }
+        .quiz-option.korean { font-family: 'Noto Sans KR', sans-serif; }
+        .quiz-option img { height: 80px; width: 100px; object-fit: cover; border-radius: 0.25rem; background-color: #f3f4f6;}
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .quiz-image { width: clamp(120px, 35vw, 150px); height: clamp(120px, 35vw, 150px); object-fit: cover; border-radius: 0.75rem; margin-bottom: 1rem; cursor: pointer; }
+        .quiz-options-vertical { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 250px; margin: 0 auto; }
+        .quiz-options-horizontal { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        .feedback-area { text-align: center; min-height: 52px; display: flex; justify-content: center; align-items: center; gap: 1rem; }
+        .audio-button { background: none; border: none; cursor: pointer; }
+        .audio-button:disabled { cursor: not-allowed; opacity: 0.5; }
+        .audio-icon { width: 2.5rem; height: 2.5rem; color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover:not(:disabled) .audio-icon { color: #1d4ed8; }
+
+        .dictation-input-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; min-height: 80px; }
+        .dictation-input { font-family: 'Noto Sans KR', sans-serif; font-size: clamp(3rem, 15vmin, 4rem); font-weight: 700; color: #1f2937; min-height: 1em; }
+        .jamo-bank { display: flex; flex-direction: column; gap: 0.5rem; justify-content: center; padding-top: 1rem; }
+        .jamo-row { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+        .jamo-key {
+            width: 42px; height: 42px;
+            font-size: 1rem;
+            border: 1px solid #d1d5db; border-radius: 0.25rem;
+            background-color: #f9fafb;
+            cursor: pointer;
+            display:flex; align-items:center; justify-content:center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .jamo-key:hover { background-color: #f3f4f6; }
+        .jamo-delete-key { font-size: 1.2rem; }
+        .jamo-delete-key:hover { background-color: #fca5a5; color: #b91c1c; }
+
+        /* [MODIFIED] Added .title-text class definition */
+        .title-text { font-size: var(--font-title); font-weight: 700; }
+
+        @media (max-width: 600px) {
+            body { padding: 0; }
+            .course-wrapper { height: 100%; max-height: 100dvh; max-width: 100%; border-radius: 0; }
+            .course-container { height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; }
+            .vocab-card { width: clamp(100px, 38vw, 180px); height: clamp(100px, 38vw, 180px); }
+            .quiz-option { min-width: auto; flex-grow: 1;}
+            .jamo-key { width: clamp(32px, 7.5vw, 40px); height: clamp(32px, 7.5vw, 40px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="course-wrapper">
+        <div class="shadow-2xl course-container">
+            
+            <!-- [MODIFIED] Added .title-text class, font-bold, removed text-3xl/leading-tight -->
+            <div id="page-0" class="page active items-center justify-center text-center">
+                <div class="page-content">
+                    <h1 class="title-text font-bold text-gray-800 mb-6">Leçon supplémentaire 13 - Vocabulaire (11)</h1>
+                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Vocab Pages -->
+            <div id="page-1" class="page">
+                <div class="page-content">
+                    <div class="vocab-card-container">
+                        <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_0907583e93224caf91af1da86f64f5f3~mv2.png" alt="Pull"></div>
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('스웨터')">스웨터</span></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant</button>
+                </div>
+            </div>
+
+            <div id="page-2" class="page">
+                <div class="page-content">
+                    <div class="vocab-card-container">
+                        <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_ed3c8214b6ec448dacfa4c71f5980da9~mv2.png" alt="Médecin"></div>
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('의사')">의사</span></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant</button>
+                </div>
+            </div>
+
+            <div id="page-3" class="page">
+                <div class="page-content">
+                    <div class="vocab-card-container">
+                        <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_e4accc008e6d4349be1ed81ad545540a~mv2.png" alt="Ciseaux"></div>
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('가위')">가위</span></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant</button>
+                </div>
+            </div>
+
+            <div id="page-4" class="page">
+                <div class="page-content">
+                    <div class="vocab-card-container">
+                        <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_ecf383f0783b492f8fbf6cc7412d40cb~mv2.png" alt="Chaise"></div>
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('의자')">의자</span></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer le quiz</button>
+                </div>
+            </div>
+
+            <!-- Quiz Pages -->
+            <div id="page-5" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne signification.</p>
+                    <img src="https://static.wixstatic.com/media/699687_0907583e93224caf91af1da86f64f5f3~mv2.png" alt="Pull" class="quiz-image mx-auto" onclick="playSound('스웨터')">
+                    <div id="quiz-1-options" class="quiz-options-vertical">
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="Pull">Pull</label>
+                        <label class="quiz-option"><input type="radio" name="quiz1" value="Pantalon">Pantalon</label>
+                    </div>
+                </div>
+                <div id="quiz-1-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-1-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(1, 'Pull', 'page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+            
+            <div id="page-6" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne signification.</p>
+                    <img src="https://static.wixstatic.com/media/699687_ed3c8214b6ec448dacfa4c71f5980da9~mv2.png" alt="Médecin" class="quiz-image mx-auto" onclick="playSound('의사')">
+                    <div id="quiz-2-options" class="quiz-options-vertical">
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="Papa">Papa</label>
+                        <label class="quiz-option"><input type="radio" name="quiz2" value="Médecin">Médecin</label>
+                    </div>
+                </div>
+                <div id="quiz-2-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-2-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(2, 'Médecin', 'page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-7" class="page">
+                 <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne signification.</p>
+                    <img src="https://static.wixstatic.com/media/699687_e4accc008e6d4349be1ed81ad545540a~mv2.png" alt="Ciseaux" class="quiz-image mx-auto" onclick="playSound('가위')">
+                    <div id="quiz-3-options" class="quiz-options-vertical">
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="Ciseaux">Ciseaux</label>
+                        <label class="quiz-option"><input type="radio" name="quiz3" value="Timbre">Timbre</label>
+                    </div>
+                </div>
+                <div id="quiz-3-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-3-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(3, 'Ciseaux', 'page-8')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-8" class="page">
+                 <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne signification.</p>
+                    <img src="https://static.wixstatic.com/media/699687_ecf383f0783b492f8fbf6cc7412d40cb~mv2.png" alt="Chaise" class="quiz-image mx-auto" onclick="playSound('의자')">
+                    <div id="quiz-4-options" class="quiz-options-vertical">
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="Cochon">Cochon</label>
+                        <label class="quiz-option"><input type="radio" name="quiz4" value="Chaise">Chaise</label>
+                    </div>
+                </div>
+                <div id="quiz-4-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-7')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-4-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(4, 'Chaise', 'page-9')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-9" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne écriture.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('의사')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-5-options" class="quiz-options-vertical">
+                        <label class="quiz-option korean"><input type="radio" name="quiz5" value="의자">의자</label>
+                        <label class="quiz-option korean"><input type="radio" name="quiz5" value="의사">의사</label>
+                    </div>
+                </div>
+                <div id="quiz-5-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-5-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(5, '의사', 'page-10')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-10" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne écriture.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('쉬다')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-6-options" class="quiz-options-vertical">
+                        <label class="quiz-option korean"><input type="radio" name="quiz6" value="시다">시다</label>
+                        <label class="quiz-option korean"><input type="radio" name="quiz6" value="쉬다">쉬다</label>
+                    </div>
+                </div>
+                <div id="quiz-6-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-6-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(6, '쉬다', 'page-11')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-11" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne écriture.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('가위')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-7-options" class="quiz-options-vertical">
+                        <label class="quiz-option korean"><input type="radio" name="quiz7" value="가위">가위</label>
+                        <label class="quiz-option korean"><input type="radio" name="quiz7" value="가이">가이</label>
+                        <label class="quiz-option korean"><input type="radio" name="quiz7" value="가희">가희</label>
+                    </div>
+                </div>
+                <div id="quiz-7-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-10')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-7-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(7, '가위', 'page-12')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-12" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne écriture.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('의자')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-8-options" class="quiz-options-vertical">
+                        <label class="quiz-option korean"><input type="radio" name="quiz8" value="의자">의자</label>
+                        <label class="quiz-option korean"><input type="radio" name="quiz8" value="의사">의사</label>
+                    </div>
+                </div>
+                <div id="quiz-8-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-11')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-8-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(8, '의자', 'page-13')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-13" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne écriture.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('스웨터')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-9-options" class="quiz-options-vertical">
+                        <label class="quiz-option korean"><input type="radio" name="quiz9" value="쓰다">쓰다</label>
+                        <label class="quiz-option korean"><input type="radio" name="quiz9" value="스웨터">스웨터</label>
+                    </div>
+                </div>
+                <div id="quiz-9-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-12')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-9-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(9, '스웨터', 'page-14')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-14" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez le bon son.</p>
+                    <img src="https://static.wixstatic.com/media/699687_0114926b55df4768ba7f5cb2f39c7a46~mv2.png" alt="Autruche" class="quiz-image mx-auto">
+                    <div id="quiz-10-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz10" value="시계"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('시계')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                        <label class="quiz-option"><input type="radio" name="quiz10" value="타조"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('타조')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                    </div>
+                </div>
+                <div id="quiz-10-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-13')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-10-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(10, '타조', 'page-15')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-15" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez le bon son.</p>
+                    <img src="https://static.wixstatic.com/media/699687_ecf383f0783b492f8fbf6cc7412d40cb~mv2.png" alt="Chaise" class="quiz-image mx-auto">
+                    <div id="quiz-11-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz11" value="의사"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('의사')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                        <label class="quiz-option"><input type="radio" name="quiz11" value="의자"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('의자')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                    </div>
+                </div>
+                <div id="quiz-11-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-14')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-11-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(11, '의자', 'page-16')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-16" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez le bon son.</p>
+                    <img src="https://static.wixstatic.com/media/699687_e4accc008e6d4349be1ed81ad545540a~mv2.png" alt="Ciseaux" class="quiz-image mx-auto">
+                    <div id="quiz-12-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz12" value="가위"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('가위')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                        <label class="quiz-option"><input type="radio" name="quiz12" value="가지"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('가지')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                    </div>
+                </div>
+                <div id="quiz-12-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-15')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-12-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(12, '가위', 'page-17')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-17" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez le bon son.</p>
+                    <img src="https://static.wixstatic.com/media/699687_0907583e93224caf91af1da86f64f5f3~mv2.png" alt="Pull" class="quiz-image mx-auto">
+                    <div id="quiz-13-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz13" value="스웨터"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('스웨터')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                        <label class="quiz-option"><input type="radio" name="quiz13" value="쉬다"><svg class="audio-icon" onclick="event.stopPropagation(); playSound('쉬다')" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></label>
+                    </div>
+                </div>
+                <div id="quiz-13-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-16')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-13-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(13, '스웨터', 'page-18')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-18" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne image.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('시계')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-14-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz14" value="야구"><img src="https://static.wixstatic.com/media/699687_6a8f2cbb7e234afe96e94c4520d719cd~mv2.png" alt="Baseball"></label>
+                        <label class="quiz-option"><input type="radio" name="quiz14" value="시계"><img src="https://static.wixstatic.com/media/699687_57e3517d47344744ad5a48f07bdf60a4~mv2.png" alt="Horloge"></label>
+                    </div>
+                </div>
+                <div id="quiz-14-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-17')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-14-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(14, '시계', 'page-19')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-19" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne image.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('가위')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-15-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz15" value="가위"><img src="https://static.wixstatic.com/media/699687_e4accc008e6d4349be1ed81ad545540a~mv2.png" alt="Ciseaux"></label>
+                        <label class="quiz-option"><input type="radio" name="quiz15" value="까지"><img src="https://static.wixstatic.com/media/699687_ea2168d1f24c4712bc6f654626d4eec2~mv2.png" alt="Pie"></label>
+                    </div>
+                </div>
+                <div id="quiz-15-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-18')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-15-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(15, '가위', 'page-20')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-20" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne image.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('의자')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-16-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz16" value="의자"><img src="https://static.wixstatic.com/media/699687_ecf383f0783b492f8fbf6cc7412d40cb~mv2.png" alt="Chaise"></label>
+                        <label class="quiz-option"><input type="radio" name="quiz16" value="우주"><img src="https://static.wixstatic.com/media/699687_6a8f1d4ad616497ba5b46918c0d7dfe3~mv2.png" alt="Espace"></label>
+                    </div>
+                </div>
+                <div id="quiz-16-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-19')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-16-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(16, '의자', 'page-21')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-21" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne image.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('의사')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-17-options" class="quiz-options-horizontal">
+                        <label class="quiz-option"><input type="radio" name="quiz17" value="짜다"><img src="https://static.wixstatic.com/media/699687_1301e718e6d54419ad04202dc3f1491d~mv2.png" alt="Être salé"></label>
+                        <label class="quiz-option"><input type="radio" name="quiz17" value="의사"><img src="https://static.wixstatic.com/media/699687_ed3c8214b6ec448dacfa4c71f5980da9~mv2.png" alt="Médecin"></label>
+                    </div>
+                </div>
+                <div id="quiz-17-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-20')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-17-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(17, '의사', 'page-22')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-22" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne signification.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('스웨터')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-18-options" class="quiz-options-vertical">
+                        <label class="quiz-option"><input type="radio" name="quiz18" value="Manteau">Manteau</label>
+                        <label class="quiz-option"><input type="radio" name="quiz18" value="Pull">Pull</label>
+                    </div>
+                </div>
+                <div id="quiz-18-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-21')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-18-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(18, 'Pull', 'page-23')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-23" class="page">
+                <div class="page-content flex-col">
+                    <p class="quiz-question">Choisissez la bonne signification.</p>
+                    <button class="audio-button mb-4 mx-auto" onclick="playSound('가위')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div id="quiz-19-options" class="quiz-options-vertical">
+                        <label class="quiz-option"><input type="radio" name="quiz19" value="Chaise">Chaise</label>
+                        <label class="quiz-option"><input type="radio" name="quiz19" value="Ciseaux">Ciseaux</label>
+                    </div>
+                </div>
+                <div id="quiz-19-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-22')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-19-feedback" class="feedback-area"></div></div>
+                    <button onclick="checkAnswer(19, 'Ciseaux', 'page-24')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+            
+            <!-- Dictation Pages -->
+            <div id="page-24" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écrivez en Hangeul</p>
+                    <button class="audio-button mb-4" onclick="playSound('얘기')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="dictation-input-container">
+                        <div id="input-20" class="dictation-input"></div>
+                    </div>
+                    <div id="jamo-bank-20" class="jamo-bank"></div>
+                </div>
+                <div id="quiz-20-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-23')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-20-feedback" class="feedback-area"></div></div>
+                    <button onclick="validateDictation(20, '얘기', 'page-25')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-25" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écrivez en Hangeul</p>
+                    <button class="audio-button mb-4" onclick="playSound('스웨터')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="dictation-input-container">
+                        <div id="input-21" class="dictation-input"></div>
+                    </div>
+                    <div id="jamo-bank-21" class="jamo-bank"></div>
+                </div>
+                <div id="quiz-21-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-24')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-21-feedback" class="feedback-area"></div></div>
+                    <button onclick="validateDictation(21, '스웨터', 'page-26')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-26" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écrivez en Hangeul</p>
+                    <button class="audio-button mb-4" onclick="playSound('가위')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="dictation-input-container">
+                        <div id="input-22" class="dictation-input"></div>
+                    </div>
+                    <div id="jamo-bank-22" class="jamo-bank"></div>
+                </div>
+                <div id="quiz-22-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-25')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-22-feedback" class="feedback-area"></div></div>
+                    <button onclick="validateDictation(22, '가위', 'page-27')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-27" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écrivez en Hangeul</p>
+                    <button class="audio-button mb-4" onclick="playSound('의사')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="dictation-input-container">
+                        <div id="input-23" class="dictation-input"></div>
+                    </div>
+                    <div id="jamo-bank-23" class="jamo-bank"></div>
+                </div>
+                <div id="quiz-23-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-26')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-23-feedback" class="feedback-area"></div></div>
+                    <button onclick="validateDictation(23, '의사', 'page-28')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+
+            <div id="page-28" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écrivez en Hangeul</p>
+                    <button class="audio-button mb-4" onclick="playSound('의자')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="dictation-input-container">
+                        <div id="input-24" class="dictation-input"></div>
+                    </div>
+                    <div id="jamo-bank-24" class="jamo-bank"></div>
+                </div>
+                <div id="quiz-24-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-27')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex-grow flex justify-center"><div id="quiz-24-feedback" class="feedback-area"></div></div>
+                    <button onclick="validateDictation(24, '의자', 'completion-message')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                </div>
+            </div>
+            
+            <div id="completion-message" class="page items-center justify-center text-center">
+                <div class="page-content">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Leçon terminée !</h2>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <button id="mobile-toggle" class="hidden">Vue mobile</button>
+
+    <script>
+        let currentPageId = 'page-0';
+        let dictationStates = {};
+
+        const sounds = {
+            '스웨터': { file: 'https://static.wixstatic.com/mp3/699687_f0fd55cac23246c7bbeaaca26615d624.mp3' },
+            '의사': { file: 'https://static.wixstatic.com/mp3/699687_3fca1fe78d4543c7b9ae42c4988f2bbf.mp3' },
+            '가위': { file: 'https://static.wixstatic.com/mp3/699687_b6410bac3693471ead343768600fb031.mp3' },
+            '의자': { file: 'https://static.wixstatic.com/mp3/699687_e0045d3288df496b8817d8beb0d79e87.mp3' },
+            '쉬다': { file: 'https://static.wixstatic.com/mp3/699687_027ca43bbb55488ca464dae0b0d6907a.mp3' },
+            '타조': { file: 'https://static.wixstatic.com/mp3/699687_faa360e6b45e466e934cd9e5c294ac6d.mp3' },
+            '시계': { file: 'https://static.wixstatic.com/mp3/699687_c3d5010c86fa4e00b3f58c75ac6e9c2a.mp3' },
+            '가지': { file: 'https://static.wixstatic.com/mp3/699687_1701edb05aef4e799291f8b74c09484c.mp3' },
+            '사과': { file: 'https://static.wixstatic.com/mp3/699687_2cff31ad95c64fb8ac04d21935c75957.mp3' },
+            '까지': { file: 'https://static.wixstatic.com/mp3/699687_3a900e5abb6940d48fad2568d64edadf.mp3' },
+            '우주': { file: 'https://static.wixstatic.com/mp3/699687_4e0d250e189a425682ec299828c691ab.mp3' },
+            '얘기': { file: 'https://static.wixstatic.com/mp3/699687_281f0a9cf0ec4df5ae9c59f085e5c9cb.mp3' },
+            '짜다': { file: 'https://static.wixstatic.com/mp3/699687_6d013e8e16944682974246830f81d1e4.mp3' },
+            '야구': { file: 'https://static.wixstatic.com/mp3/699687_32afbdb86c5c407f9d4e35dbd4dc8da1.mp3' },
+            '우표': { file: 'https://static.wixstatic.com/mp3/699687_147848ac6f1141f09354c980dcaa396e.mp3' },
+            '쓰다': { file: 'https://static.wixstatic.com/mp3/699687_37336f3686d14878b406b7c413348149.mp3' },
+            '병원': { file: 'https://static.wixstatic.com/mp3/699687_3d2c8831e5d44a2e992983d9f3f2d2ad.mp3' },
+            '아기': { file: 'https://static.wixstatic.com/mp3/699687_6e3603c4cc7142b99af6110f69573023.mp3' },
+            '우유': { file: 'https://static.wixstatic.com/mp3/699687_89d1b092d5c24e5281861d80387431e6.mp3' },
+        };
+        
+        // [MOVED] Moved to global scope for resetPage to access
+        const dictationQuizzes = [
+            { id: 20, consonants: ['ㄱ', 'ㅋ', 'ㄲ', 'ㄷ', 'ㅌ', 'ㄸ', 'ㅂ', 'ㅍ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅈ', 'ㅊ', 'ㅉ', 'ㅇ', 'ㅎ'] },
+            { id: 21, consonants: ['ㄱ', 'ㅋ', 'ㄲ', 'ㄷ', 'ㅌ', 'ㄸ', 'ㅂ', 'ㅍ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅈ', 'ㅊ', 'ㅉ', 'ㅇ', 'ㅎ'] },
+            { id: 22, consonants: ['ㄱ', 'ㅋ', 'ㄲ', 'ㄷ', 'ㅌ', 'ㄸ', 'ㅂ', 'ㅍ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅈ', 'ㅊ', 'ㅉ', 'ㅇ', 'ㅎ'] },
+            { id: 23, consonants: ['ㄱ', 'ㅋ', 'ㄲ', 'ㄷ', 'ㅌ', 'ㄸ', 'ㅂ', 'ㅍ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅈ', 'ㅊ', 'ㅉ', 'ㅇ', 'ㅎ'] },
+            { id: 24, consonants: ['ㄱ', 'ㅋ', 'ㄲ', 'ㄷ', 'ㅌ', 'ㄸ', 'ㅂ', 'ㅍ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅈ', 'ㅊ', 'ㅉ', 'ㅇ', 'ㅎ'] }
+        ];
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey] || !sounds[soundKey].file) {
+                console.error("Audio file is missing for key:", soundKey);
+                return;
+            }
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+            });
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+                resetPage(nextPage); // [ADDED] Call resetPage on navigation
+            }
+            
+            // [ADDED] postMessage logic for completion page
+            if (pageId === 'completion-message') {
+                if (window.parent) {
+                    try {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    } catch (e) {
+                        console.error('postMessage failed:', e);
+                    }
+                }
+            }
+        }
+        
+        // [ADDED] resetPage function to clear quiz states on navigation
+        function resetPage(pageElement) {
+            const nav = pageElement.querySelector('[id$="-nav"]');
+            if (nav && nav.dataset.initialHtml) {
+                nav.innerHTML = nav.dataset.initialHtml;
+                nav.querySelectorAll('button[onclick]').forEach(btn => {
+                    btn.onclick = new Function(btn.getAttribute('onclick'));
+                });
+            }
+
+            pageElement.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                opt.style.pointerEvents = 'auto';
+                const radio = opt.querySelector('input');
+                if (radio) { radio.checked = false; radio.disabled = false; }
+            });
+
+            const jamoBank = pageElement.querySelector('[id^="jamo-bank-"]');
+            if (jamoBank) {
+                const quizNum = jamoBank.id.split('-')[2];
+                const dictationQuiz = dictationQuizzes.find(q => q.id == quizNum);
+                if (dictationQuiz) { 
+                    setupDictationQuiz(dictationQuiz.id, dictationQuiz.consonants);
+                }
+            }
+        }
+        
+        function checkAnswer(quizNum, correctAnswer, nextPageId) {
+            const quizName = `quiz${quizNum}`;
+            const selectedOption = document.querySelector(`input[name="${quizName}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector('.feedback-area');
+            const actionButton = navEl.querySelector('button:last-child');
+
+            if (!selectedOption) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base)">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => { feedbackContainer.innerHTML = '' }, 2000);
+                return;
+            }
+            
+            disableQuizOptions(quizName);
+            feedbackContainer.innerHTML = '';
+
+            const selectedLabel = selectedOption.parentElement;
+            
+            if (selectedOption.value === correctAnswer) {
+                selectedLabel.classList.add('correct');
+                const buttonText = nextPageId === 'completion-message' ? 'Terminer' : 'Suivant';
+                actionButton.textContent = buttonText;
+                actionButton.onclick = () => showPage(nextPageId);
+                actionButton.className = 'nav-button bg-green-600 text-white hover:bg-green-700';
+            } else {
+                selectedLabel.classList.add('incorrect');
+                actionButton.textContent = 'Réessayer';
+                actionButton.onclick = () => resetQuiz(quizNum, correctAnswer, nextPageId);
+                actionButton.className = 'nav-button bg-red-600 text-white hover:bg-red-700';
+            }
+        }
+
+        function resetQuiz(quizNum, correctAnswer, nextPageId) {
+            const quizName = `quiz${quizNum}`;
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const actionButton = navEl.querySelector('button:last-child');
+            
+            actionButton.textContent = 'Valider';
+            actionButton.onclick = () => checkAnswer(quizNum, correctAnswer, nextPageId);
+            actionButton.className = 'nav-button bg-blue-600 text-white hover:bg-blue-700';
+            
+            const feedbackEl = navEl.querySelector('.feedback-area');
+            if(feedbackEl) feedbackEl.innerHTML = '';
+
+            const options = document.querySelectorAll(`input[name="${quizName}"]`);
+            options.forEach(opt => {
+                const parentLabel = opt.parentElement;
+                if (!parentLabel.classList.contains('audio-unavailable')) {
+                    opt.disabled = false;
+                    parentLabel.style.pointerEvents = 'auto';
+                }
+                opt.checked = false;
+                parentLabel.classList.remove('selected', 'correct', 'incorrect');
+            });
+        }
+
+        function disableQuizOptions(quizName) {
+            document.querySelectorAll(`input[name="${quizName}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.pointerEvents = 'none';
+            });
+        }
+
+        const Hangul = {
+            CHOSEONG: ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'],
+            JUNGSEONG: ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'],
+            JONGSEONG: ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'],
+            JUNGSEONG_COMBINATIONS: { 'ㅗ': {'ㅏ': 'ㅘ', 'ㅐ': 'ㅙ', 'ㅣ': 'ㅚ'}, 'ㅜ': {'ㅓ': 'ㅝ', 'ㅔ': 'ㅞ', 'ㅣ': 'ㅟ'}, 'ㅡ': {'ㅣ': 'ㅢ'} },
+            JONGSEONG_COMBINATIONS: { 'ㄱ': {'ㅅ': 'ㄳ'}, 'ㄴ': {'ㅈ': 'ㄵ', 'ㅎ': 'ㄶ'}, 'ㄹ': {'ㄱ': 'ㄺ', 'ㅁ': 'ㄻ', 'ㅂ': 'ㄼ', 'ㅅ': 'ㄽ', 'ㅌ': 'ㄾ', 'ㅍ': 'ㄿ', 'ㅎ': 'ㅀ'}, 'ㅂ': {'ㅅ': 'ㅄ'} },
+            
+            isChoseong: c => Hangul.CHOSEONG.includes(c),
+            isJungseong: c => Hangul.JUNGSEONG.includes(c),
+            isJongseong: c => Hangul.JONGSEONG.includes(c) || Hangul.JONGSEONG_COMBINATIONS.hasOwnProperty(c),
+
+            compose: (cho, jung, jong) => {
+                const choIndex = Hangul.CHOSEONG.indexOf(cho);
+                const jungIndex = Hangul.JUNGSEONG.indexOf(jung);
+                const jongIndex = Hangul.JONGSEONG.indexOf(jong || '');
+                if (choIndex === -1 || jungIndex === -1 || jongIndex === -1) return null;
+                return String.fromCharCode(0xAC00 + (choIndex * 21 * 28) + (jungIndex * 28) + jongIndex);
+            },
+            
+            decompose: (syllable) => {
+                const code = syllable.charCodeAt(0) - 0xAC00;
+                if (code < 0 || code > 11171) return [syllable];
+                const jongIndex = code % 28;
+                const jungIndex = ((code - jongIndex) / 28) % 21;
+                const choIndex = Math.floor(((code - jongIndex) / 28) / 21);
+                return [Hangul.CHOSEONG[choIndex], Hangul.JUNGSEONG[jungIndex], Hangul.JONGSEONG[jongIndex] || null].filter(Boolean);
+            },
+
+            findDecomposedJong: (jong) => {
+                 for (const p1 in Hangul.JONGSEONG_COMBINATIONS) {
+                    for (const p2 in Hangul.JONGSEONG_COMBINATIONS[p1]) {
+                        if (Hangul.JONGSEONG_COMBINATIONS[p1][p2] === jong) {
+                            return [p1, p2];
+                        }
+                    }
+                 }
+                 return [jong];
+            }
+        };
+
+        function setupDictationQuiz(quizNum, consonantSet) {
+            const jamoBank = document.getElementById(`jamo-bank-${quizNum}`);
+            const inputEl = document.getElementById(`input-${quizNum}`);
+            if (!jamoBank || !inputEl) return;
+
+            dictationStates[quizNum] = { buffer: [], text: '' };
+            inputEl.textContent = '';
+            jamoBank.innerHTML = '';
+
+            const consonants = consonantSet;
+            const vowels = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
+            const keyLayout = [consonants, vowels];
+
+            keyLayout.forEach(row => {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'jamo-row';
+                row.forEach(item => {
+                    const key = document.createElement('button');
+                    key.className = 'jamo-key';
+                    key.textContent = item;
+                    key.onclick = () => processJamoInput(quizNum, item);
+                    rowEl.appendChild(key);
+                });
+                 if (row === vowels) {
+                    const deleteKey = document.createElement('button');
+                    deleteKey.className = 'jamo-key jamo-delete-key';
+                    deleteKey.innerHTML = '←';
+                    deleteKey.onclick = () => processJamoInput(quizNum, 'Backspace');
+                    rowEl.appendChild(deleteKey);
+                }
+                jamoBank.appendChild(rowEl);
+            });
+        }
+
+        function processJamoInput(quizNum, jamo) {
+            let { buffer, text } = dictationStates[quizNum];
+            const inputEl = document.getElementById(`input-${quizNum}`);
+
+            if (jamo === 'Backspace') {
+                if (buffer.length > 0) {
+                    buffer.pop();
+                } else if (text.length > 0) {
+                    const lastChar = text.slice(-1);
+                    const decomposed = Hangul.decompose(lastChar);
+                    text = text.slice(0, -1);
+                    if (decomposed.length > 1) {
+                         if(decomposed[2]) {
+                            const decomposedJong = Hangul.findDecomposedJong(decomposed[2]);
+                            buffer = [decomposed[0], decomposed[1], ...decomposedJong].slice(0, -1);
+                         } else {
+                            buffer = decomposed.slice(0, -1);
+                         }
+                    } else {
+                        buffer = [];
+                    }
+                }
+            } else if (Hangul.isChoseong(jamo)) {
+                if (buffer.length === 0) { // 1. Choseong
+                    buffer.push(jamo);
+                } else if (buffer.length === 1 && Hangul.isChoseong(buffer[0])) { // 2. Choseong -> New Choseong
+                    text += buffer[0];
+                    buffer = [jamo];
+                } else if (buffer.length === 2) { // 3. Cho + Jung -> Jongseong
+                    if (Hangul.isJongseong(jamo)) {
+                        buffer.push(jamo);
+                    } else { // Cho + Jung -> New Choseong
+                        text += Hangul.compose(buffer[0], buffer[1]);
+                        buffer = [jamo];
+                    }
+                } else if (buffer.length === 3) { // 4. Cho + Jung + Jong -> ...
+                    const combinedJong = Hangul.JONGSEONG_COMBINATIONS[buffer[2]]?.[jamo];
+                    if (combinedJong) { // Combine Jongseong
+                        buffer[2] = combinedJong;
+                    } else { // New syllable
+                        text += Hangul.compose(buffer[0], buffer[1], buffer[2]);
+                        buffer = [jamo];
+                    }
+                } else if (buffer.length === 1 && Hangul.isJungseong(buffer[0])) { // Vowel only -> New Choseong
+                     text += buffer[0];
+                     buffer = [jamo];
+                }
+            } else if (Hangul.isJungseong(jamo)) {
+                if (buffer.length === 0) { // 1. Jungseong
+                    buffer.push(jamo);
+                } else if (buffer.length === 1 && Hangul.isChoseong(buffer[0])) { // 2. Cho -> Jungseong
+                    buffer.push(jamo);
+                } else if (buffer.length === 1 && Hangul.isJungseong(buffer[0])) { // 3. Jung -> Combine Jung
+                    const combinedJung = Hangul.JUNGSEONG_COMBINATIONS[buffer[0]]?.[jamo];
+                    if (combinedJung) {
+                        buffer[0] = combinedJung;
+                    } else { // Vowel -> New Vowel
+                        text += buffer[0];
+                        buffer = [jamo];
+                    }
+                } else if (buffer.length === 2) { // 4. Cho + Jung -> Combine Jung
+                    const combinedJung = Hangul.JUNGSEONG_COMBINATIONS[buffer[1]]?.[jamo];
+                    if (combinedJung) {
+                        buffer[1] = combinedJung;
+                    } else { // Cho + Jung -> New Vowel
+                        text += Hangul.compose(buffer[0], buffer[1]);
+                        buffer = [jamo];
+                    }
+                } else if (buffer.length === 3) { // 5. Cho + Jung + Jong -> New Syllable
+                    const [cho, jung, jong] = buffer;
+                    const decomposedJong = Hangul.findDecomposedJong(jong);
+
+                    if (decomposedJong.length === 2) { // Jong is complex (e.g., ㄺ)
+                        text += Hangul.compose(cho, jung, decomposedJong[0]);
+                        buffer = [decomposedJong[1], jamo];
+                    } else { // Jong is simple
+                        text += Hangul.compose(cho, jung);
+                        buffer = [jong, jamo];
+                    }
+                }
+            }
+            
+            let currentDisplay = text;
+            if (buffer.length > 0) {
+                if (buffer.length === 1) currentDisplay += buffer[0];
+                else if (buffer.length === 2) currentDisplay += Hangul.compose(buffer[0], buffer[1]);
+                else if (buffer.length === 3) currentDisplay += Hangul.compose(buffer[0], buffer[1], buffer[2]);
+            }
+            
+            inputEl.textContent = currentDisplay;
+            dictationStates[quizNum] = { buffer, text };
+        }
+
+        function validateDictation(quizNum, correctAnswer, nextPageId) {
+            const inputEl = document.getElementById(`input-${quizNum}`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const actionButton = navEl.querySelector('button[onclick^="validateDictation"]');
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            
+            let { buffer, text } = dictationStates[quizNum];
+            if (buffer.length > 0) {
+                 if (buffer.length === 1) text += buffer[0];
+                 else if (buffer.length === 2) text += Hangul.compose(buffer[0], buffer[1]);
+                 else if (buffer.length === 3) text += Hangul.compose(buffer[0], buffer[1], buffer[2]);
+            }
+            inputEl.textContent = text;
+            dictationStates[quizNum].buffer = [];
+            dictationStates[quizNum].text = text;
+
+            const jamoBank = document.getElementById(`jamo-bank-${quizNum}`);
+            if (jamoBank) {
+                 jamoBank.querySelectorAll('.jamo-key').forEach(key => key.disabled = true);
+            }
+            
+            actionButton.style.display = 'none';
+
+            const isCorrect = Array.isArray(correctAnswer) 
+                ? correctAnswer.includes(inputEl.textContent) 
+                : inputEl.textContent === correctAnswer;
+
+            if (isCorrect) {
+                const buttonText = nextPageId === 'completion-message' ? 'Terminer' : 'Suivant';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                feedbackContainer.innerHTML = `<button onclick="resetDictationQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+
+        function resetDictationQuiz(quizNum) {
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+             if (navEl.dataset.initialHtml) {
+                navEl.innerHTML = navEl.dataset.initialHtml;
+                navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                    btn.onclick = new Function(btn.getAttribute('onclick'));
+                });
+            }
+            
+            const jamoBank = document.getElementById(`jamo-bank-${quizNum}`);
+            const consonantSet = jamoBank.dataset.consonants.split(',');
+            setupDictationQuiz(quizNum, consonantSet);
+        }
+
+        function initializeApp() {
+            showPage('page-0');
+            
+            // [ADDED] Store initial HTML for all nav bars
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                nav.dataset.initialHtml = nav.innerHTML;
+            });
+            
+            document.querySelectorAll('[onclick*="playSound"]').forEach(el => {
+                const match = el.getAttribute('onclick').match(/'([^']+)'/);
+                if (!match) return;
+                const soundKey = match[1];
+                if (!sounds[soundKey] || !sounds[soundKey].file) {
+                    el.classList.add('audio-unavailable');
+                    if (el.tagName === 'BUTTON' || el.tagName === 'SPAN' || el.tagName === 'svg') {
+                        el.disabled = true;
+                    }
+                    if(el.parentElement.tagName === 'LABEL') {
+                        el.parentElement.classList.add('audio-unavailable');
+                    }
+                }
+            });
+
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const name = e.target.name;
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(opt => {
+                        opt.parentElement.classList.remove('selected');
+                    });
+                    if(e.target.checked) {
+                        e.target.parentElement.classList.add('selected');
+                    }
+                });
+            });
+
+            // [MOVED] dictationQuizzes definition is now global
+            dictationQuizzes.forEach(q => {
+                const jamoBank = document.getElementById(`jamo-bank-${q.id}`);
+                if(jamoBank) {
+                    jamoBank.dataset.consonants = q.consonants;
+                    setupDictationQuiz(q.id, q.consonants);
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        const toggleButton = document.getElementById('mobile-toggle');
+        const courseWrapper = document.querySelector('.course-wrapper');
+        toggleButton.addEventListener('click', () => {
+            courseWrapper.classList.toggle('mobile-view');
+            toggleButton.textContent = courseWrapper.classList.contains('mobile-view') ? 'Vue bureau' : 'Vue mobile';
+        });
+
+    </script>
+</body>
+</html>
+
