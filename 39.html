@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leçon supplémentaire 9 - Activité (3) - Expanded</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5vmin, 2rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+        .course-wrapper { width: 100%; max-width: 600px; transition: transform 0.4s ease-in-out; transform-origin: center center; }
+        .course-container { width: 100%; position: relative; aspect-ratio: 1 / 1; }
+        .course-wrapper.mobile-view { transform: scale(0.6); }
+        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; background-color: white; padding: 2.5rem; border-radius: 0.75rem; box-sizing: border-box; }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+        .nav-button { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; cursor: pointer; }
+        #mobile-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background-color: #1f2937; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        
+        /* [MODIFIED] Added .title-text */
+        .title-text { font-size: var(--font-title); }
+
+        /* Quiz Styles */
+        .quiz-question { font-weight: 600; font-size: 1.25rem; color: #1f2937; margin-bottom: 1.5rem; }
+        .quiz-option { display: inline-block; padding: 1rem 1.5rem; border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.5rem; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; font-size: 1.25rem; font-family: 'Noto Sans KR', sans-serif; text-align: center; min-width: 150px; }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
+        .audio-button { background: none; border: none; cursor: pointer; margin-bottom: 2rem; }
+        .audio-icon { width: 4rem; height: 4rem; color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+
+        /* Matching Quiz Styles */
+        .matching-container { display: flex; justify-content: space-around; align-items: flex-start; gap: 1rem; width:100%; }
+        .matching-column { display: flex; flex-direction: column; gap: 0.75rem; flex: 1; }
+        .match-option { padding: 0.75rem; border: 2px solid #d1d5db; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s; }
+        .match-option.selected { border-color: #6366f1; background-color: #e0e7ff; }
+        .match-option.paired-1 { background-color: #cffafe; }
+        .match-option.paired-2 { background-color: #fef9c3; }
+        .match-option.paired-3 { background-color: #fce7f3; }
+        .match-option.paired-4 { background-color: #e4e4e7; }
+        .match-option.paired-5 { background-color: #dcfce7; }
+        .match-option.disabled { cursor: not-allowed; opacity: 0.6; }
+        .match-option.correct-match { border-color: #22c55e; background-color: #dcfce7; }
+        .match-option.incorrect-match { border-color: #ef4444; background-color: #fee2e2; }
+
+        /* Typing Quiz Styles */
+        .typing-input {
+            font-family: 'Noto Sans KR', sans-serif;
+            text-align: center;
+            font-size: 2rem;
+            padding: 0.5rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 200px;
+            margin: 1rem auto 0;
+        }
+        .typing-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="course-wrapper">
+        <div class="shadow-2xl course-container">
+            
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active items-center justify-center text-center">
+                <div class="page-content">
+                    <!-- [MODIFIED] Applied .title-text class, removed text-4xl/leading-tight -->
+                    <h1 class="title-text font-bold text-gray-800 mb-6">Leçon supplémentaire 9 - Activité (3)</h1>
+                    <p class="text-lg text-gray-600">30 questions pour pratiquer votre vocabulaire coréen.</p>
+                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Pages 1-5: Audio -> French Definition -->
+            <div id="page-1" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (1/30)</p>
+                    <button class="audio-button" onclick="playSound('tokki')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-1-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-1-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('1', 'page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-2" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (2/30)</p>
+                    <button class="audio-button" onclick="playSound('appa')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-2-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-2-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('2', 'page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-3" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (3/30)</p>
+                    <button class="audio-button" onclick="playSound('sagwa')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-3-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-3-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('3', 'page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-4" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (4/30)</p>
+                    <button class="audio-button" onclick="playSound('dwaeji')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-4-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-4-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('4', 'page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-5" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (5/30)</p>
+                    <button class="audio-button" onclick="playSound('uija')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-5-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-5-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('5', 'page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pages 6-10: Image + French -> Korean -->
+            <div id="page-6" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (6/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_c5178f4a983a41e788e401f0ee34b001~mv2.png" alt="Se reposer" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold mb-4">Se reposer</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-6-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-6-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('6', 'page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-7" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (7/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_e4accc008e6d4349be1ed81ad545540a~mv2.png" alt="Ciseaux" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold mb-4">Ciseaux</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-7-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-7-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('7', 'page-8')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-8" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (8/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_f5bc124e2ace446ea1716f4b2953934c~mv2.png" alt="Église" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold mb-4">Église</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-8-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-7')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-8-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('8', 'page-9')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-9" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (9/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_0907583e93224caf91af1da86f64f5f3~mv2.png" alt="Pull" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold mb-4">Pull</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-9-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-9-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('9', 'page-10')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-10" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (10/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_ed3c8214b6ec448dacfa4c71f5980da9~mv2.png" alt="Médecin" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold mb-4">Médecin</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-10-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-10-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('10', 'page-11')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pages 11-13: Matching -->
+            <div id="page-11" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Associez les mots français à leur traduction coréenne. (11-15/30)</p>
+                    <div id="match-quiz-11" class="matching-container">
+                        <div class="matching-column" id="match-fr-11">
+                            <button class="match-option" data-word="Lion">Lion</button>
+                            <button class="match-option" data-word="Pantalon">Pantalon</button>
+                            <button class="match-option" data-word="Tofu">Tofu</button>
+                            <button class="match-option" data-word="Raisin">Raisin</button>
+                            <button class="match-option" data-word="Lait">Lait</button>
+                        </div>
+                        <div class="matching-column" id="match-kr-11">
+                            <button class="match-option" data-word="baji">바지</button>
+                            <button class="match-option" data-word="uyu">우유</button>
+                            <button class="match-option" data-word="saja">사자</button>
+                            <button class="match-option" data-word="podo">포도</button>
+                            <button class="match-option" data-word="dubu">두부</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="quiz-11-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-10')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-11-feedback" class="feedback-area"></div>
+                        <button onclick="checkMatchingAnswer('11', 'page-12')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-12" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Associez les mots français à leur traduction coréenne. (16-20/30)</p>
+                    <div id="match-quiz-12" class="matching-container">
+                        <div class="matching-column" id="match-fr-12">
+                            <button class="match-option" data-word="Chien">Chien</button>
+                            <button class="match-option" data-word="Train">Train</button>
+                            <button class="match-option" data-word="Horloge">Horloge</button>
+                            <button class="match-option" data-word="Autruche">Autruche</button>
+                            <button class="match-option" data-word="Baseball">Baseball</button>
+                        </div>
+                        <div class="matching-column" id="match-kr-12">
+                            <button class="match-option" data-word="sigye">시계</button>
+                            <button class="match-option" data-word="yagu">야구</button>
+                            <button class="match-option" data-word="gae">개</button>
+                            <button class="match-option" data-word="gicha">기차</button>
+                            <button class="match-option" data-word="tajo">타조</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="quiz-12-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-11')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-12-feedback" class="feedback-area"></div>
+                        <button onclick="checkMatchingAnswer('12', 'page-13')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-13" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Associez les mots français à leur traduction coréenne. (21-25/30)</p>
+                    <div id="match-quiz-13" class="matching-container">
+                        <div class="matching-column" id="match-fr-13">
+                            <button class="match-option" data-word="Univers">Univers</button>
+                            <button class="match-option" data-word="Ville">Ville</button>
+                            <button class="match-option" data-word="Nez">Nez</button>
+                            <button class="match-option" data-word="Poireau">Poireau</button>
+                            <button class="match-option" data-word="Soleil">Soleil</button>
+                        </div>
+                        <div class="matching-column" id="match-kr-13">
+                            <button class="match-option" data-word="dosi">도시</button>
+                            <button class="match-option" data-word="hae">해</button>
+                            <button class="match-option" data-word="uju">우주</button>
+                            <button class="match-option" data-word="pa">파</button>
+                            <button class="match-option" data-word="ko">코</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="quiz-13-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-12')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-13-feedback" class="feedback-area"></div>
+                        <button onclick="checkMatchingAnswer('13', 'page-14')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pages 14-18: Typing -->
+            <div id="page-14" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (26/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_c3c01fb97d3c4f12967f54569c2b4efb~mv2.png" alt="Timbre" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Timbre</p>
+                    <input type="text" name="q14" class="typing-input" placeholder="_ _" maxlength="2">
+                </div>
+                <div id="quiz-14-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-13')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-14-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('14', '우표', 'page-15')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-15" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (27/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_c3b947b9f891464b8df2d7a2773df29f~mv2.png" alt="Ouvrir" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Ouvrir</p>
+                    <input type="text" name="q15" class="typing-input" placeholder="_ _" maxlength="2">
+                </div>
+                <div id="quiz-15-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-14')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-15-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('15', '펴다', 'page-16')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="page-16" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (28/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_6a18521f5044481eb801fbbf908ea882~mv2.png" alt="Aubergine" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Aubergine</p>
+                    <input type="text" name="q16" class="typing-input" placeholder="_ _" maxlength="2">
+                </div>
+                <div id="quiz-16-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-15')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-16-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('16', '가지', 'page-17')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-17" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (29/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_16f447364c134ef4a6aa94d392ee95ba~mv2.png" alt="Chanteur" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Chanteur</p>
+                    <input type="text" name="q17" class="typing-input" placeholder="_ _" maxlength="2">
+                </div>
+                <div id="quiz-17-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-16')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-17-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('17', '가수', 'page-18')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-18" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (30/30)</p>
+                    <img src="https://static.wixstatic.com/media/699687_ed0a692113d64030b634140a9ee9f2d4~mv2.png" alt="Bébé" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Bébé</p>
+                    <input type="text" name="q18" class="typing-input" placeholder="_ _" maxlength="2">
+                </div>
+                <div id="quiz-18-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-17')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-18-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('18', '아기', 'page-19')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 19: Completion Message -->
+            <div id="page-19" class="page items-center justify-center text-center">
+                <div class="page-content">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Activité terminée !</h2>
+                    <p class="text-gray-600">Félicitations, vous avez terminé les 30 questions.</p>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <button id="mobile-toggle">Vue mobile</button>
+
+    <script>
+        let currentPageId = 'page-0';
+        
+        const mcqData = {
+            '1': { answer: 'Lapin', distractors: ['Cochon', 'Papa', 'Pomme', 'Chaise', 'Lion'] },
+            '2': { answer: 'Papa', distractors: ['Médecin', 'Lapin', 'Cochon', 'Raisin', 'Pomme'] },
+            '3': { answer: 'Pomme', distractors: ['Raisin', 'Chaise', 'Lion', 'Lait', 'Bébé'] },
+            '4': { answer: 'Cochon', distractors: ['Chien', 'Pull', 'Église', 'Lapin', 'Tofu'] },
+            '5': { answer: 'Chaise', distractors: ['Horloge', 'Ciseaux', 'Se reposer', 'Médecin', 'Pull'] },
+            '6': { answer: '쉬다', distractors: ['쓰다', '짜다', '가다', '보다', '자다'] },
+            '7': { answer: '가위', distractors: ['교회', '의사', '의자', '아기', '소포'] },
+            '8': { answer: '교회', distractors: ['의사', '가위', '쉬다', '타조', '기차'] },
+            '9': { answer: '스웨터', distractors: ['소포', '시계', '기차', '야구', '두부'] },
+            '10': { answer: '의사', distractors: ['의자', '가수', '아기', '교회', '바지'] }
+        };
+
+        const sounds = {
+            'dubu': { file: 'https://static.wixstatic.com/mp3/699687_9f1d9eecb14e4450aebbb20a3e247e22.mp3' },
+            'baji': { file: 'https://static.wixstatic.com/mp3/699687_62be60a8dc6945a9a90b26e532f450d3.mp3' },
+            'saja': { file: 'https://static.wixstatic.com/mp3/699687_43b758e785e341d9a6041da783d8bd31.mp3' },
+            'agi': { file: 'https://static.wixstatic.com/mp3/699687_6e3603c4cc7142b99af6110f69573023.mp3' },
+            'gaji': { file: 'https://static.wixstatic.com/mp3/699687_1701edb05aef4e799291f8b74c09484c.mp3' },
+            'gasu': { file: 'https://static.wixstatic.com/mp3/699687_6c979c3ecd5742a1a87bfa5a07550c2b.mp3' },
+            'gae': { file: 'https://static.wixstatic.com/mp3/699687_df8a183ca9a14530a22d8ca61e7d43a9.mp3' },
+            'uju': { file: 'https://static.wixstatic.com/mp3/699687_4e0d250e189a425682ec299828c691ab.mp3' }, 
+            'dosi': { file: 'https://static.wixstatic.com/mp3/699687_1d0912a8fc5646e1ac36d590310dc1a8.mp3' }, 
+            'ko': { file: 'https://static.wixstatic.com/mp3/699687_fc778aadf6a94f1ea175b11b0526fe9c.mp3' },
+            'pa': { file: 'https://static.wixstatic.com/mp3/699687_a6ad9c5f67464db9aa8d036c4700c976.mp3' },
+            'hae': { file: 'https://static.wixstatic.com/mp3/699687_193396d6bb89436286a044133f3f16b7.mp3' }, 
+            'podo': { file: 'https://static.wixstatic.com/mp3/699687_31327ab0374443c7a77625358120faeb.mp3' }, 
+            'gicha': { file: 'https://static.wixstatic.com/mp3/699687_d6d02eef338141f4b2e6c0633d444166.mp3' },
+            'tajo': { file: 'https://static.wixstatic.com/mp3/699687_faa360e6b45e466e934cd9e5c294ac6d.mp3' }, 
+            'yagu': { file: 'https://static.wixstatic.com/mp3/699687_32afbdb86c5c407f9d4e35dbd4dc8da1.mp3' },
+            'sigye': { file: 'https://static.wixstatic.com/mp3/699687_c3d5010c86fa4e00b3f58c75ac6e9c2a.mp3' },
+            'uyu': { file: 'https://static.wixstatic.com/mp3/699687_98ccb78733604a9ea3eeb34deb9379c7.mp3' }, 
+            'upyo': { file: 'https://static.wixstatic.com/mp3/699687_147848ac6f1141f09354c980dcaa396e.mp3' },
+            'pyeoda': { file: 'https://static.wixstatic.com/mp3/699687_8411d486a5b047a3a251218f3ebf9b92.mp3' },
+            'tokki': { file: 'https://static.wixstatic.com/mp3/699687_f2dfa0a9f3e344b894bdeea46abf6e37.mp3' },
+            'appa': { file: 'https://static.wixstatic.com/mp3/699687_e2ce5248465c4f2396026ed8778c7b19.mp3' },
+            'sagwa': { file: 'https://static.wixstatic.com/mp3/699687_2cff31ad95c64fb8ac04d21935c75957.mp3' },
+            'dwaeji': { file: 'https://static.wixstatic.com/mp3/699687_888f4a4e115145f6bc72b54f4530a662.mp3' },
+            'uija': { file: 'https://static.wixstatic.com/mp3/699687_e0045d3288df496b8817d8beb0d79e87.mp3' },
+            'swida': { file: 'https://static.wixstatic.com/mp3/699687_2210339d6b234473a216e9f5d1c251d1.mp3' },
+            'gawi': { file: 'https://static.wixstatic.com/mp3/699687_d93424d1a38f4a7592429f95303a272f.mp3' },
+            'gyohoe': { file: 'https://static.wixstatic.com/mp3/699687_28669c5c772c496aa334a170c51152b9.mp3' },
+            'seuweteo': { file: 'https://static.wixstatic.com/mp3/699687_c674069cf782487e838e1b3695d7f1e9.mp3' },
+            'uisa': { file: 'https://static.wixstatic.com/mp3/699687_b8451a31c5144584a275b810361251c8.mp3' }
+        };
+
+        const matchingAnswers = {
+            '11': { 'Lion': 'saja', 'Pantalon': 'baji', 'Tofu': 'dubu', 'Raisin': 'podo', 'Lait': 'uyu' },
+            '12': { 'Chien': 'gae', 'Train': 'gicha', 'Horloge': 'sigye', 'Autruche': 'tajo', 'Baseball': 'yagu' },
+            '13': { 'Univers': 'uju', 'Ville': 'dosi', 'Nez': 'ko', 'Poireau': 'pa', 'Soleil': 'hae' }
+        };
+        let matchState = {};
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function setupMcqOptions(quizNum) {
+            const data = mcqData[quizNum];
+            const optionsContainer = document.querySelector(`#page-${quizNum} .options-container`);
+            if (!optionsContainer) return;
+
+            const numOptions = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
+            const numDistractors = numOptions - 1;
+
+            const distractors = [...data.distractors];
+            shuffleArray(distractors);
+            const selectedDistractors = distractors.slice(0, numDistractors);
+
+            const finalOptions = [data.answer, ...selectedDistractors];
+            shuffleArray(finalOptions);
+
+            optionsContainer.innerHTML = finalOptions.map(opt => `
+                <label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>
+            `).join('');
+            
+            addRadioEventListeners(quizNum);
+        }
+
+        function addRadioEventListeners(quizNum) {
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                        opt.parentElement.classList.remove('selected');
+                    });
+                    if(e.target.checked) {
+                        e.target.parentElement.classList.add('selected');
+                    }
+                });
+            });
+        }
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey] || !sounds[soundKey].file) {
+                console.log(`Audio file for "${soundKey}" not available.`);
+                const audioButton = document.querySelector(`#page-${currentPageId.split('-')[1]} .audio-button`);
+                if(audioButton) {
+                    audioButton.style.transform = 'scale(1.1)';
+                    setTimeout(() => { audioButton.style.transform = 'scale(1)'; }, 200);
+                }
+                return;
+            };
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+            });
+        }
+
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+                if (pageId.startsWith('page-11') || pageId.startsWith('page-12') || pageId.startsWith('page-13')) {
+                    const quizNum = pageId.replace('page-', '');
+                    initializeMatchingQuiz(quizNum);
+                }
+            }
+
+            // [ADDED] PostMessage logic
+            if (pageId === 'page-19') { // This is the completion page ID
+                if (window.parent) {
+                    try {
+                        window.parent.postMessage({
+                            type: 'lesson_complete'
+                        }, '*');
+                    } catch (e) {
+                        console.error('postMessage failed:', e);
+                    }
+                }
+            }
+        }
+        
+        function handleSelection(quizNum, type, selectedBtn) {
+            if (selectedBtn.classList.contains('disabled')) return;
+            const state = matchState[quizNum];
+            const columnSelector = type === 'fr' ? `#match-fr-${quizNum}` : `#match-kr-${quizNum}`;
+            const currentlySelected = document.querySelector(`${columnSelector} .match-option.selected`);
+            if (currentlySelected) {
+                currentlySelected.classList.remove('selected');
+            }
+            selectedBtn.classList.add('selected');
+            state.currentSelection[type] = selectedBtn.dataset.word;
+            if (state.currentSelection.fr && state.currentSelection.kr) {
+                state.pairCount++;
+                const frBtn = document.querySelector(`#match-fr-${quizNum} .match-option[data-word="${state.currentSelection.fr}"]`);
+                const krBtn = document.querySelector(`#match-kr-${quizNum} .match-option[data-word="${state.currentSelection.kr}"]`);
+                state.userPairs[state.currentSelection.fr] = state.currentSelection.kr;
+                [frBtn, krBtn].forEach(btn => {
+                    btn.classList.remove('selected');
+                    btn.classList.add('disabled', `paired-${state.pairCount}`);
+                });
+                state.currentSelection = { fr: null, kr: null };
+            }
+        }
+
+        function initializeMatchingQuiz(quizNum) {
+            matchState[quizNum] = {
+                currentSelection: { fr: null, kr: null },
+                userPairs: {},
+                pairCount: 0
+            };
+            const frButtons = document.querySelectorAll(`#match-fr-${quizNum} .match-option`);
+            const krButtons = document.querySelectorAll(`#match-kr-${quizNum} .match-option`);
+            frButtons.forEach(btn => btn.onclick = () => handleSelection(quizNum, 'fr', btn));
+            krButtons.forEach(btn => btn.onclick = () => handleSelection(quizNum, 'kr', btn));
+            const krContainer = document.getElementById(`match-kr-${quizNum}`);
+            for (let i = krContainer.children.length; i >= 0; i--) {
+                krContainer.appendChild(krContainer.children[Math.random() * i | 0]);
+            }
+        }
+
+        function checkMatchingAnswer(quizNum, nextPageId) {
+            const correctPairs = matchingAnswers[quizNum];
+            const userPairs = matchState[quizNum].userPairs;
+            let allCorrect = true;
+            const frButtons = document.querySelectorAll(`#match-fr-${quizNum} .match-option`);
+            
+            if (Object.keys(userPairs).length < frButtons.length) {
+                const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+                const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez tout associer.</p>`;
+                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                return;
+            }
+
+            frButtons.forEach(btn => {
+                const frWord = btn.dataset.word;
+                const userKrWord = userPairs[frWord];
+                const correctKrWord = correctPairs[frWord];
+                const krBtn = document.querySelector(`#match-kr-${quizNum} .match-option[data-word="${userKrWord}"]`);
+                if (userKrWord === correctKrWord) {
+                    btn.classList.add('correct-match');
+                    if(krBtn) krBtn.classList.add('correct-match');
+                } else {
+                    btn.classList.add('incorrect-match');
+                    if(krBtn) krBtn.classList.add('incorrect-match');
+                    allCorrect = false;
+                }
+            });
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            navEl.querySelector('button[onclick^="checkMatchingAnswer"]').style.display = 'none';
+            if (allCorrect) {
+                const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+
+        function checkTypingAnswer(quizNum, correctAnswer, nextPageId) {
+            const inputEl = document.querySelector(`input[name="q${quizNum}"]`);
+            const userAnswer = inputEl.value.trim();
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            if (!userAnswer) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez entrer une réponse.</p>`;
+                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                return;
+            }
+            inputEl.disabled = true;
+            navEl.querySelector('button[onclick^="checkTypingAnswer"]').style.display = 'none';
+            if (userAnswer === correctAnswer) {
+                inputEl.classList.add('border-green-500', 'bg-green-50');
+                const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                inputEl.classList.add('border-red-500', 'bg-red-50');
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+
+        function checkAnswer(quizNum, nextPageId) {
+            const selectedOption = document.querySelector(`input[name="q${quizNum}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            if (!selectedOption) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                return;
+            }
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'default';
+            });
+            navEl.querySelector('button[onclick^="checkAnswer"]').style.display = 'none';
+            const correctAnswer = mcqData[quizNum].answer;
+            if (selectedOption.value === correctAnswer) {
+                selectedOption.parentElement.classList.add('correct');
+                const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                selectedOption.parentElement.classList.add('incorrect');
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+        
+        function resetQuiz(quizNum) {
+            const pageId = `page-${quizNum}`;
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            feedbackContainer.innerHTML = '';
+            
+            // Find the correct validation button to restore
+            let validateButton = navEl.querySelector('button[onclick^="checkAnswer"]');
+            if (!validateButton) validateButton = navEl.querySelector('button[onclick^="checkMatchingAnswer"]');
+            if (!validateButton) validateButton = navEl.querySelector('button[onclick^="checkTypingAnswer"]');
+            
+            if (validateButton) {
+                validateButton.style.display = 'inline-block';
+            } else { 
+                // Button was dynamically generated, so re-fetch from initial HTML
+                const originalNav = document.createElement('div');
+                originalNav.innerHTML = navEl.dataset.initialHtml;
+                const originalButton = originalNav.querySelector('button.bg-blue-600');
+                if (originalButton) {
+                    navEl.querySelector('.feedback-area + button').replaceWith(originalButton);
+                    originalButton.onclick = new Function(originalButton.getAttribute('onclick'));
+                }
+            }
+            
+            const pageElement = document.getElementById(pageId);
+            
+            if (parseInt(quizNum) >= 1 && parseInt(quizNum) <= 10) {
+                setupMcqOptions(quizNum); // This also re-adds listeners
+            }
+
+            const typingInput = pageElement.querySelector(`input[type="text"][name="q${quizNum}"]`);
+            if (typingInput) {
+                typingInput.disabled = false;
+                typingInput.value = '';
+                typingInput.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
+            }
+
+            const matchingContainer = pageElement.querySelector(`#match-quiz-${quizNum}`);
+            if (matchingContainer) {
+                const matchOptions = matchingContainer.querySelectorAll('.match-option');
+                matchOptions.forEach(opt => {
+                    opt.className = 'match-option'; // Reset all classes
+                });
+                initializeMatchingQuiz(quizNum);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+             // Save initial nav state
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                nav.dataset.initialHtml = nav.innerHTML;
+            });
+
+            for (let i = 1; i <= 10; i++) {
+                setupMcqOptions(i.toString());
+            }
+            showPage('page-0');
+        });
+        
+        const toggleButton = document.getElementById('mobile-toggle');
+        const courseWrapper = document.querySelector('.course-wrapper');
+        toggleButton.addEventListener('click', () => {
+            courseWrapper.classList.toggle('mobile-view');
+            toggleButton.textContent = courseWrapper.classList.contains('mobile-view') ? 'Vue bureau' : 'Vue mobile';
+        });
+
+    </script>
+</body>
+</html>
+
