@@ -60,12 +60,11 @@
         .quiz-options-vertical { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 250px; margin: 0 auto; }
         .quiz-options-horizontal { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
         
-        /* [MODIFIED] Using CSS variables for padding and font-size */
+        /* [MODIFIED] Reverted to original fixed padding and removed font-size */
         .nav-button { 
-            padding: var(--padding-sm) var(--padding-md); 
+            padding: 0.75rem 1.5rem; 
             border-radius: 0.5rem; 
             font-weight: 600; 
-            font-size: var(--font-base); /* Added font-size */
             transition: background-color 0.2s; 
         }
         .feedback-area { text-align: right; min-height: 52px; display: flex; justify-content: flex-end; align-items: center; gap: 1rem; }
@@ -471,8 +470,8 @@
 
             const consonants1 = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
             const consonants2 = ['ㄲ', 'ㄸ', 'ㅃ', 'ㅆ', 'ㅉ'];
-             // [FIXED] Added composite vowels to jamo bank
-            const vowels = ['ㅏ', 'ㅑ','ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅒ', 'ㅔ', 'ㅖ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅢ']; 
+             // [REVERTED] Removed composite vowels as requested
+            const vowels = ['ㅏ', 'ㅑ','ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅒ', 'ㅔ', 'ㅖ']; 
             
             const conRow1 = document.createElement('div'); conRow1.className = 'jamo-row';
             consonants1.forEach(jamo => conRow1.appendChild(createJamoKey(quizNum, jamo)));
