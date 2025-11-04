@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Leçon supplémentaire 15 - Vocabulaire (13)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5vmin, 2rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+        .course-wrapper { width: 100%; max-width: 600px; transition: transform 0.4s ease-in-out; transform-origin: center center; }
+        .course-container { width: 100%; position: relative; aspect-ratio: 1 / 1; }
+        .course-wrapper.mobile-view { transform: scale(0.6); }
+        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; background-color: white; padding: var(--padding-lg); border-radius: 0.75rem; box-sizing: border-box; }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+        
+        .title-text { 
+            font-size: var(--font-title); 
+            font-weight: 700;
+            text-align: center; 
+        }
+        
+        .vocab-card-container { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 2rem 0; }
+        .vocab-card { border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; background-color: #f9fafb; }
+        .vocab-card img { width: 100%; height: 100%; object-fit: cover; }
+        .vocab-card .vocab-text { font-family: 'Noto Sans KR', sans-serif; font-size: 3rem; font-weight: 700; cursor: pointer; }
+        
+        #mobile-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background-color: #1f2937; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .quiz-question { font-weight: 600; font-size: 1.125rem; color: #1f2937; margin-bottom: 1rem; text-align: center; }
+        .quiz-option { display: inline-flex; flex-direction: column; align-items:center; gap: 0.5rem; padding: 1rem; border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.25rem; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; font-size: 1.5rem; font-family: 'Inter', sans-serif; text-align: center; min-width: 120px; }
+        .quiz-option.korean { font-family: 'Noto Sans KR', sans-serif; }
+        .quiz-option img { height: 80px; width: 100px; object-fit: cover; border-radius: 0.25rem; background-color: #f3f4f6;}
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .quiz-image { width: 150px; height: 150px; object-fit: cover; border-radius: 0.75rem; margin-bottom: 1rem; cursor: pointer; }
+        .quiz-options-vertical { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 250px; margin: 0 auto; }
+        .quiz-options-horizontal { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+        
+        /* [MODIFIED] Using CSS variables for padding and font-size for consistency */
+        .nav-button { 
+            padding: var(--padding-sm) var(--padding-md); 
+            border-radius: 0.5rem; 
+            font-weight: 600; 
+            font-size: var(--font-base); /* Added font-size */
+            transition: background-color 0.2s; 
+        }
+        .feedback-area { text-align: right; min-height: 52px; display: flex; justify-content: flex-end; align-items: center; gap: 1rem; }
+        .audio-button { background: none; border: none; cursor: pointer; }
+        .audio-button:disabled { cursor: not-allowed; opacity: 0.5; }
+        .audio-icon { width: 2.5rem; height: 2.5rem; color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover:not(:disabled) .audio-icon { color: #1d4ed8; }
+
+        .input-zone-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; min-height: 80px; gap: 0.5rem;}
+        .syllable-input { border: 2px solid #cbd5e1; background-color: #f9fafb; width: 100px; height: 100px; font-size: 4rem; font-family: 'Noto Sans KR', sans-serif; font-weight: 700; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: border-color 0.2s; }
+        .syllable-input.active { border-color: #3b82f6; }
+        .jamo-bank { display: flex; flex-direction: column; gap: 0.5rem; justify-content: center; padding-top: 1rem; }
+        .jamo-row { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
+        .jamo-key {
+            width: 42px; height: 42px;
+            font-size: 1rem;
+            border: 1px solid #d1d5db; border-radius: 0.25rem;
+            background-color: #f9fafb;
+            cursor: pointer;
+            display:flex; align-items:center; justify-content:center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .jamo-key:hover { background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="course-wrapper">
+        <div class="shadow-2xl course-container">
+            
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active items-center justify-center text-center">
+                <div class="page-content">
+                    <h1 class="title-text text-gray-800 mb-6">Leçon supplémentaire 15 - Vocabulaire (13)</h1>
+                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Vocabulary Intro Pages -->
+            <div id="page-1" class="page">
+                <div class="page-content">
+                    <div class="vocab-card-container">
+                        <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_6cf41c4ecaa84a0f9fb64e2cd8bdaa37~mv2.png" alt="Cheval"></div>
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('mal')">말</span></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant</button>
+                </div>
+            </div>
+            <div id="page-2" class="page">
+                <div class="page-content">
+                    <div class="vocab-card-container">
+                        <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_649fc8a084724bdba11ce3f11e7cbada~mv2.png" alt="Tête"></div>
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('meori')">머리</span></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant</button>
+                </div>
+            </div>
+            <div id="page-3" class="page">
+                <div class="page-content">
+                    <div class="vocab-card-container">
+                        <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_79171b7dc27d4edcbf8aa8e074b123fc~mv2.png" alt="Rivière"></div>
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('gang')">강</span></div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer le quiz</button>
+                </div>
+            </div>
+
+            <!-- Quiz Pages will be generated here by JS -->
+
+            <!-- Final Completion Page -->
+            <div id="page-29" class="page items-center justify-center text-center">
+                <div class="page-content">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Leçon terminée !</h2>
+                    <p class="text-gray-600 text-xl">Félicitations !</p>
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <button id="mobile-toggle">Vue mobile</button>
+    
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="audio-icon-svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+        </symbol>
+    </svg>
+
+    <script>
+        let currentPageId = 'page-0';
+        let initialNavStates = {};
+        let dictationInputs = {};
+        let activeDictationBox = null;
+
+        const sounds = {
+            'namu': { file: 'https://static.wixstatic.com/mp3/699687_b4b721131b1f4f52a03fa5dbb3cb779b.mp3' }, 
+            'nara': { file: 'https://static.wixstatic.com/mp3/699687_6b66ac55b5324cb1a4cc047ac6a7d22a.mp3' }, 
+            'il': { file: 'https://static.wixstatic.com/mp3/699687_7dc2a0f5df8446c6a67f091a9880e118.mp3' },
+            'mal': { file: 'https://static.wixstatic.com/mp3/699687_1c8a2152b8f2441fac05c79ecfff4d44.mp3' },
+            'meori': { file: 'https://static.wixstatic.com/mp3/699687_66a6fc45d03d4ac19a06dd5dd017802e.mp3' },
+            'gang': { file: 'https://static.wixstatic.com/mp3/699687_fac8f50ddc354a12927d526c896a919f.mp3' },
+            'gawi': { file: 'https://static.wixstatic.com/mp3/699687_d93424d1a38f4a7592429f95303a272f.mp3' }, 
+            'sseuda': { file: 'https://static.wixstatic.com/mp3/699687_4593007f5ee348bc92c72d63a9b260b2.mp3' }, 
+            'hae': { file: 'https://static.wixstatic.com/mp3/699687_193396d6bb89436286a044133f3f16b7.mp3' },
+            'dosi': { file: 'https://static.wixstatic.com/mp3/699687_1d0912a8fc5646e1ac36d590310dc1a8.mp3' }, 
+            'gasu': { file: 'https://static.wixstatic.com/mp3/699687_6c979c3ecd5742a1a87bfa5a07550c2b.mp3' }, 
+            'upyo': { file: 'https://static.wixstatic.com/mp3/699687_147848ac6f1141f09354c980dcaa396e.mp3' },
+            'uyu': { file: 'https://static.wixstatic.com/mp3/699687_98ccb78733604a9ea3eeb34deb9379c7.mp3' }, 
+            'tokki': { file: 'https://static.wixstatic.com/mp3/699687_f2dfa0a9f3e344b894bdeea46abf6e37.mp3' }, 
+            'tto': { file: 'https://static.wixstatic.com/mp3/699687_972f23240d6c483296e033f07a783305.mp3' },
+            'jjada': { file: 'https://static.wixstatic.com/mp3/699687_662f045891cc4e3fb65e8d7465c9fcf3.mp3' }, 
+            'gicha': { file: 'https://static.wixstatic.com/mp3/699687_d6d02eef338141f4b2e6c0633d444166.mp3' }, 
+            'jucha': { file: 'https://static.wixstatic.com/mp3/699687_d2081c183c5544508f3616c7fd257ffb.mp3' },
+            'sopo': { file: 'https://static.wixstatic.com/mp3/699687_c3e378fa4773459baacecbc75209ace7.mp3' }, 
+            'yaegi': { file: 'https://static.wixstatic.com/mp3/699687_281f0a9cf0ec4df5ae9c59f085e5c9cb.mp3' }, 
+            'podo': { file: 'https://static.wixstatic.com/mp3/699687_31327ab0374443c7a77625358120faeb.mp3' },
+            'uisa': { file: 'https://static.wixstatic.com/mp3/699687_3fca1fe78d4543c7b9ae42c4988f2bbf.mp3' },
+            'sagwa': { file: 'https://static.wixstatic.com/mp3/699687_2cff31ad95c64fb8ac04d21935c75957.mp3' },
+            'kkaji': { file: 'https://static.wixstatic.com/mp3/699687_3a900e5abb6940d48fad2568d64edadf.mp3' },
+            'baji': { file: 'https://static.wixstatic.com/mp3/699687_62be60a8dc6945a9a90b26e532f450d3.mp3' },
+            'gae': { file: 'https://static.wixstatic.com/mp3/699687_df8a183ca9a14530a22d8ca61e7d43a9.mp3' },
+            'kyeoda': { file: 'https://static.wixstatic.com/mp3/699687_d9d2e17d0ed7412381095b7f38852d24.mp3' },
+            'pyeoda': { file: 'https://static.wixstatic.com/mp3/699687_8411d486a5b047a3a251218f3ebf9b92.mp3' },
+            'sigye': { file: 'https://static.wixstatic.com/mp3/699687_c3d5010c86fa4e00b3f58c75ac6e9c2a.mp3' },
+            'hyuga': { file: 'https://static.wixstatic.com/mp3/699687_d4a98326335b4d21a71d1921ef47fd7f.mp3' },
+            'tajo': { file: 'https://static.wixstatic.com/mp3/699687_faa360e6b45e466e934cd9e5c294ac6d.mp3' },
+            'gyohoe': { file: 'https://static.wixstatic.com/mp3/699687_7414cd0d17d542708a9ca2f40319e6e6.mp3' },
+            'dwaeji': { file: 'https://static.wixstatic.com/mp3/699687_888f4a4e115145f6bc72b54f4530a662.mp3' },
+            'swida': { file: 'https://static.wixstatic.com/mp3/699687_027ca43bbb55488ca464dae0b0d6907a.mp3' },
+        };
+
+        const quizData = {
+            4: { type: 'img-to-fr', audio: 'mal', image: 'https://static.wixstatic.com/media/699687_6cf41c4ecaa84a0f9fb64e2cd8bdaa37~mv2.png', answer: 'Cheval', options: ['Cheval', 'Chien'] },
+            5: { type: 'img-to-fr', audio: 'meori', image: 'https://static.wixstatic.com/media/699687_649fc8a084724bdba11ce3f11e7cbada~mv2.png', answer: 'Tête', options: ['Nez', 'Tête'] },
+            6: { type: 'img-to-fr', audio: 'gang', image: 'https://static.wixstatic.com/media/699687_79171b7dc27d4edcbf8aa8e074b123fc~mv2.png', answer: 'Rivière', options: ['Rivière', 'Timbre'] },
+            7: { type: 'audio-to-kr', audio: 'mal', answer: '말', options: ['발', '말'] },
+            8: { type: 'audio-to-kr', audio: 'meori', answer: '머리', options: ['머리', '버리'] },
+            9: { type: 'audio-to-kr', audio: 'gang', answer: '강', options: ['간', '강'] },
+            10: { type: 'audio-to-kr', audio: 'sagwa', answer: '사과', options: ['사가', '사과'] },
+            11: { type: 'audio-to-kr', audio: 'kkaji', answer: '까지', options: ['까지', '카지'] },
+            12: { type: 'img-to-audio', image: 'https://static.wixstatic.com/media/699687_6cf41c4ecaa84a0f9fb64e2cd8bdaa37~mv2.png', answer: 'mal', options: ['mal', 'il'] },
+            13: { type: 'img-to-audio', image: 'https://static.wixstatic.com/media/699687_649fc8a084724bdba11ce3f11e7cbada~mv2.png', answer: 'meori', options: ['baji', 'meori'] },
+            14: { type: 'img-to-audio', image: 'https://static.wixstatic.com/media/699687_79171b7dc27d4edcbf8aa8e074b123fc~mv2.png', answer: 'gang', options: ['gang', 'gae'] },
+            15: { type: 'img-to-audio', image: 'https://static.wixstatic.com/media/699687_0310c1e11189477b8205f289ae864257~mv2.png', answer: 'kyeoda', options: ['pyeoda', 'kyeoda'] },
+            16: { type: 'audio-to-img', audio: 'mal', answer: 'mal', options: { 'mal': 'https://static.wixstatic.com/media/699687_6cf41c4ecaa84a0f9fb64e2cd8bdaa37~mv2.png', 'tokki': 'https://static.wixstatic.com/media/699687_2b878251dd90430dbf0c35e829f7378a~mv2.png' } },
+            17: { type: 'audio-to-img', audio: 'sigye', answer: 'sigye', options: { 'hyuga': 'https://static.wixstatic.com/media/699687_4ddd0a1bd7cc4c19bce28d4d2c1f1d78~mv2.png', 'sigye': 'https://static.wixstatic.com/media/699687_57e3517d47344744ad5a48f07bdf60a4~mv2.png' } },
+            18: { type: 'audio-to-img', audio: 'tajo', answer: 'tajo', options: { 'tajo': 'https://static.wixstatic.com/media/699687_0114926b55df4768ba7f5cb2f39c7a46~mv2.png', 'jucha': 'https://static.wixstatic.com/media/699687_46af37a781ed4b60acb9a716740cf14b~mv2.png' } },
+            19: { type: 'audio-to-img', audio: 'meori', answer: 'meori', options: { 'namu': 'https://static.wixstatic.com/media/699687_3f2e12f5c0ac474db77401809ff398e9~mv2.png', 'meori': 'https://static.wixstatic.com/media/699687_649fc8a084724bdba11ce3f11e7cbada~mv2.png' } },
+            20: { type: 'audio-to-img', audio: 'gang', answer: 'gang', options: { 'gang': 'https://static.wixstatic.com/media/699687_79171b7dc27d4edcbf8aa8e074b123fc~mv2.png', 'tto': 'https://static.wixstatic.com/media/699687_ac16ff46a87e434789a644e441dd0833~mv2.png' } },
+            21: { type: 'audio-to-fr', audio: 'gyohoe', answer: 'Église', options: ['Église', 'Arbre'] },
+            22: { type: 'audio-to-fr', audio: 'meori', answer: 'Tête', options: ['Tête', 'Médecin'] },
+            23: { type: 'audio-to-fr', audio: 'dwaeji', answer: 'Cochon', options: ['Cochon', 'Autruche'] },
+            24: { type: 'dictation', audio: 'swida', answer: '쉬다', syllables: 2 },
+            25: { type: 'dictation', audio: 'meori', answer: '머리', syllables: 2 },
+            26: { type: 'dictation', audio: 'gang', answer: '강', syllables: 1 },
+            27: { type: 'dictation', audio: 'nara', answer: '나라', syllables: 2 },
+            28: { type: 'dictation', audio: 'mal', answer: '말', syllables: 1 },
+        };
+
+        function createQuizPage(quizNum) {
+            const data = quizData[quizNum];
+            if (!data) return;
+
+            let contentHtml = '';
+            let questionText = '';
+            
+            switch(data.type) {
+                case 'img-to-fr':
+                    questionText = "Choisissez la bonne signification.";
+                    contentHtml = `
+                        <img src="${data.image}" alt="Quiz Image" class="quiz-image mx-auto" onclick="playSound('${data.audio}')" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e2e8f0/64748b?text=Image';">
+                        <div class="quiz-options-vertical">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
+                    break;
+                case 'audio-to-kr':
+                    questionText = "Choisissez la bonne écriture.";
+                    contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
+                                   <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option korean"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
+                    break;
+                case 'img-to-audio':
+                    questionText = "Choisissez le bon son.";
+                     contentHtml = `<img src="${data.image}" alt="Quiz Image" class="quiz-image mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e2e8f0/64748b?text=Image';">
+                                   <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}"><button class="audio-button !m-0" onclick="playSound('${opt}')"><svg class="audio-icon"><use href="#audio-icon-svg"/></svg></button></label>`).join('')}</div>`;
+                    break;
+                case 'audio-to-img':
+                    questionText = "Choisissez la bonne image.";
+                    contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
+                                   <div class="quiz-options-horizontal">${Object.entries(data.options).map(([key, src]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${key}"><img src="${src}" onerror="this.onerror=null;this.src='https://placehold.co/100x100/e2e8f0/64748b?text=Image';"></label>`).join('')}</div>`;
+                    break;
+                case 'audio-to-fr':
+                    questionText = "Choisissez la bonne signification.";
+                    contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
+                                   <div class="quiz-options-vertical">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
+                    break;
+                case 'dictation':
+                    questionText = "Écrivez en Hangeul.";
+                    let inputs = '';
+                    for(let i=0; i<data.syllables; i++){
+                        inputs += `<div id="input-${quizNum}-${i}" class="syllable-input" onclick="setActiveDictationBox(${quizNum}, ${i})"></div>`;
+                    }
+                    contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
+                                   <div class="input-zone-container">${inputs}</div>
+                                   <div id="jamo-bank-${quizNum}" class="jamo-bank"></div>`;
+                    break;
+            }
+
+            const pageHtml = `
+                <div id="page-${quizNum}" class="page">
+                    <div class="page-content">
+                        <p class="quiz-question">${questionText}</p>
+                        ${contentHtml}
+                    </div>
+                    <div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full">
+                        <button onclick="showPage('page-${quizNum - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                        <div class="feedback-area">
+                           <button onclick="${data.type === 'dictation' ? `validateDictation(${quizNum}, '${data.answer}', 'page-${quizNum + 1}')` : `checkAnswer(${quizNum}, '${data.answer}', 'page-${quizNum + 1}')`}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        </div>
+                    </div>
+                </div>`;
+            
+            const targetElement = document.getElementById(`page-${quizNum - 1}`) || document.getElementById('page-3');
+            targetElement.insertAdjacentHTML('afterend', pageHtml);
+            
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
+                    if(e.target.checked) e.target.parentElement.classList.add('selected');
+                });
+            });
+
+            if (data.type === 'dictation') {
+                setupDictationQuiz(quizNum);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            for (let i = 4; i <= 28; i++) {
+                createQuizPage(i);
+            }
+            const finalQuizButton = document.querySelector('#quiz-28-nav button[onclick^="validateDictation"]');
+            if(finalQuizButton) {
+                finalQuizButton.setAttribute('onclick', `validateDictation(28, '${quizData[28].answer}', 'page-29')`);
+            }
+            
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                initialNavStates[nav.id] = nav.innerHTML;
+            });
+            
+            showPage('page-0');
+        });
+
+        function playSound(soundKey) {
+            if (!sounds[soundKey] || !sounds[soundKey].file) {
+                console.error("Audio file is missing for key:", soundKey);
+                return;
+            }
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+            });
+        }
+
+        // [MODIFIED] Consolidated showPage function
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+                
+                // [ADDED] PostMessage logic
+                if (pageId === 'page-29') { // This is the completion page ID
+                    if (window.parent) {
+                        try {
+                            window.parent.postMessage({ type: 'lesson_complete' }, '*');
+                        } catch (e) {
+                            console.error('postMessage failed:', e);
+                        }
+                    }
+                }
+                
+                resetPage(nextPage); // Reset page state on show
+            }
+        }
+
+        // [ADDED] resetPage function to restore page state
+        function resetPage(pageElement) {
+            const pageId = pageElement.id;
+            const quizNumMatch = pageId.match(/page-(\d+)/);
+            if (!quizNumMatch) return; // Not a quiz page
+            
+            const quizNum = parseInt(quizNumMatch[1]);
+            if (quizNum < 4) return; // Not a quiz page (it's vocab intro)
+
+            // Find the nav element and restore it
+            const navEl = pageElement.querySelector(`#quiz-${quizNum}-nav`);
+            if (navEl && initialNavStates[navEl.id]) {
+                 navEl.innerHTML = initialNavStates[navEl.id];
+                 // Re-bind buttons
+                 navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                    btn.onclick = new Function(btn.getAttribute('onclick'));
+                 });
+            }
+
+            // Reset MCQs
+            pageElement.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                opt.style.cursor = 'pointer';
+                const radio = opt.querySelector('input');
+                if (radio) { radio.checked = false; radio.disabled = false; }
+            });
+
+            // Reset Dictation
+            if (quizData[quizNum] && quizData[quizNum].type === 'dictation') {
+                setupDictationQuiz(quizNum);
+            }
+        }
+        
+        function checkAnswer(quizNum, correctAnswer, nextPageId) {
+            const selectedOption = document.querySelector(`input[name="q${quizNum}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`.feedback-area`);
+            const validerButton = navEl.querySelector('button[onclick^="checkAnswer"]');
+            
+            if (!selectedOption) {
+                // [MODIFIED] Added font-size styling to feedback
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => { 
+                    const currentFeedback = feedbackContainer.querySelector('p');
+                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
+                        const navId = `quiz-${quizNum}-nav`;
+                        if (initialNavStates[navId]) {
+                            navEl.innerHTML = initialNavStates[navId];
+                            navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                                btn.onclick = new Function(btn.getAttribute('onclick'));
+                            });
+                        }
+                    }
+                }, 2000);
+                return;
+            }
+            
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'default';
+            });
+            if(validerButton) validerButton.style.display = 'none';
+
+            const buttonText = (nextPageId === 'page-29') ? 'Terminer' : 'Suivant &rarr;';
+
+            if (selectedOption.value === correctAnswer) {
+                selectedOption.parentElement.classList.add('correct');
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                selectedOption.parentElement.classList.add('incorrect');
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum}, '${correctAnswer}', '${nextPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+
+        // [MODIFIED] resetQuiz simplified to call resetPage
+        function resetQuiz(quizNum, correctAnswer, nextPageId) {
+            const pageElement = document.getElementById(`page-${quizNum}`);
+            if (pageElement) resetPage(pageElement);
+        }
+        
+        const Hangul = {
+            CHOSEONG: ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'],
+            JUNGSEONG: ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'],
+            JONGSEONG: ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'],
+            JUNGSEONG_COMBINATIONS: { 'ㅗ': {'ㅏ': 'ㅘ', 'ㅐ': 'ㅙ', 'ㅣ': 'ㅚ'}, 'ㅜ': {'ㅓ': 'ㅝ', 'ㅔ': 'ㅞ', 'ㅣ': 'ㅟ'}, 'ㅡ': {'ㅣ': 'ㅢ'} },
+            JONGSEONG_COMBINATIONS: { 'ㄱ': {'ㅅ': 'ㄳ'}, 'ㄴ': {'ㅈ': 'ㄵ', 'ㅎ': 'ㄶ'}, 'ㄹ': {'ㄱ': 'ㄺ', 'ㅁ': 'ㄻ', 'ㅂ': 'ㄼ', 'ㅅ': 'ㄽ', 'ㅌ': 'ㄾ', 'ㅍ': 'ㄿ', 'ㅎ': 'ㅀ'}, 'ㅂ': {'ㅅ': 'ㅄ'} },
+            decompose: (syllable) => {
+                const code = syllable.charCodeAt(0) - 0xAC00;
+                if (code < 0 || code > 11171) return [syllable];
+                const jongIndex = code % 28;
+                const jungIndex = ((code - jongIndex) / 28) % 21;
+                const choIndex = Math.floor(((code - jongIndex) / 28) / 21);
+                return [Hangul.CHOSEONG[choIndex], Hangul.JUNGSEONG[jungIndex], Hangul.JONGSEONG[jongIndex] || null].filter(Boolean);
+            }
+        };
+
+        function setupDictationQuiz(quizNum) {
+            const jamoBank = document.getElementById(`jamo-bank-${quizNum}`);
+            if (!jamoBank) return;
+
+            const container = document.getElementById(`page-${quizNum}`).querySelector('.input-zone-container');
+            const boxCount = container.children.length;
+            dictationInputs[quizNum] = Array(boxCount).fill(0).map(() => []);
+            
+            // [FIXED] Clear previous content
+            jamoBank.innerHTML = ''; 
+            container.querySelectorAll('.syllable-input').forEach(box => box.textContent = '');
+
+            const consonants1 = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+            const consonants2 = ['ㄲ', 'ㄸ', 'ㅃ', 'ㅆ', 'ㅉ'];
+             // [FIXED] Added composite vowels to jamo bank
+            const vowels = ['ㅏ', 'ㅑ','ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅒ', 'ㅔ', 'ㅖ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅢ']; 
+            
+            const conRow1 = document.createElement('div'); conRow1.className = 'jamo-row';
+            consonants1.forEach(jamo => conRow1.appendChild(createJamoKey(quizNum, jamo)));
+            jamoBank.appendChild(conRow1);
+
+            const conRow2 = document.createElement('div'); conRow2.className = 'jamo-row';
+            consonants2.forEach(jamo => conRow2.appendChild(createJamoKey(quizNum, jamo)));
+            jamoBank.appendChild(conRow2);
+
+            const vowRow = document.createElement('div'); vowRow.className = 'jamo-row';
+            vowels.forEach(jamo => vowRow.appendChild(createJamoKey(quizNum, jamo)));
+            
+            const deleteKey = document.createElement('button');
+            deleteKey.className = 'jamo-key';
+            deleteKey.innerHTML = '←';
+            deleteKey.onclick = () => processJamo(quizNum, 'DELETE');
+            vowRow.appendChild(deleteKey);
+            
+            jamoBank.appendChild(vowRow);
+
+            updateDictationDisplay(quizNum);
+            setActiveDictationBox(quizNum, 0);
+        }
+        
+        function setActiveDictationBox(quizNum, boxIndex) {
+            activeDictationBox = { quizNum, boxIndex };
+            document.querySelectorAll(`#page-${quizNum} .syllable-input`).forEach(el => el.classList.remove('active'));
+            const currentBox = document.getElementById(`input-${quizNum}-${boxIndex}`);
+            if (currentBox) {
+                currentBox.classList.add('active');
+            }
+        }
+
+        function createJamoKey(quizNum, jamo) {
+            const key = document.createElement('button');
+            key.className = 'jamo-key';
+            key.textContent = jamo;
+            key.onclick = () => processJamo(quizNum, jamo);
+            return key;
+        }
+
+        function processJamo(quizNum, jamo) {
+            if (!activeDictationBox || activeDictationBox.quizNum !== quizNum) setActiveDictationBox(quizNum, 0);
+            
+            const { boxIndex } = activeDictationBox;
+            let buffer = dictationInputs[quizNum][boxIndex];
+
+            if (jamo === 'DELETE') {
+                if (buffer.length > 0) {
+                    const lastJamo = buffer.pop();
+                    // Deconstruct composite jamo if needed (simplified)
+                    for (const base in Hangul.JUNGSEONG_COMBINATIONS) {
+                        for (const add in Hangul.JUNGSEONG_COMBINATIONS[base]) {
+                            if (Hangul.JUNGSEONG_COMBINATIONS[base][add] === lastJamo) { buffer.push(base); break; }
+                        }
+                    }
+                     for (const base in Hangul.JONGSEONG_COMBINATIONS) {
+                        for (const add in Hangul.JONGSEONG_COMBINATIONS[base]) {
+                            if (Hangul.JONGSEONG_COMBINATIONS[base][add] === lastJamo) { buffer.push(base); break; }
+                        }
+                    }
+                }
+            } else {
+                const last = buffer[buffer.length - 1];
+                if (Hangul.JUNGSEONG.includes(jamo)) { // Vowel
+                    if (buffer.length > 0 && Hangul.JUNGSEONG.includes(last)) {
+                        const combined = Hangul.JUNGSEONG_COMBINATIONS[last]?.[jamo];
+                        if (combined) buffer[buffer.length - 1] = combined;
+                        else buffer.push(jamo);
+                    } else {
+                        buffer.push(jamo);
+                    }
+                } else { // Consonant
+                     if (buffer.length > 1 && Hangul.JONGSEONG.includes(last)) {
+                        const combined = Hangul.JONGSEONG_COMBINATIONS[last]?.[jamo];
+                        if (combined) buffer[buffer.length - 1] = combined;
+                        else buffer.push(jamo);
+                    } else {
+                        buffer.push(jamo);
+                    }
+                }
+            }
+            updateDictationDisplay(quizNum);
+        }
+        
+        function combineHangeul(jamoArray) {
+            if (!jamoArray || jamoArray.length === 0) return '';
+            let cho = -1, jung = -1, jong = 0;
+            if (jamoArray.length > 0) cho = Hangul.CHOSEONG.indexOf(jamoArray[0]);
+            if (jamoArray.length > 1) jung = Hangul.JUNGSEONG.indexOf(jamoArray[1]);
+            if (jamoArray.length > 2) jong = Hangul.JONGSEONG.indexOf(jamoArray[2]);
+            if (cho !== -1 && jung !== -1) {
+                return String.fromCharCode(0xAC00 + (cho * 21 * 28) + (jung * 28) + jong);
+            }
+            return jamoArray.join('');
+        }
+
+        function updateDictationDisplay(quizNum) {
+            const container = document.getElementById(`page-${quizNum}`).querySelector('.input-zone-container');
+            const boxes = container.querySelectorAll('.syllable-input');
+            
+            boxes.forEach((box, index) => {
+                 box.textContent = combineHangeul(dictationInputs[quizNum][index]);
+            });
+        }
+
+        function validateDictation(quizNum, correctAnswer, nextPageId) {
+            let userAnswer = '';
+            dictationInputs[quizNum].forEach(jamoArray => {
+                userAnswer += combineHangeul(jamoArray);
+            });
+
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackEl = navEl.querySelector(`.feedback-area`);
+            const validerButton = navEl.querySelector('button[onclick^="validateDictation"]');
+            
+            // [ADDED] Check for empty answer
+            if (userAnswer.trim() === '') {
+                feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez entrer une réponse.</p>`;
+                setTimeout(() => {
+                    const currentFeedback = feedbackEl.querySelector('p');
+                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
+                        const navId = `quiz-${quizNum}-nav`;
+                        if (initialNavStates[navId]) {
+                            navEl.innerHTML = initialNavStates[navId];
+                            navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                                btn.onclick = new Function(btn.getAttribute('onclick'));
+                            });
+                        }
+                    }
+                }, 2000);
+                return;
+            }
+
+            const buttonText = (nextPageId === 'page-29') ? 'Terminer' : 'Suivant &rarr;';
+
+            if (userAnswer === correctAnswer) {
+                feedbackEl.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+                if(validerButton) validerButton.style.display = 'none';
+            } else {
+                // [MODIFIED] Added font-size styling to feedback
+                feedbackEl.innerHTML = `<p class="text-red-600 font-bold mr-4" style="font-size: var(--font-base);">Incorrect.</p> <button onclick="resetDictationQuiz(${quizNum}, '${correctAnswer}', '${nextPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                if(validerButton) validerButton.style.display = 'none';
+            }
+        }
+
+        // [MODIFIED] resetDictationQuiz simplified to call resetPage
+        function resetDictationQuiz(quizNum, correctAnswer, nextPageId) {
+            const pageElement = document.getElementById(`page-${quizNum}`);
+            if (pageElement) resetPage(pageElement);
+        }
+
+        const toggleButton = document.getElementById('mobile-toggle');
+        const courseWrapper = document.querySelector('.course-wrapper');
+        toggleButton.addEventListener('click', () => {
+            courseWrapper.classList.toggle('mobile-view');
+            toggleButton.textContent = courseWrapper.classList.contains('mobile-view') ? 'Vue bureau' : 'Vue mobile';
+        });
+
+    </script>
+</body>
+</html>
