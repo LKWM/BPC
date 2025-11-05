@@ -26,27 +26,62 @@
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
         }
-        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; }
-        .course-wrapper { width: 100%; max-width: 600px; transition: transform 0.4s ease-in-out; transform-origin: center center; }
-        .course-container { width: 100%; position: relative; aspect-ratio: 1 / 1; }
-        .course-wrapper.mobile-view { transform: scale(0.6); }
-        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; background-color: white; padding: var(--padding-lg); border-radius: 0.75rem; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+        }
+        .course-wrapper { 
+            width: 100%; 
+            max-width: 600px; 
+            /* [DELETED] Removed mobile-view transform */
+        }
+        .course-container { 
+            width: 100%; 
+            position: relative; 
+            aspect-ratio: 1 / 1; 
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: white;
+        }
+        .page { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; 
+            background-color: white; padding: var(--padding-lg); 
+            border-radius: 0.75rem; 
+            box-sizing: border-box;
+        }
         .page.active { opacity: 1; visibility: visible; }
         .page-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
         
-        /* [ADDED] Unified title style */
-        .title-text { 
-            font-size: var(--font-title); 
-            font-weight: 700;
-            text-align: center; 
-        }
-
         .vocab-card-container { display: flex; justify-content: center; align-items: center; gap: 1rem; margin: 2rem 0; }
         .vocab-card { border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; background-color: #f9fafb; }
         .vocab-card img { width: 100%; height: 100%; object-fit: cover; }
         .vocab-card .vocab-text { font-family: 'Noto Sans KR', sans-serif; font-size: 3rem; font-weight: 700; cursor: pointer; }
         
-        #mobile-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background-color: #1f2937; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        /* [ADDED] Media query for mobile responsiveness */
+        @media (max-width: 600px) {
+            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
+            .course-wrapper { height: 100%; max-width: 100%; }
+            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; border-radius: 0; }
+            .quiz-option { min-width: auto; flex-grow: 1;}
+            .quiz-image { width: 120px; height: 120px; }
+            .vocab-card { width: 150px; height: 150px; }
+            .syllable-input { width: 80px; height: 80px; font-size: 3rem; }
+        }
+
+        /* [ADDED] Unified title style */
+        .title-text { 
+            font-size: var(--font-title); 
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+        }
+        
+        /* [DELETED] Removed #mobile-toggle */
         .quiz-question { font-weight: 600; font-size: 1.125rem; color: #1f2937; margin-bottom: 1rem; text-align: center; }
         .quiz-option { display: inline-flex; flex-direction: column; align-items:center; gap: 0.5rem; padding: 1rem; border: 2px solid #d1d5db; border-radius: 0.5rem; margin: 0.25rem; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; font-size: 1.5rem; font-family: 'Inter', sans-serif; text-align: center; min-width: 120px; }
         .quiz-option.korean { font-family: 'Noto Sans KR', sans-serif; }
@@ -60,12 +95,14 @@
         .quiz-options-vertical { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 250px; margin: 0 auto; }
         .quiz-options-horizontal { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
         
-        /* [MODIFIED] Reverted to original fixed padding and removed font-size */
+        /* [MODIFIED] Using CSS variables for padding and font-size */
         .nav-button { 
-            padding: 0.75rem 1.5rem; 
+            padding: var(--padding-sm) var(--padding-md); 
             border-radius: 0.5rem; 
             font-weight: 600; 
+            font-size: var(--font-base); /* Added font-size */
             transition: background-color 0.2s; 
+            cursor: pointer;
         }
         .feedback-area { text-align: right; min-height: 52px; display: flex; justify-content: flex-end; align-items: center; gap: 1rem; }
         .audio-button { background: none; border: none; cursor: pointer; }
@@ -90,7 +127,7 @@
         .jamo-key:hover { background-color: #f3f4f6; }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
     <div class="course-wrapper">
         <div class="shadow-2xl course-container">
@@ -159,7 +196,7 @@
         </div>
     </div>
 
-    <button id="mobile-toggle">Vue mobile</button>
+    <!-- [DELETED] Removed mobile toggle button -->
     
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
         <symbol id="audio-icon-svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -310,6 +347,7 @@
             }
         }
         
+        // [MODIFIED] Consolidated event listeners and functions
         document.addEventListener('DOMContentLoaded', () => {
             for (let i = 4; i <= 28; i++) {
                 createQuizPage(i);
@@ -334,62 +372,66 @@
             Tone.start().then(() => {
                 const player = new Tone.Player(sounds[soundKey].file).toDestination();
                 player.autostart = true;
+                player.onstop = () => player.dispose(); // [ADDED] Dispose player after use
             });
         }
 
-        // [MODIFIED] Consolidated showPage function
+        // [MODIFIED] Added postMessage and resetPage logic
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const nextPage = document.getElementById(pageId);
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
-                
-                // [ADDED] PostMessage logic
-                if (pageId === 'page-29') { // This is the completion page ID
+
+                // [ADDED] postMessage logic
+                if (pageId === 'page-29') { // This is the completion page
                     if (window.parent) {
-                        try {
-                            window.parent.postMessage({ type: 'lesson_complete' }, '*');
-                        } catch (e) {
-                            console.error('postMessage failed:', e);
-                        }
+                        window.parent.postMessage({ type: 'lesson_complete' }, '*');
                     }
                 }
                 
-                resetPage(nextPage); // Reset page state on show
+                // [ADDED] Call to reset page state
+                resetPage(nextPage);
             }
         }
 
-        // [ADDED] resetPage function to restore page state
+        // [ADDED] Function to reset page state
         function resetPage(pageElement) {
             const pageId = pageElement.id;
-            const quizNumMatch = pageId.match(/page-(\d+)/);
-            if (!quizNumMatch) return; // Not a quiz page
-            
-            const quizNum = parseInt(quizNumMatch[1]);
-            if (quizNum < 4) return; // Not a quiz page (it's vocab intro)
+            const quizNumMatch = pageId.match(/^page-(.+)$/);
+            if (!quizNumMatch) return;
 
-            // Find the nav element and restore it
+            const quizNum = quizNumMatch[1];
+            // Check if it's a quiz page (4 to 28)
+            if (quizNum < 4 || quizNum > 28) return; 
+
             const navEl = pageElement.querySelector(`#quiz-${quizNum}-nav`);
+            
+            // Restore nav bar
             if (navEl && initialNavStates[navEl.id]) {
-                 navEl.innerHTML = initialNavStates[navEl.id];
-                 // Re-bind buttons
-                 navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                navEl.innerHTML = initialNavStates[navEl.id];
+                // Re-bind buttons
+                navEl.querySelectorAll('button[onclick]').forEach(btn => {
                     btn.onclick = new Function(btn.getAttribute('onclick'));
-                 });
+                });
             }
+            
+            const quizNumInt = parseInt(quizNum);
 
             // Reset MCQs
-            pageElement.querySelectorAll('.quiz-option').forEach(opt => {
-                opt.classList.remove('selected', 'correct', 'incorrect');
-                opt.style.cursor = 'pointer';
-                const radio = opt.querySelector('input');
-                if (radio) { radio.checked = false; radio.disabled = false; }
-            });
-
+            if (quizNumInt >= 4 && quizNumInt <= 23) {
+                 const options = pageElement.querySelectorAll(`input[name="q${quizNum}"]`);
+                 options.forEach(opt => {
+                    opt.disabled = false;
+                    opt.checked = false;
+                    opt.parentElement.style.cursor = 'pointer';
+                    opt.parentElement.classList.remove('selected', 'correct', 'incorrect');
+                });
+            }
             // Reset Dictation
-            if (quizData[quizNum] && quizData[quizNum].type === 'dictation') {
-                setupDictationQuiz(quizNum);
+            else if (quizNumInt >= 24 && quizNumInt <= 28) {
+                setupDictationQuiz(quizNumInt);
             }
         }
         
@@ -400,13 +442,13 @@
             const validerButton = navEl.querySelector('button[onclick^="checkAnswer"]');
             
             if (!selectedOption) {
-                // [MODIFIED] Added font-size styling to feedback
+                // [MODIFIED] Added font-size and restored original button
                 feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`;
                 setTimeout(() => { 
                     const currentFeedback = feedbackContainer.querySelector('p');
-                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
+                    if(currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
                         const navId = `quiz-${quizNum}-nav`;
-                        if (initialNavStates[navId]) {
+                        if(initialNavStates[navId]) {
                             navEl.innerHTML = initialNavStates[navId];
                             navEl.querySelectorAll('button[onclick]').forEach(btn => {
                                 btn.onclick = new Function(btn.getAttribute('onclick'));
@@ -430,11 +472,12 @@
                 feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
                 selectedOption.parentElement.classList.add('incorrect');
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum}, '${correctAnswer}', '${nextPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz(${quizNum}, '${correctAnswer}', '${nextPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
         }
 
-        // [MODIFIED] resetQuiz simplified to call resetPage
+        // [MODIFIED] Simplified resetQuiz
         function resetQuiz(quizNum, correctAnswer, nextPageId) {
             const pageElement = document.getElementById(`page-${quizNum}`);
             if (pageElement) resetPage(pageElement);
@@ -446,14 +489,7 @@
             JONGSEONG: ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'],
             JUNGSEONG_COMBINATIONS: { 'ㅗ': {'ㅏ': 'ㅘ', 'ㅐ': 'ㅙ', 'ㅣ': 'ㅚ'}, 'ㅜ': {'ㅓ': 'ㅝ', 'ㅔ': 'ㅞ', 'ㅣ': 'ㅟ'}, 'ㅡ': {'ㅣ': 'ㅢ'} },
             JONGSEONG_COMBINATIONS: { 'ㄱ': {'ㅅ': 'ㄳ'}, 'ㄴ': {'ㅈ': 'ㄵ', 'ㅎ': 'ㄶ'}, 'ㄹ': {'ㄱ': 'ㄺ', 'ㅁ': 'ㄻ', 'ㅂ': 'ㄼ', 'ㅅ': 'ㄽ', 'ㅌ': 'ㄾ', 'ㅍ': 'ㄿ', 'ㅎ': 'ㅀ'}, 'ㅂ': {'ㅅ': 'ㅄ'} },
-            decompose: (syllable) => {
-                const code = syllable.charCodeAt(0) - 0xAC00;
-                if (code < 0 || code > 11171) return [syllable];
-                const jongIndex = code % 28;
-                const jungIndex = ((code - jongIndex) / 28) % 21;
-                const choIndex = Math.floor(((code - jongIndex) / 28) / 21);
-                return [Hangul.CHOSEONG[choIndex], Hangul.JUNGSEONG[jungIndex], Hangul.JONGSEONG[jongIndex] || null].filter(Boolean);
-            }
+            // [DELETED] Decompose not needed for this file's logic
         };
 
         function setupDictationQuiz(quizNum) {
@@ -464,14 +500,13 @@
             const boxCount = container.children.length;
             dictationInputs[quizNum] = Array(boxCount).fill(0).map(() => []);
             
-            // [FIXED] Clear previous content
             jamoBank.innerHTML = ''; 
             container.querySelectorAll('.syllable-input').forEach(box => box.textContent = '');
 
             const consonants1 = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
             const consonants2 = ['ㄲ', 'ㄸ', 'ㅃ', 'ㅆ', 'ㅉ'];
-             // [REVERTED] Removed composite vowels as requested
-            const vowels = ['ㅏ', 'ㅑ','ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅒ', 'ㅔ', 'ㅖ']; 
+            // [MODIFIED] Jamo bank set to basic vowels for combination (composite vowels removed)
+            const vowels = ['ㅏ', 'ㅑ','ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅒ', 'ㅔ', 'ㅖ'];
             
             const conRow1 = document.createElement('div'); conRow1.className = 'jamo-row';
             consonants1.forEach(jamo => conRow1.appendChild(createJamoKey(quizNum, jamo)));
@@ -590,12 +625,13 @@
             
             // [ADDED] Check for empty answer
             if (userAnswer.trim() === '') {
+                // [MODIFIED] Added font-size
                 feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez entrer une réponse.</p>`;
-                setTimeout(() => {
+                 setTimeout(() => {
                     const currentFeedback = feedbackEl.querySelector('p');
-                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
+                    if(currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
                         const navId = `quiz-${quizNum}-nav`;
-                        if (initialNavStates[navId]) {
+                        if(initialNavStates[navId]) {
                             navEl.innerHTML = initialNavStates[navId];
                             navEl.querySelectorAll('button[onclick]').forEach(btn => {
                                 btn.onclick = new Function(btn.getAttribute('onclick'));
@@ -605,32 +641,25 @@
                 }, 2000);
                 return;
             }
-
+            
+            if(validerButton) validerButton.style.display = 'none';
             const buttonText = (nextPageId === 'page-29') ? 'Terminer' : 'Suivant &rarr;';
 
             if (userAnswer === correctAnswer) {
                 feedbackEl.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
-                if(validerButton) validerButton.style.display = 'none';
             } else {
-                // [MODIFIED] Added font-size styling to feedback
+                 // [MODIFIED] Added font-size
                 feedbackEl.innerHTML = `<p class="text-red-600 font-bold mr-4" style="font-size: var(--font-base);">Incorrect.</p> <button onclick="resetDictationQuiz(${quizNum}, '${correctAnswer}', '${nextPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
-                if(validerButton) validerButton.style.display = 'none';
             }
         }
 
-        // [MODIFIED] resetDictationQuiz simplified to call resetPage
+        // [MODIFIED] Simplified resetDictationQuiz
         function resetDictationQuiz(quizNum, correctAnswer, nextPageId) {
-            const pageElement = document.getElementById(`page-${quizNum}`);
-            if (pageElement) resetPage(pageElement);
+             const pageElement = document.getElementById(`page-${quizNum}`);
+             if (pageElement) resetPage(pageElement);
         }
 
-        const toggleButton = document.getElementById('mobile-toggle');
-        const courseWrapper = document.querySelector('.course-wrapper');
-        toggleButton.addEventListener('click', () => {
-            courseWrapper.classList.toggle('mobile-view');
-            toggleButton.textContent = courseWrapper.classList.contains('mobile-view') ? 'Vue bureau' : 'Vue mobile';
-        });
-
+        // [DELETED] Removed mobile toggle logic
     </script>
 </body>
 </html>
