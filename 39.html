@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Leçon supplémentaire 9 - Activité (3) - Expanded</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -24,18 +24,66 @@
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
         }
-        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; }
-        .course-wrapper { width: 100%; max-width: 600px; transition: transform 0.4s ease-in-out; transform-origin: center center; }
-        .course-container { width: 100%; position: relative; aspect-ratio: 1 / 1; }
-        .course-wrapper.mobile-view { transform: scale(0.6); }
-        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; background-color: white; padding: 2.5rem; border-radius: 0.75rem; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+        }
+        .course-wrapper { 
+            width: 100%; 
+            max-width: 600px; 
+            /* [DELETED] Removed mobile-view transform */
+        }
+        .course-container { 
+            width: 100%; 
+            position: relative; 
+            aspect-ratio: 1 / 1; 
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: white;
+        }
+        .page { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; 
+            background-color: white; padding: var(--padding-lg); 
+            border-radius: 0.75rem; box-sizing: border-box; 
+        }
         .page.active { opacity: 1; visibility: visible; }
         .page-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
-        .nav-button { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.2s; cursor: pointer; }
-        #mobile-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background-color: #1f2937; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
         
-        /* [MODIFIED] Added .title-text */
-        .title-text { font-size: var(--font-title); }
+        /* [MODIFIED] Using CSS variables for padding and font-size */
+        .nav-button { 
+            padding: var(--padding-sm) var(--padding-md); 
+            border-radius: 0.5rem; 
+            font-weight: 600; 
+            font-size: var(--font-base); /* Added font-size */
+            transition: background-color 0.2s; 
+            cursor: pointer;
+        }
+        
+        /* [ADDED] Media query for mobile responsiveness */
+        @media (max-width: 600px) {
+            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
+            .course-wrapper { height: 100%; max-width: 100%; }
+            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; border-radius: 0; }
+            .quiz-option { min-width: auto; flex-grow: 1;}
+            .match-option { padding: var(--padding-sm); font-size: var(--font-base); }
+            .typing-input { font-size: 1.5rem; }
+            .quiz-question { font-size: var(--font-lg); }
+        }
+
+        /* [DELETED] Removed #mobile-toggle */
+        
+        /* [ADDED] Unified title style */
+        .title-text { 
+            font-size: var(--font-title); 
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+        }
 
         /* Quiz Styles */
         .quiz-question { font-weight: 600; font-size: 1.25rem; color: #1f2937; margin-bottom: 1.5rem; }
@@ -61,8 +109,8 @@
         .match-option.paired-4 { background-color: #e4e4e7; }
         .match-option.paired-5 { background-color: #dcfce7; }
         .match-option.disabled { cursor: not-allowed; opacity: 0.6; }
-        .match-option.correct-match { border-color: #22c55e; background-color: #dcfce7; }
-        .match-option.incorrect-match { border-color: #ef4444; background-color: #fee2e2; }
+        .match-option.correct-match { border-color: #22c55e !important; background-color: #dcfce7 !important; }
+        .match-option.incorrect-match { border-color: #ef4444 !important; background-color: #fee2e2 !important; }
 
         /* Typing Quiz Styles */
         .typing-input {
@@ -83,7 +131,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
     <div class="course-wrapper">
         <div class="shadow-2xl course-container">
@@ -91,8 +139,8 @@
             <!-- Page 0: Title -->
             <div id="page-0" class="page active items-center justify-center text-center">
                 <div class="page-content">
-                    <!-- [MODIFIED] Applied .title-text class, removed text-4xl/leading-tight -->
-                    <h1 class="title-text font-bold text-gray-800 mb-6">Leçon supplémentaire 9 - Activité (3)</h1>
+                    <!-- [MODIFIED] Applied .title-text class -->
+                    <h1 class="title-text text-gray-800 mb-6">Leçon supplémentaire 9 - Activité (3)</h1>
                     <p class="text-lg text-gray-600">30 questions pour pratiquer votre vocabulaire coréen.</p>
                     <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
                 </div>
@@ -349,7 +397,7 @@
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (26/30)</p>
                     <img src="https://static.wixstatic.com/media/699687_c3c01fb97d3c4f12967f54569c2b4efb~mv2.png" alt="Timbre" class="mx-auto rounded-lg mb-4 h-48 object-cover">
                     <p class="text-xl font-bold">Timbre</p>
-                    <input type="text" name="q14" class="typing-input" placeholder="_ _" maxlength="2">
+                    <input type="text" name="q14" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-14-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-13')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
@@ -365,7 +413,7 @@
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (27/30)</p>
                     <img src="https://static.wixstatic.com/media/699687_c3b947b9f891464b8df2d7a2773df29f~mv2.png" alt="Ouvrir" class="mx-auto rounded-lg mb-4 h-48 object-cover">
                     <p class="text-xl font-bold">Ouvrir</p>
-                    <input type="text" name="q15" class="typing-input" placeholder="_ _" maxlength="2">
+                    <input type="text" name="q15" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-15-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-14')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
@@ -381,7 +429,7 @@
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (28/30)</p>
                     <img src="https://static.wixstatic.com/media/699687_6a18521f5044481eb801fbbf908ea882~mv2.png" alt="Aubergine" class="mx-auto rounded-lg mb-4 h-48 object-cover">
                     <p class="text-xl font-bold">Aubergine</p>
-                    <input type="text" name="q16" class="typing-input" placeholder="_ _" maxlength="2">
+                    <input type="text" name="q16" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-16-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-15')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
@@ -397,7 +445,7 @@
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (29/30)</p>
                     <img src="https://static.wixstatic.com/media/699687_16f447364c134ef4a6aa94d392ee95ba~mv2.png" alt="Chanteur" class="mx-auto rounded-lg mb-4 h-48 object-cover">
                     <p class="text-xl font-bold">Chanteur</p>
-                    <input type="text" name="q17" class="typing-input" placeholder="_ _" maxlength="2">
+                    <input type="text" name="q17" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-17-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-16')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
@@ -413,7 +461,7 @@
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (30/30)</p>
                     <img src="https://static.wixstatic.com/media/699687_ed0a692113d64030b634140a9ee9f2d4~mv2.png" alt="Bébé" class="mx-auto rounded-lg mb-4 h-48 object-cover">
                     <p class="text-xl font-bold">Bébé</p>
-                    <input type="text" name="q18" class="typing-input" placeholder="_ _" maxlength="2">
+                    <input type="text" name="q18" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-18-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-17')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
@@ -439,11 +487,14 @@
         </div>
     </div>
 
-    <button id="mobile-toggle">Vue mobile</button>
+    <!-- [DELETED] Removed mobile toggle button -->
 
     <script>
         let currentPageId = 'page-0';
-        
+        let mcqOptionsStore = {}; // Store the shuffled options for each MCQ quiz
+        let initialNavStates = {}; // [ADDED] Store initial nav states
+        let matchState = {}; // [ADDED] Store matching quiz states
+
         const mcqData = {
             '1': { answer: 'Lapin', distractors: ['Cochon', 'Papa', 'Pomme', 'Chaise', 'Lion'] },
             '2': { answer: 'Papa', distractors: ['Médecin', 'Lapin', 'Cochon', 'Raisin', 'Pomme'] },
@@ -487,7 +538,20 @@
             'gawi': { file: 'https://static.wixstatic.com/mp3/699687_d93424d1a38f4a7592429f95303a272f.mp3' },
             'gyohoe': { file: 'https://static.wixstatic.com/mp3/699687_28669c5c772c496aa334a170c51152b9.mp3' },
             'seuweteo': { file: 'https://static.wixstatic.com/mp3/699687_c674069cf782487e838e1b3695d7f1e9.mp3' },
-            'uisa': { file: 'https://static.wixstatic.com/mp3/699687_b8451a31c5144584a275b810361251c8.mp3' }
+            'uisa': { file: 'https://static.wixstatic.com/mp3/699687_b8451a31c5144584a275b810361251c8.mp3' },
+            'namu': { file: 'https://static.wixstatic.com/mp3/699687_8b95668f1d944283b80dea27b3d48f8d.mp3' },
+            'nara': { file: 'https://static.wixstatic.com/mp3/699687_6b66ac55b5324cb1a4cc047ac6a7d22a.mp3' },
+            'mal': { file: 'https://static.wixstatic.com/mp3/699687_1c8a2152b8f2441fac05c79ecfff4d44.mp3' },
+            'meori': { file: 'https://static.wixstatic.com/mp3/699687_66a6fc45d03d4ac19a06dd5dd017802e.mp3' },
+            'gang': { file: 'https://static.wixstatic.com/mp3/699687_fac8f50ddc354a12927d526c896a919f.mp3' },
+            'radio': { file: 'https://static.wixstatic.com/mp3/699687_0c24861bfd4a4501b08f14a6048e8058.mp3' },
+            'jong_i': { file: 'https://static.wixstatic.com/mp3/699687_221fcc2e070c48b58bc39daaaded8356.mp3' },
+            'norae': { file: 'https://static.wixstatic.com/mp3/699687_949674a509a740579d3235c9ad134bc3.mp3' },
+            'jubu': { file: 'https://static.wixstatic.com/mp3/699687_a871a2595e2143aab71a0f8661271fb5.mp3' },
+            'sopo': { file: 'https://static.wixstatic.com/mp3/699687_c3e378fa4773459baacecbc75209ace7.mp3' },
+            'jucha': { file: 'https://static.wixstatic.com/mp3/699687_d2081c183c5544508f3616c7fd257ffb.mp3' },
+            'hyuga': { file: 'https://static.wixstatic.com/mp3/699687_d4a98326335b4d21a71d1921ef47fd7f.mp3' },
+            'yaegi': { file: 'https://static.wixstatic.com/mp3/699687_281f0a9cf0ec4df5ae9c59f085e5c9cb.mp3' }
         };
 
         const matchingAnswers = {
@@ -495,7 +559,7 @@
             '12': { 'Chien': 'gae', 'Train': 'gicha', 'Horloge': 'sigye', 'Autruche': 'tajo', 'Baseball': 'yagu' },
             '13': { 'Univers': 'uju', 'Ville': 'dosi', 'Nez': 'ko', 'Poireau': 'pa', 'Soleil': 'hae' }
         };
-        let matchState = {};
+        
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -505,19 +569,25 @@
         }
 
         function setupMcqOptions(quizNum) {
-            const data = mcqData[quizNum];
             const optionsContainer = document.querySelector(`#page-${quizNum} .options-container`);
             if (!optionsContainer) return;
 
-            const numOptions = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
-            const numDistractors = numOptions - 1;
+            let finalOptions;
+            if (mcqOptionsStore[quizNum]) {
+                finalOptions = mcqOptionsStore[quizNum];
+            } else {
+                const data = mcqData[quizNum];
+                const numOptions = Math.floor(Math.random() * 2) + 4; // 4 or 5
+                const numDistractors = numOptions - 1;
 
-            const distractors = [...data.distractors];
-            shuffleArray(distractors);
-            const selectedDistractors = distractors.slice(0, numDistractors);
+                const distractors = [...data.distractors];
+                shuffleArray(distractors);
+                const selectedDistractors = distractors.slice(0, numDistractors);
 
-            const finalOptions = [data.answer, ...selectedDistractors];
-            shuffleArray(finalOptions);
+                finalOptions = [data.answer, ...selectedDistractors];
+                shuffleArray(finalOptions);
+                mcqOptionsStore[quizNum] = finalOptions;
+            }
 
             optionsContainer.innerHTML = finalOptions.map(opt => `
                 <label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>
@@ -540,9 +610,9 @@
         }
 
         function playSound(soundKey) {
+            const audioButton = document.querySelector(`#page-${currentPageId.split('-')[1]} .audio-button`);
             if (!sounds[soundKey] || !sounds[soundKey].file) {
-                console.log(`Audio file for "${soundKey}" not available.`);
-                const audioButton = document.querySelector(`#page-${currentPageId.split('-')[1]} .audio-button`);
+                console.log(`Audio file for "${soundKey}" not available. This is a placeholder.`);
                 if(audioButton) {
                     audioButton.style.transform = 'scale(1.1)';
                     setTimeout(() => { audioButton.style.transform = 'scale(1)'; }, 200);
@@ -552,9 +622,19 @@
             Tone.start().then(() => {
                 const player = new Tone.Player(sounds[soundKey].file).toDestination();
                 player.autostart = true;
+                player.onstop = () => {
+                    player.dispose();
+                };
+            }).catch(e => {
+                 console.error("Could not start audio context: ", e);
+                 if(audioButton) {
+                    audioButton.style.transform = 'scale(1.1)';
+                    setTimeout(() => { audioButton.style.transform = 'scale(1)'; }, 200);
+                }
             });
         }
 
+        // [MODIFIED] Added postMessage and resetPage logic
         function showPage(pageId) {
             const currentPage = document.getElementById(currentPageId);
             if (currentPage) currentPage.classList.remove('active');
@@ -563,28 +643,71 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
-                if (pageId.startsWith('page-11') || pageId.startsWith('page-12') || pageId.startsWith('page-13')) {
-                    const quizNum = pageId.replace('page-', '');
-                    initializeMatchingQuiz(quizNum);
-                }
-            }
 
-            // [ADDED] PostMessage logic
-            if (pageId === 'page-19') { // This is the completion page ID
-                if (window.parent) {
-                    try {
-                        window.parent.postMessage({
-                            type: 'lesson_complete'
-                        }, '*');
-                    } catch (e) {
-                        console.error('postMessage failed:', e);
+                // [ADDED] postMessage logic
+                if (pageId === 'page-19') { // This is the completion page
+                    if (window.parent) {
+                        window.parent.postMessage({ type: 'lesson_complete' }, '*');
                     }
+                }
+                
+                // [ADDED] Call to reset page state
+                resetPage(nextPage);
+            }
+        }
+
+        // [ADDED] Function to reset page state
+        function resetPage(pageElement) {
+            const pageId = pageElement.id;
+            const quizNumMatch = pageId.match(/^page-(.+)$/);
+            if (!quizNumMatch) return;
+
+            const quizNum = quizNumMatch[1];
+            const navEl = pageElement.querySelector(`#quiz-${quizNum}-nav`);
+            
+            // Restore nav bar
+            if (navEl && initialNavStates[navEl.id]) {
+                navEl.innerHTML = initialNavStates[navEl.id];
+                // Re-bind buttons
+                navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                    btn.onclick = new Function(btn.getAttribute('onclick'));
+                });
+            }
+            
+            const quizNumInt = parseInt(quizNum);
+
+            // Reset MCQ
+            if (quizNumInt >= 1 && quizNumInt <= 10) {
+                setupMcqOptions(quizNum); // This also re-adds listeners
+            }
+            // Reset Matching
+            else if (quizNumInt >= 11 && quizNumInt <= 13) {
+                 const matchingContainer = pageElement.querySelector(`.matching-container`);
+                 if (matchingContainer) {
+                    const matchOptions = matchingContainer.querySelectorAll('.match-option');
+                    matchOptions.forEach(opt => {
+                        opt.className = 'match-option'; // Reset all classes
+                    });
+                    initializeMatchingQuiz(quizNum); // Re-init state and listeners
+                 }
+            }
+            // Reset Typing
+            else if (quizNumInt >= 14 && quizNumInt <= 18) {
+                const typingInput = pageElement.querySelector(`input[type="text"]`);
+                if (typingInput) {
+                    typingInput.disabled = false;
+                    typingInput.value = '';
+                    typingInput.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
                 }
             }
         }
         
         function handleSelection(quizNum, type, selectedBtn) {
             if (selectedBtn.classList.contains('disabled')) return;
+            // Ensure state is initialized
+            if (!matchState[quizNum]) {
+                initializeMatchingQuiz(quizNum);
+            }
             const state = matchState[quizNum];
             const columnSelector = type === 'fr' ? `#match-fr-${quizNum}` : `#match-kr-${quizNum}`;
             const currentlySelected = document.querySelector(`${columnSelector} .match-option.selected`);
@@ -599,8 +722,10 @@
                 const krBtn = document.querySelector(`#match-kr-${quizNum} .match-option[data-word="${state.currentSelection.kr}"]`);
                 state.userPairs[state.currentSelection.fr] = state.currentSelection.kr;
                 [frBtn, krBtn].forEach(btn => {
-                    btn.classList.remove('selected');
-                    btn.classList.add('disabled', `paired-${state.pairCount}`);
+                    if(btn) {
+                        btn.classList.remove('selected');
+                        btn.classList.add('disabled', `paired-${state.pairCount}`);
+                    }
                 });
                 state.currentSelection = { fr: null, kr: null };
             }
@@ -616,25 +741,36 @@
             const krButtons = document.querySelectorAll(`#match-kr-${quizNum} .match-option`);
             frButtons.forEach(btn => btn.onclick = () => handleSelection(quizNum, 'fr', btn));
             krButtons.forEach(btn => btn.onclick = () => handleSelection(quizNum, 'kr', btn));
+            
             const krContainer = document.getElementById(`match-kr-${quizNum}`);
-            for (let i = krContainer.children.length; i >= 0; i--) {
-                krContainer.appendChild(krContainer.children[Math.random() * i | 0]);
+            if (krContainer && !krContainer.dataset.shuffled) {
+                const buttonsToShuffle = Array.from(krContainer.children);
+                shuffleArray(buttonsToShuffle);
+                buttonsToShuffle.forEach(button => krContainer.appendChild(button));
+                krContainer.dataset.shuffled = 'true';
             }
         }
 
         function checkMatchingAnswer(quizNum, nextPageId) {
             const correctPairs = matchingAnswers[quizNum];
-            const userPairs = matchState[quizNum].userPairs;
+            const userPairs = matchState[quizNum] ? matchState[quizNum].userPairs : {};
             let allCorrect = true;
             const frButtons = document.querySelectorAll(`#match-fr-${quizNum} .match-option`);
-            
+
             if (Object.keys(userPairs).length < frButtons.length) {
-                const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-                const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez tout associer.</p>`;
-                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
-                return;
+                allCorrect = false;
+            } else {
+                 for (const frWord in correctPairs) {
+                    if (userPairs[frWord] !== correctPairs[frWord]) {
+                        allCorrect = false;
+                        break;
+                    }
+                }
             }
+
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            navEl.querySelector('button[onclick^="checkMatchingAnswer"]').style.display = 'none';
 
             frButtons.forEach(btn => {
                 const frWord = btn.dataset.word;
@@ -647,17 +783,15 @@
                 } else {
                     btn.classList.add('incorrect-match');
                     if(krBtn) krBtn.classList.add('incorrect-match');
-                    allCorrect = false;
                 }
             });
-            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="checkMatchingAnswer"]').style.display = 'none';
+
+            const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
             if (allCorrect) {
-                const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
                 feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                 // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
         }
 
@@ -667,19 +801,32 @@
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
             if (!userAnswer) {
-                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez entrer une réponse.</p>`;
-                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez entrer une réponse.</p>`;
+                setTimeout(() => {
+                    const currentFeedback = feedbackContainer.querySelector('p');
+                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
+                        const navId = `quiz-${quizNum}-nav`;
+                        if (initialNavStates[navId]) {
+                            navEl.innerHTML = initialNavStates[navId];
+                            navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                                btn.onclick = new Function(btn.getAttribute('onclick'));
+                            });
+                        }
+                    }
+                }, 2000);
                 return;
             }
             inputEl.disabled = true;
             navEl.querySelector('button[onclick^="checkTypingAnswer"]').style.display = 'none';
+            const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
             if (userAnswer === correctAnswer) {
                 inputEl.classList.add('border-green-500', 'bg-green-50');
-                const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
                 feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
                 inputEl.classList.add('border-red-500', 'bg-red-50');
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                 // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
         }
 
@@ -688,8 +835,20 @@
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
             if (!selectedOption) {
-                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez sélectionner une réponse.</p>`;
-                setTimeout(() => { if(feedbackContainer) feedbackContainer.innerHTML = ''; }, 2000);
+                 // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`;
+                setTimeout(() => {
+                    const currentFeedback = feedbackContainer.querySelector('p');
+                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
+                        const navId = `quiz-${quizNum}-nav`;
+                        if (initialNavStates[navId]) {
+                            navEl.innerHTML = initialNavStates[navId];
+                            navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                                btn.onclick = new Function(btn.getAttribute('onclick'));
+                            });
+                        }
+                    }
+                }, 2000);
                 return;
             }
             document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
@@ -698,83 +857,37 @@
             });
             navEl.querySelector('button[onclick^="checkAnswer"]').style.display = 'none';
             const correctAnswer = mcqData[quizNum].answer;
+            const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
             if (selectedOption.value === correctAnswer) {
                 selectedOption.parentElement.classList.add('correct');
-                const buttonText = nextPageId === 'page-19' ? 'Terminer' : 'Suivant &rarr;';
                 feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
                 selectedOption.parentElement.classList.add('incorrect');
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                 // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
         }
         
+        // [MODIFIED] Simplified resetQuiz to just call resetPage
         function resetQuiz(quizNum) {
-            const pageId = `page-${quizNum}`;
-            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            feedbackContainer.innerHTML = '';
-            
-            // Find the correct validation button to restore
-            let validateButton = navEl.querySelector('button[onclick^="checkAnswer"]');
-            if (!validateButton) validateButton = navEl.querySelector('button[onclick^="checkMatchingAnswer"]');
-            if (!validateButton) validateButton = navEl.querySelector('button[onclick^="checkTypingAnswer"]');
-            
-            if (validateButton) {
-                validateButton.style.display = 'inline-block';
-            } else { 
-                // Button was dynamically generated, so re-fetch from initial HTML
-                const originalNav = document.createElement('div');
-                originalNav.innerHTML = navEl.dataset.initialHtml;
-                const originalButton = originalNav.querySelector('button.bg-blue-600');
-                if (originalButton) {
-                    navEl.querySelector('.feedback-area + button').replaceWith(originalButton);
-                    originalButton.onclick = new Function(originalButton.getAttribute('onclick'));
-                }
-            }
-            
-            const pageElement = document.getElementById(pageId);
-            
-            if (parseInt(quizNum) >= 1 && parseInt(quizNum) <= 10) {
-                setupMcqOptions(quizNum); // This also re-adds listeners
-            }
-
-            const typingInput = pageElement.querySelector(`input[type="text"][name="q${quizNum}"]`);
-            if (typingInput) {
-                typingInput.disabled = false;
-                typingInput.value = '';
-                typingInput.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
-            }
-
-            const matchingContainer = pageElement.querySelector(`#match-quiz-${quizNum}`);
-            if (matchingContainer) {
-                const matchOptions = matchingContainer.querySelectorAll('.match-option');
-                matchOptions.forEach(opt => {
-                    opt.className = 'match-option'; // Reset all classes
-                });
-                initializeMatchingQuiz(quizNum);
-            }
+            const pageElement = document.getElementById(`page-${quizNum}`);
+            if (pageElement) resetPage(pageElement);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
              // Save initial nav state
             document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-                nav.dataset.initialHtml = nav.innerHTML;
+                initialNavStates[nav.id] = nav.innerHTML;
             });
 
             for (let i = 1; i <= 10; i++) {
                 setupMcqOptions(i.toString());
             }
+            // [DELETED] Removed duplicate DOMContentLoaded listener
             showPage('page-0');
         });
         
-        const toggleButton = document.getElementById('mobile-toggle');
-        const courseWrapper = document.querySelector('.course-wrapper');
-        toggleButton.addEventListener('click', () => {
-            courseWrapper.classList.toggle('mobile-view');
-            toggleButton.textContent = courseWrapper.classList.contains('mobile-view') ? 'Vue bureau' : 'Vue mobile';
-        });
-
+        // [DELETED] Removed mobile toggle logic
     </script>
 </body>
 </html>
-
