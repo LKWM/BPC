@@ -26,14 +26,46 @@
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
         }
-        body { font-family: 'Inter', 'Noto Sans KR', sans-serif; }
-        .course-wrapper { width: 100%; max-width: 600px; transition: transform 0.4s ease-in-out; transform-origin: center center; }
-        .course-container { width: 100%; position: relative; aspect-ratio: 1 / 1; }
-        .course-wrapper.mobile-view { transform: scale(0.6); }
-        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; background-color: white; padding: var(--padding-lg); border-radius: 0.75rem; box-sizing: border-box; }
+        /* [MODIFIED] Added base font-family */
+        body { 
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+        }
+        .course-wrapper { 
+            width: 100%; 
+            max-width: 600px; 
+            /* [DELETED] Removed transform properties for mobile toggle */
+        }
+        .course-container { 
+            width: 100%; 
+            position: relative; 
+            aspect-ratio: 1 / 1; 
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: white;
+        }
+        
+        .page { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; 
+            background-color: white; padding: var(--padding-lg); 
+            border-radius: 0.75rem; box-sizing: border-box; 
+        }
         .page.active { opacity: 1; visibility: visible; }
         .page-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
         
+        /* [ADDED] Media query for mobile responsiveness */
+        @media (max-width: 600px) {
+            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
+            .course-wrapper { height: 100%; max-width: 100%; }
+            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; border-radius: 0; }
+            .quiz-option { min-width: auto; flex-grow: 1;}
+        }
+
         /* [ADDED] Unified title style */
         .title-text { 
             font-size: var(--font-title); 
@@ -51,7 +83,7 @@
             cursor: pointer;
         }
 
-        #mobile-toggle { position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 10px 20px; background-color: #1f2937; color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        /* [DELETED] Removed #mobile-toggle styles */
         
         /* Quiz Styles */
         .quiz-question { font-weight: 600; font-size: 1.25rem; color: #1f2937; margin-bottom: 1.5rem; }
@@ -335,18 +367,18 @@
                     <p class="quiz-question">Associez les mots français à leur traduction coréenne. (21-25/30)</p>
                     <div id="match-quiz-13" class="matching-container">
                         <div class="matching-column" id="match-fr-13">
-                            <button class="match-option" data-word="Femme au foyer">Femme au foyer</button>
-                            <button class="match-option" data-word="Colis">Colis</button>
-                            <button class="match-option" data-word="Parking">Parking</button>
-                            <button class="match-option" data-word="Vacances">Vacances</button>
-                            <button class="match-option" data-word="Histoire">Histoire</button>
+                            <button class="match-option" data-word="Univers">Univers</button>
+                            <button class="match-option" data-word="Ville">Ville</button>
+                            <button class="match-option" data-word="Nez">Nez</button>
+                            <button class="match-option" data-word="Poireau">Poireau</button>
+                            <button class="match-option" data-word="Soleil">Soleil</button>
                         </div>
                         <div class="matching-column" id="match-kr-13">
-                            <button class="match-option" data-word="sopo">소포</button>
-                            <button class="match-option" data-word="hyuga">휴가</button>
-                            <button class="match-option" data-word="jubu">주부</button>
-                            <button class="match-option" data-word="yaegi">얘기</button>
-                            <button class="match-option" data-word="jucha">주차</button>
+                            <button class="match-option" data-word="dosi">도시</button>
+                            <button class="match-option" data-word="hae">해</button>
+                            <button class="match-option" data-word="uju">우주</button>
+                            <button class="match-option" data-word="pa">파</button>
+                            <button class="match-option" data-word="ko">코</button>
                         </div>
                     </div>
                 </div>
@@ -455,7 +487,7 @@
         </div>
     </div>
 
-    <button id="mobile-toggle">Vue mobile</button>
+    <!-- [DELETED] Removed mobile toggle button -->
 
     <script>
         let currentPageId = 'page-0';
@@ -520,7 +552,7 @@
         const matchingAnswers = {
             '11': { 'Lion': 'saja', 'Pantalon': 'baji', 'Tofu': 'dubu', 'Raisin': 'podo', 'Lait': 'uyu' },
             '12': { 'Chien': 'gae', 'Train': 'gicha', 'Horloge': 'sigye', 'Autruche': 'tajo', 'Baseball': 'yagu' },
-            '13': { 'Femme au foyer': 'jubu', 'Colis': 'sopo', 'Parking': 'jucha', 'Vacances': 'hyuga', 'Histoire': 'yaegi' }
+            '13': { 'Univers': 'uju', 'Ville': 'dosi', 'Nez': 'ko', 'Poireau': 'pa', 'Soleil': 'hae' }
         };
         
 
@@ -667,6 +699,10 @@
         
         function handleSelection(quizNum, type, selectedBtn) {
             if (selectedBtn.classList.contains('disabled')) return;
+            // Ensure state is initialized
+            if (!matchState[quizNum]) {
+                initializeMatchingQuiz(quizNum);
+            }
             const state = matchState[quizNum];
             const columnSelector = type === 'fr' ? `#match-fr-${quizNum}` : `#match-kr-${quizNum}`;
             const currentlySelected = document.querySelector(`${columnSelector} .match-option.selected`);
@@ -702,7 +738,7 @@
             krButtons.forEach(btn => btn.onclick = () => handleSelection(quizNum, 'kr', btn));
             
             const krContainer = document.getElementById(`match-kr-${quizNum}`);
-            if (!krContainer.dataset.shuffled) {
+            if (krContainer && !krContainer.dataset.shuffled) {
                 const buttonsToShuffle = Array.from(krContainer.children);
                 shuffleArray(buttonsToShuffle);
                 buttonsToShuffle.forEach(button => krContainer.appendChild(button));
@@ -712,10 +748,11 @@
 
         function checkMatchingAnswer(quizNum, nextPageId) {
             const correctPairs = matchingAnswers[quizNum];
-            const userPairs = matchState[quizNum].userPairs;
+            const userPairs = matchState[quizNum] ? matchState[quizNum].userPairs : {};
             let allCorrect = true;
+            const frButtons = document.querySelectorAll(`#match-fr-${quizNum} .match-option`);
 
-            if (Object.keys(userPairs).length < Object.keys(correctPairs).length) {
+            if (Object.keys(userPairs).length < frButtons.length) {
                 allCorrect = false;
             } else {
                  for (const frWord in correctPairs) {
@@ -730,7 +767,6 @@
             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
             navEl.querySelector('button[onclick^="checkMatchingAnswer"]').style.display = 'none';
 
-            const frButtons = document.querySelectorAll(`#match-fr-${quizNum} .match-option`);
             frButtons.forEach(btn => {
                 const frWord = btn.dataset.word;
                 const userKrWord = userPairs[frWord];
@@ -749,7 +785,8 @@
             if (allCorrect) {
                 feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                 // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
         }
 
@@ -783,7 +820,8 @@
                 feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
                 inputEl.classList.add('border-red-500', 'bg-red-50');
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                 // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
         }
 
@@ -820,7 +858,8 @@
                 feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
                 selectedOption.parentElement.classList.add('incorrect');
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                 // [MODIFIED] Added font-size
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
         }
         
@@ -831,28 +870,19 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            for (let i = 1; i <= 10; i++) {
-                setupMcqOptions(i.toString());
-            }
-            for (let i = 11; i <= 13; i++) {
-                initializeMatchingQuiz(i.toString());
-            }
-            
-            // [ADDED] Save all initial nav states
-            document.querySelectorAll('[id^="quiz-"][id$="-nav"]').forEach(nav => {
+             // Save initial nav state
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
                 initialNavStates[nav.id] = nav.innerHTML;
             });
 
+            for (let i = 1; i <= 10; i++) {
+                setupMcqOptions(i.toString());
+            }
+            // [DELETED] Removed duplicate DOMContentLoaded listener
             showPage('page-0');
         });
         
-        const toggleButton = document.getElementById('mobile-toggle');
-        const courseWrapper = document.querySelector('.course-wrapper');
-        toggleButton.addEventListener('click', () => {
-            courseWrapper.classList.toggle('mobile-view');
-            toggleButton.textContent = courseWrapper.classList.contains('mobile-view') ? 'Vue bureau' : 'Vue mobile';
-        });
-
+        // [DELETED] Removed mobile toggle logic
     </script>
 </body>
 </html>
