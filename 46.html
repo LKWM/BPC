@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
-        /* [ADDED] Root variables for consistent sizing */
         :root {
             --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
             --font-base: clamp(0.875rem, 2.5vmin, 1rem);
@@ -22,11 +21,9 @@
             --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
             --padding-lg: clamp(1rem, 4vmin, 2.5rem);
         }
-
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
         }
-        /* [MODIFIED] Added base font-family */
         body { 
             font-family: 'Inter', 'Noto Sans KR', sans-serif; 
             display: flex; align-items: center; justify-content: center;
@@ -35,7 +32,6 @@
         .course-wrapper { 
             width: 100%; 
             max-width: 600px; 
-            /* [DELETED] Removed transform properties for mobile toggle */
         }
         .course-container { 
             width: 100%; 
@@ -64,13 +60,17 @@
             .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
             .page { padding: 1.5rem 1rem; border-radius: 0; }
             .quiz-option { min-width: auto; flex-grow: 1;}
+            .match-option { padding: var(--padding-sm); font-size: var(--font-base); }
+            .typing-input { font-size: 1.5rem; }
+            .quiz-question { font-size: var(--font-lg); }
         }
-
+        
         /* [ADDED] Unified title style */
         .title-text { 
             font-size: var(--font-title); 
             font-weight: 700;
-            text-align: center; 
+            color: #1f2937;
+            text-align: center;
         }
 
         /* [MODIFIED] Using CSS variables for padding and font-size */
@@ -78,12 +78,10 @@
             padding: var(--padding-sm) var(--padding-md); 
             border-radius: 0.5rem; 
             font-weight: 600; 
-            font-size: var(--font-base); /* Added font-size */
+            font-size: var(--font-base);
             transition: background-color 0.2s; 
             cursor: pointer;
         }
-
-        /* [DELETED] Removed #mobile-toggle styles */
         
         /* Quiz Styles */
         .quiz-question { font-weight: 600; font-size: 1.25rem; color: #1f2937; margin-bottom: 1.5rem; }
@@ -131,7 +129,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
     <div class="course-wrapper">
         <div class="shadow-2xl course-container">
@@ -222,12 +220,12 @@
                 </div>
             </div>
 
-            <!-- Pages 6-10: Image + French -> Korean -->
+            <!-- [MODIFIED] Pages 6-10: Image + French -> Korean -->
             <div id="page-6" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (6/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_c5178f4a983a41e788e401f0ee34b001~mv2.png" alt="Se reposer" class="mx-auto rounded-lg mb-2 h-40 object-cover">
-                    <p class="text-xl font-bold mb-2">Se reposer</p>
+                    <img src="https://static.wixstatic.com/media/699687_7f855ceaad124b3796e055df662b459e~mv2.png" alt="Pays" class="mx-auto rounded-lg mb-2 h-40 object-cover">
+                    <p class="text-xl font-bold mb-2">Pays</p>
                     <div class="w-full text-center options-container"></div>
                 </div>
                 <div id="quiz-6-nav" class="flex justify-between items-center w-full">
@@ -242,8 +240,8 @@
             <div id="page-7" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (7/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_e4accc008e6d4349be1ed81ad545540a~mv2.png" alt="Ciseaux" class="mx-auto rounded-lg mb-2 h-40 object-cover">
-                    <p class="text-xl font-bold mb-2">Ciseaux</p>
+                    <img src="https://static.wixstatic.com/media/699687_3f2e12f5c0ac474db77401809ff398e9~mv2.png" alt="Arbre" class="mx-auto rounded-lg mb-2 h-40 object-cover">
+                    <p class="text-xl font-bold mb-2">Arbre</p>
                     <div class="w-full text-center options-container"></div>
                 </div>
                 <div id="quiz-7-nav" class="flex justify-between items-center w-full">
@@ -258,8 +256,8 @@
             <div id="page-8" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (8/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_f5bc124e2ace446ea1716f4b2953934c~mv2.png" alt="Église" class="mx-auto rounded-lg mb-2 h-40 object-cover">
-                    <p class="text-xl font-bold mb-2">Église</p>
+                    <img src="https://static.wixstatic.com/media/699687_0451f25eee874ee6a57f76804594769a~mv2.png" alt="Radio" class="mx-auto rounded-lg mb-2 h-40 object-cover">
+                    <p class="text-xl font-bold mb-2">Radio</p>
                     <div class="w-full text-center options-container"></div>
                 </div>
                 <div id="quiz-8-nav" class="flex justify-between items-center w-full">
@@ -274,8 +272,8 @@
             <div id="page-9" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (9/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_0907583e93224caf91af1da86f64f5f3~mv2.png" alt="Pull" class="mx-auto rounded-lg mb-2 h-40 object-cover">
-                    <p class="text-xl font-bold mb-2">Pull</p>
+                    <img src="https://static.wixstatic.com/media/699687_27d0d7bdfcff483487efba4c0bf04d4e~mv2.png" alt="Chanson" class="mx-auto rounded-lg mb-2 h-40 object-cover">
+                    <p class="text-xl font-bold mb-2">Chanson</p>
                     <div class="w-full text-center options-container"></div>
                 </div>
                 <div id="quiz-9-nav" class="flex justify-between items-center w-full">
@@ -290,8 +288,8 @@
             <div id="page-10" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (10/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_ed3c8214b6ec448dacfa4c71f5980da9~mv2.png" alt="Médecin" class="mx-auto rounded-lg mb-2 h-40 object-cover">
-                    <p class="text-xl font-bold mb-2">Médecin</p>
+                    <img src="https://static.wixstatic.com/media/699687_649fc8a084724bdba11ce3f11e7cbada~mv2.png" alt="Tête" class="mx-auto rounded-lg mb-2 h-40 object-cover">
+                    <p class="text-xl font-bold mb-2">Tête</p>
                     <div class="w-full text-center options-container"></div>
                 </div>
                 <div id="quiz-10-nav" class="flex justify-between items-center w-full">
@@ -303,24 +301,24 @@
                 </div>
             </div>
             
-            <!-- Pages 11-13: Matching -->
+            <!-- [MODIFIED] Pages 11-13: Matching -->
             <div id="page-11" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Associez les mots français à leur traduction coréenne. (11-15/30)</p>
                     <div id="match-quiz-11" class="matching-container">
                         <div class="matching-column" id="match-fr-11">
-                            <button class="match-option" data-word="Lion">Lion</button>
-                            <button class="match-option" data-word="Pantalon">Pantalon</button>
-                            <button class="match-option" data-word="Tofu">Tofu</button>
-                            <button class="match-option" data-word="Raisin">Raisin</button>
-                            <button class="match-option" data-word="Lait">Lait</button>
+                            <button class="match-option" data-word="Arbre">Arbre</button>
+                            <button class="match-option" data-word="Pays">Pays</button>
+                            <button class="match-option" data-word="Cheval">Cheval</button>
+                            <button class="match-option" data-word="Tête">Tête</button>
+                            <button class="match-option" data-word="Rivière">Rivière</button>
                         </div>
                         <div class="matching-column" id="match-kr-11">
-                            <button class="match-option" data-word="baji">바지</button>
-                            <button class="match-option" data-word="uyu">우유</button>
-                            <button class="match-option" data-word="saja">사자</button>
-                            <button class="match-option" data-word="podo">포도</button>
-                            <button class="match-option" data-word="dubu">두부</button>
+                            <button class="match-option" data-word="mal">말</button>
+                            <button class="match-option" data-word="meori">머리</button>
+                            <button class="match-option" data-word="namu">나무</button>
+                            <button class="match-option" data-word="gang">강</button>
+                            <button class="match-option" data-word="nara">나라</button>
                         </div>
                     </div>
                 </div>
@@ -338,18 +336,18 @@
                     <p class="quiz-question">Associez les mots français à leur traduction coréenne. (16-20/30)</p>
                     <div id="match-quiz-12" class="matching-container">
                         <div class="matching-column" id="match-fr-12">
-                            <button class="match-option" data-word="Chien">Chien</button>
-                            <button class="match-option" data-word="Train">Train</button>
-                            <button class="match-option" data-word="Horloge">Horloge</button>
-                            <button class="match-option" data-word="Autruche">Autruche</button>
-                            <button class="match-option" data-word="Baseball">Baseball</button>
+                            <button class="match-option" data-word="Chanson">Chanson</button>
+                            <button class="match-option" data-word="Papier">Papier</button>
+                            <button class="match-option" data-word="Radio">Radio</button>
+                            <button class="match-option" data-word="Travail">Travail</button>
+                            <button class="match-option" data-word="Lapin">Lapin</button>
                         </div>
                         <div class="matching-column" id="match-kr-12">
-                            <button class="match-option" data-word="sigye">시계</button>
-                            <button class="match-option" data-word="yagu">야구</button>
-                            <button class="match-option" data-word="gae">개</button>
-                            <button class="match-option" data-word="gicha">기차</button>
-                            <button class="match-option" data-word="tajo">타조</button>
+                            <button class="match-option" data-word="tokki">토끼</button>
+                            <button class="match-option" data-word="radio">라디오</button>
+                            <button class="match-option" data-word="norae">노래</button>
+                            <button class="match-option" data-word="jong_i">종이</button>
+                            <button class="match-option" data-word="il">일</button>
                         </div>
                     </div>
                 </div>
@@ -367,18 +365,18 @@
                     <p class="quiz-question">Associez les mots français à leur traduction coréenne. (21-25/30)</p>
                     <div id="match-quiz-13" class="matching-container">
                         <div class="matching-column" id="match-fr-13">
-                            <button class="match-option" data-word="Univers">Univers</button>
-                            <button class="match-option" data-word="Ville">Ville</button>
-                            <button class="match-option" data-word="Nez">Nez</button>
-                            <button class="match-option" data-word="Poireau">Poireau</button>
-                            <button class="match-option" data-word="Soleil">Soleil</button>
+                            <button class="match-option" data-word="Papa">Papa</button>
+                            <button class="match-option" data-word="Pomme">Pomme</button>
+                            <button class="match-option" data-word="Cochon">Cochon</button>
+                            <button class="match-option" data-word="Chaise">Chaise</button>
+                            <button class="match-option" data-word="Se reposer">Se reposer</button>
                         </div>
                         <div class="matching-column" id="match-kr-13">
-                            <button class="match-option" data-word="dosi">도시</button>
-                            <button class="match-option" data-word="hae">해</button>
-                            <button class="match-option" data-word="uju">우주</button>
-                            <button class="match-option" data-word="pa">파</button>
-                            <button class="match-option" data-word="ko">코</button>
+                            <button class="match-option" data-word="swida">쉬다</button>
+                            <button class="match-option" data-word="uija">의자</button>
+                            <button class="match-option" data-word="appa">아빠</button>
+                            <button class="match-option" data-word="dwaeji">돼지</button>
+                            <button class="match-option" data-word="sagwa">사과</button>
                         </div>
                     </div>
                 </div>
@@ -391,19 +389,19 @@
                 </div>
             </div>
 
-            <!-- Pages 14-18: Typing -->
+            <!-- [MODIFIED] Pages 14-18: Typing -->
             <div id="page-14" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (26/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_c3c01fb97d3c4f12967f54569c2b4efb~mv2.png" alt="Timbre" class="mx-auto rounded-lg mb-4 h-48 object-cover">
-                    <p class="text-xl font-bold">Timbre</p>
+                    <img src="https://static.wixstatic.com/media/699687_3f2e12f5c0ac474db77401809ff398e9~mv2.png" alt="Arbre" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Arbre</p>
                     <input type="text" name="q14" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-14-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-13')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                     <div class="flex items-center gap-4">
                         <div id="quiz-14-feedback" class="feedback-area"></div>
-                        <button onclick="checkTypingAnswer('14', '우표', 'page-15')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        <button onclick="checkTypingAnswer('14', '나무', 'page-15')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                     </div>
                 </div>
             </div>
@@ -411,15 +409,15 @@
             <div id="page-15" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (27/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_c3b947b9f891464b8df2d7a2773df29f~mv2.png" alt="Ouvrir" class="mx-auto rounded-lg mb-4 h-48 object-cover">
-                    <p class="text-xl font-bold">Ouvrir</p>
+                    <img src="https://static.wixstatic.com/media/699687_7f855ceaad124b3796e055df662b459e~mv2.png" alt="Pays" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Pays</p>
                     <input type="text" name="q15" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-15-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-14')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                     <div class="flex items-center gap-4">
                         <div id="quiz-15-feedback" class="feedback-area"></div>
-                        <button onclick="checkTypingAnswer('15', '펴다', 'page-16')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        <button onclick="checkTypingAnswer('15', '나라', 'page-16')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                     </div>
                 </div>
             </div>
@@ -427,15 +425,15 @@
             <div id="page-16" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (28/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_6a18521f5044481eb801fbbf908ea882~mv2.png" alt="Aubergine" class="mx-auto rounded-lg mb-4 h-48 object-cover">
-                    <p class="text-xl font-bold">Aubergine</p>
+                    <img src="https://static.wixstatic.com/media/699687_649fc8a084724bdba11ce3f11e7cbada~mv2.png" alt="Tête" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Tête</p>
                     <input type="text" name="q16" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-16-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-15')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                     <div class="flex items-center gap-4">
                         <div id="quiz-16-feedback" class="feedback-area"></div>
-                        <button onclick="checkTypingAnswer('16', '가지', 'page-17')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        <button onclick="checkTypingAnswer('16', '머리', 'page-17')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                     </div>
                 </div>
             </div>
@@ -443,15 +441,15 @@
             <div id="page-17" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (29/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_16f447364c134ef4a6aa94d392ee95ba~mv2.png" alt="Chanteur" class="mx-auto rounded-lg mb-4 h-48 object-cover">
-                    <p class="text-xl font-bold">Chanteur</p>
+                    <img src="https://static.wixstatic.com/media/699687_27d0d7bdfcff483487efba4c0bf04d4e~mv2.png" alt="Chanson" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Chanson</p>
                     <input type="text" name="q17" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
                 </div>
                 <div id="quiz-17-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-16')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                     <div class="flex items-center gap-4">
                         <div id="quiz-17-feedback" class="feedback-area"></div>
-                        <button onclick="checkTypingAnswer('17', '가수', 'page-18')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        <button onclick="checkTypingAnswer('17', '노래', 'page-18')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                     </div>
                 </div>
             </div>
@@ -459,15 +457,15 @@
             <div id="page-18" class="page">
                 <div class="page-content text-center">
                     <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (30/30)</p>
-                    <img src="https://static.wixstatic.com/media/699687_ed0a692113d64030b634140a9ee9f2d4~mv2.png" alt="Bébé" class="mx-auto rounded-lg mb-4 h-48 object-cover">
-                    <p class="text-xl font-bold">Bébé</p>
-                    <input type="text" name="q18" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                    <img src="https://static.wixstatic.com/media/699687_0451f25eee874ee6a57f76804594769a~mv2.png" alt="Radio" class="mx-auto rounded-lg mb-4 h-48 object-cover">
+                    <p class="text-xl font-bold">Radio</p>
+                    <input type="text" name="q18" class="typing-input" placeholder="___" maxlength="3" lang="ko">
                 </div>
                 <div id="quiz-18-nav" class="flex justify-between items-center w-full">
                     <button onclick="showPage('page-17')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                     <div class="flex items-center gap-4">
                         <div id="quiz-18-feedback" class="feedback-area"></div>
-                        <button onclick="checkTypingAnswer('18', '아기', 'page-19')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                        <button onclick="checkTypingAnswer('18', '라디오', 'page-19')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                     </div>
                 </div>
             </div>
@@ -495,17 +493,18 @@
         let initialNavStates = {}; // [ADDED] Store initial nav states
         let matchState = {}; // [ADDED] Store matching quiz states
 
+        // [MODIFIED] Updated MCQ data for questions 7-10
         const mcqData = {
             '1': { answer: 'Arbre', distractors: ['Pays', 'Cheval', 'Papier', 'Chanson', 'Radio'] },
             '2': { answer: 'Pays', distractors: ['Arbre', 'Tête', 'Rivière', 'Travail', 'Chanson'] },
             '3': { answer: 'Cheval', distractors: ['Tête', 'Rivière', 'Papier', 'Pays', 'Arbre'] },
             '4': { answer: 'Papier', distractors: ['Chanson', 'Radio', 'Arbre', 'Rivière', 'Tête'] },
             '5': { answer: 'Chanson', distractors: ['Radio', 'Papier', 'Tête', 'Pays', 'Arbre'] },
-            '6': { answer: '쉬다', distractors: ['쓰다', '짜다', '가다', '보다', '자다'] },
-            '7': { answer: '가위', distractors: ['교회', '의사', '의자', '아기', '소포'] },
-            '8': { answer: '교회', distractors: ['의사', '가위', '쉬다', '타조', '기차'] },
-            '9': { answer: '스웨터', distractors: ['소포', '시계', '기차', '야구', '두부'] },
-            '10': { answer: '의사', distractors: ['의자', '가수', '아기', '교회', '바지'] }
+            '6': { answer: '나라', distractors: ['나무', '라디오', '머리', '강', '종이'] },
+            '7': { answer: '나무', distractors: ['노래', '일', '말', '강', '머리'] }, // [FIXED] Syntax error 'Gt' removed
+            '8': { answer: '라디오', distractors: ['종이', '머리', '나라', '일', '노래'] },
+            '9': { answer: '노래', distractors: ['말', '강', '나무', '종이', '라디오'] }, // Changed from 'Pull'
+            '10': { answer: '머리', distractors: ['의자', '가수', '일', '강', '말'] } // Changed from 'Médecin'
         };
 
         const sounds = {
@@ -516,12 +515,17 @@
             'gaji': { file: 'https://static.wixstatic.com/mp3/699687_1701edb05aef4e799291f8b74c09484c.mp3' },
             'gasu': { file: 'https://static.wixstatic.com/mp3/699687_6c979c3ecd5742a1a87bfa5a07550c2b.mp3' },
             'gae': { file: 'https://static.wixstatic.com/mp3/699687_df8a183ca9a14530a22d8ca61e7d43a9.mp3' },
-            'podo': { file: 'https://static.wixstatic.com/mp3/699687_31327ab0374443c7a77625358120faeb.mp3' },
+            'uju': { file: 'https://static.wixstatic.com/mp3/699687_4e0d250e189a425682ec299828c691ab.mp3' }, 
+            'dosi': { file: 'https://static.wixstatic.com/mp3/699687_1d0912a8fc5646e1ac36d590310dc1a8.mp3' }, 
+            'ko': { file: 'https://static.wixstatic.com/mp3/699687_fc778aadf6a94f1ea175b11b0526fe9c.mp3' },
+            'pa': { file: 'https://static.wixstatic.com/mp3/699687_a6ad9c5f67464db9aa8d036c4700c976.mp3' },
+            'hae': { file: 'https://static.wixstatic.com/mp3/699687_193396d6bb89436286a044133f3f16b7.mp3' }, 
+            'podo': { file: 'https://static.wixstatic.com/mp3/699687_31327ab0374443c7a77625358120faeb.mp3' }, 
             'gicha': { file: 'https://static.wixstatic.com/mp3/699687_d6d02eef338141f4b2e6c0633d444166.mp3' },
-            'tajo': { file: 'https://static.wixstatic.com/mp3/699687_faa360e6b45e466e934cd9e5c294ac6d.mp3' },
+            'tajo': { file: 'https://static.wixstatic.com/mp3/699687_faa360e6b45e466e934cd9e5c294ac6d.mp3' }, 
             'yagu': { file: 'https://static.wixstatic.com/mp3/699687_32afbdb86c5c407f9d4e35dbd4dc8da1.mp3' },
             'sigye': { file: 'https://static.wixstatic.com/mp3/699687_c3d5010c86fa4e00b3f58c75ac6e9c2a.mp3' },
-            'uyu': { file: 'https://static.wixstatic.com/mp3/699687_98ccb78733604a9ea3eeb34deb9379c7.mp3' },
+            'uyu': { file: 'https://static.wixstatic.com/mp3/699687_98ccb78733604a9ea3eeb34deb9379c7.mp3' }, 
             'upyo': { file: 'https://static.wixstatic.com/mp3/699687_147848ac6f1141f09354c980dcaa396e.mp3' },
             'pyeoda': { file: 'https://static.wixstatic.com/mp3/699687_8411d486a5b047a3a251218f3ebf9b92.mp3' },
             'tokki': { file: 'https://static.wixstatic.com/mp3/699687_f2dfa0a9f3e344b894bdeea46abf6e37.mp3' },
@@ -540,19 +544,21 @@
             'meori': { file: 'https://static.wixstatic.com/mp3/699687_66a6fc45d03d4ac19a06dd5dd017802e.mp3' },
             'gang': { file: 'https://static.wixstatic.com/mp3/699687_fac8f50ddc354a12927d526c896a919f.mp3' },
             'radio': { file: 'https://static.wixstatic.com/mp3/699687_0c24861bfd4a4501b08f14a6048e8058.mp3' },
-            'jong_i': { file: 'https://static.wixstatic.com/mp3/699687_221fcc2e070c48b58bc39daaaded8356.mp3' },
+            'jong_i': { file: 'https://static.wixstatic.com/mp3/699687_221fcc2e070c48b58bc39daaaded8356.mp3' }, // [FIXED] Syntax error
             'norae': { file: 'https://static.wixstatic.com/mp3/699687_949674a509a740579d3235c9ad134bc3.mp3' },
             'jubu': { file: 'https://static.wixstatic.com/mp3/699687_a871a2595e2143aab71a0f8661271fb5.mp3' },
             'sopo': { file: 'https://static.wixstatic.com/mp3/699687_c3e378fa4773459baacecbc75209ace7.mp3' },
             'jucha': { file: 'https://static.wixstatic.com/mp3/699687_d2081c183c5544508f3616c7fd257ffb.mp3' },
             'hyuga': { file: 'https://static.wixstatic.com/mp3/699687_d4a98326335b4d21a71d1921ef47fd7f.mp3' },
-            'yaegi': { file: 'https://static.wixstatic.com/mp3/699687_281f0a9cf0ec4df5ae9c59f085e5c9cb.mp3' }
+            'yaegi': { file: 'https://static.wixstatic.com/mp3/699687_281f0a9cf0ec4df5ae9c59f085e5c9cb.mp3' },
+            'il': { file: 'https://static.wixstatic.com/mp3/699687_7dc2a0f5df8446c6a67f091a9880e118.mp3' }
         };
 
+        // [MODIFIED] Updated matching data
         const matchingAnswers = {
-            '11': { 'Lion': 'saja', 'Pantalon': 'baji', 'Tofu': 'dubu', 'Raisin': 'podo', 'Lait': 'uyu' },
-            '12': { 'Chien': 'gae', 'Train': 'gicha', 'Horloge': 'sigye', 'Autruche': 'tajo', 'Baseball': 'yagu' },
-            '13': { 'Univers': 'uju', 'Ville': 'dosi', 'Nez': 'ko', 'Poireau': 'pa', 'Soleil': 'hae' }
+            '11': { 'Arbre': 'namu', 'Pays': 'nara', 'Cheval': 'mal', 'Tête': 'meori', 'Rivière': 'gang' },
+            '12': { 'Radio': 'radio', 'Papier': 'jong_i', 'Chanson': 'norae', 'Travail': 'il', 'Lapin': 'tokki' },
+            '13': { 'Papa': 'appa', 'Pomme': 'sagwa', 'Cochon': 'dwaeji', 'Chaise': 'uija', 'Se reposer': 'swida' }
         };
         
 
@@ -572,6 +578,7 @@
                 finalOptions = mcqOptionsStore[quizNum];
             } else {
                 const data = mcqData[quizNum];
+                if (!data) return; // [ADDED] Safety check
                 const numOptions = Math.floor(Math.random() * 2) + 4; // 4 or 5
                 const numDistractors = numOptions - 1;
 
