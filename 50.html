@@ -113,18 +113,61 @@
         .input-zone-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; min-height: 80px; gap: 0.5rem;}
         .syllable-input { border: 2px solid #cbd5e1; background-color: #f9fafb; width: 100px; height: 100px; font-size: 4rem; font-family: 'Noto Sans KR', sans-serif; font-weight: 700; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: border-color 0.2s; }
         .syllable-input.active { border-color: #3b82f6; }
-        .jamo-bank { display: flex; flex-direction: column; gap: 0.5rem; justify-content: center; padding-top: 1rem; }
-        .jamo-row { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; }
-        .jamo-key {
-            width: 42px; height: 42px;
-            font-size: 1rem;
-            border: 1px solid #d1d5db; border-radius: 0.25rem;
-            background-color: #f9fafb;
-            cursor: pointer;
-            display:flex; align-items:center; justify-content:center;
-            -webkit-tap-highlight-color: transparent;
+        
+        /* [DELETED] .jamo-bank, .jamo-row, .jamo-key (Replaced below) */
+
+        /* [추가된 부분] Styles for the new Dubeolsik Keyboard */
+        .keyboard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem; /* 8px */
+            justify-content: center;
+            padding-top: 1rem; /* 16px */
+            width: 100%;
+            max-width: 500px; /* Limit keyboard width */
+            margin: 0 auto; /* Center the keyboard */
         }
-        .jamo-key:hover { background-color: #f3f4f6; }
+        .keyboard-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem; /* ~6px */
+            justify-content: center;
+        }
+        .keyboard-key {
+            height: 42px;
+            padding: 0 0.5rem; /* Add padding for wider keys */
+            min-width: 42px; /* Minimum width for standard keys */
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 500;
+            border: 1px solid #d1d5db; /* gray-300 */
+            border-bottom-width: 2px; /* 3D effect */
+            border-radius: 0.375rem; /* rounded-md */
+            background-color: #f9fafb; /* gray-50 */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.1s;
+        }
+        .keyboard-key:hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .keyboard-key:active {
+            background-color: #e5e7eb; /* gray-200 */
+            border-bottom-width: 1px;
+            transform: translateY(1px);
+        }
+        .keyboard-key.shift-key, .keyboard-key.backspace-key {
+            flex-grow: 1.5; /* Make special keys wider */
+            background-color: #e5e7eb; /* gray-200 */
+        }
+        .keyboard-key.shift-key.active {
+            background-color: #60a5fa; /* blue-400 */
+            color: white;
+            border-color: #2563eb; /* blue-600 */
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -306,8 +349,8 @@
             if(data.options && Array.isArray(data.options)) {
                 data.options = data.options.sort(() => Math.random() - 0.5);
             } else if (data.options && typeof data.options === 'object') {
-                 let shuffledEntries = Object.entries(data.options).sort(() => Math.random() - 0.5);
-                 data.options = Object.fromEntries(shuffledEntries);
+                let shuffledEntries = Object.entries(data.options).sort(() => Math.random() - 0.5);
+                data.options = Object.fromEntries(shuffledEntries);
             }
             
             switch(data.type) {
@@ -320,22 +363,22 @@
                 case 'audio-to-kr':
                     questionText = "Choisissez la bonne écriture.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                   <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option korean"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
+                                <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option korean"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
                     break;
                 case 'img-to-audio':
                     questionText = "Choisissez le bon son.";
-                     contentHtml = `<img src="${data.image}" alt="Quiz Image" class="quiz-image mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e2e8f0/64748b?text=Image';">
-                                   <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}"><button class="audio-button !m-0 !p-0" onclick="event.stopPropagation(); playSound('${opt}')"><svg class="audio-icon"><use href="#audio-icon-svg"/></svg></button></label>`).join('')}</div>`;
+                    contentHtml = `<img src="${data.image}" alt="Quiz Image" class="quiz-image mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e2e8f0/64748b?text=Image';">
+                                <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}"><button class="audio-button !m-0 !p-0" onclick="event.stopPropagation(); playSound('${opt}')"><svg class="audio-icon"><use href="#audio-icon-svg"/></svg></button></label>`).join('')}</div>`;
                     break;
                 case 'audio-to-img':
                     questionText = "Choisissez la bonne image.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                   <div class="quiz-options-horizontal">${Object.entries(data.options).map(([key, src]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${key}"><img src="${src}" onerror="this.onerror=null;this.src='https://placehold.co/100x80/e2e8f0/64748b?text=Image';"></label>`).join('')}</div>`;
+                                <div class="quiz-options-horizontal">${Object.entries(data.options).map(([key, src]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${key}"><img src="${src}" onerror="this.onerror=null;this.src='https://placehold.co/100x80/e2e8f0/64748b?text=Image';"></label>`).join('')}</div>`;
                     break;
                 case 'audio-to-fr':
                     questionText = "Choisissez la bonne signification.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                   <div class="quiz-options-vertical">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt.replace(/'/g, "\\'")}">${opt}</label>`).join('')}</div>`;
+                                <div class="quiz-options-vertical">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt.replace(/'/g, "\\'")}">${opt}</label>`).join('')}</div>`;
                     break;
                 case 'dictation':
                     questionText = "Écrivez en Hangeul.";
@@ -344,8 +387,8 @@
                         inputs += `<div id="input-${quizNum}-${i}" class="syllable-input" onclick="setActiveDictationBox(${quizNum}, ${i})"></div>`;
                     }
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                   <div class="input-zone-container">${inputs}</div>
-                                   <div id="keyboard-container-${quizNum}" class="keyboard-container"></div>`;
+                                <div class="input-zone-container">${inputs}</div>
+                                <div id="keyboard-container-${quizNum}" class="keyboard-container"></div>`;
                     break;
             }
 
@@ -452,8 +495,8 @@
 
             // Reset MCQs
             if (quizNumInt >= 4 && quizNumInt <= 23) {
-                 const options = pageElement.querySelectorAll(`input[name="q${quizNum}"]`);
-                 options.forEach(opt => {
+                const options = pageElement.querySelectorAll(`input[name="q${quizNum}"]`);
+                options.forEach(opt => {
                     opt.disabled = false;
                     opt.checked = false;
                     opt.parentElement.style.cursor = 'pointer';
@@ -518,7 +561,8 @@
         // [DELETED] Second Hangul object
         
         function setupDictationQuiz(quizNum) {
-            const jamoBank = document.getElementById(`keyboard-container-${quizNum}`); // [FIX] Use correct ID
+            // [수정된 부분] 백틱(`)을 사용하여 문자열을 올바르게 만듭니다.
+            const jamoBank = document.getElementById(`keyboard-container-${quizNum}`);
             if (!jamoBank) return;
 
             const container = document.getElementById(`page-${quizNum}`).querySelector('.input-zone-container');
@@ -535,6 +579,7 @@
 
         // [MODIFIED] Using the correct keyboard creation function name
         function createDubeolsikKeyboard(quizNum) {
+            // [수정된 부분] 백틱(`)을 사용하여 문자열을 올바르게 만듭니다.
             const keyboardContainer = document.getElementById(`keyboard-container-${quizNum}`);
             if (!keyboardContainer) return;
 
@@ -626,7 +671,7 @@
                         buffer.push(jamo);
                     }
                 } else { // Consonant
-                     if (buffer.length > 1 && Hangul.JONGSEONG.includes(last)) {
+                    if (buffer.length > 1 && Hangul.JONGSEONG.includes(last)) {
                         const combined = Hangul.JONGSEONG_COMBINATIONS[last]?.[jamo];
                         if (combined) buffer[buffer.length - 1] = combined;
                         else buffer.push(jamo);
