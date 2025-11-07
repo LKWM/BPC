@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- [수정됨] user-scalable=no 추가 -->
+    <title>Leçon supplémentaire 27 - Activité 6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        /* [추가됨] 일관된 스타일을 위한 CSS 변수 */
+        :root {
+            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
+            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
+            --font-lg: clamp(1rem, 3vmin, 1.25rem);
+            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
+            --font-title: clamp(1.5rem, 5vmin, 2rem);
+            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
+            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
+            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+        }
+
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+        body { 
+            font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+        }
+        .course-wrapper { 
+            width: 100%; 
+            max-width: 600px; 
+            /* [삭제됨] mobile-view transform */
+        }
+        .course-container { 
+            width: 100%; 
+            position: relative; 
+            aspect-ratio: 1 / 1; 
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: white;
+        }
+        .page { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out; 
+            background-color: white; padding: var(--padding-lg); 
+            border-radius: 0.75rem; 
+            box-sizing: border-box;
+        }
+        .page.active { opacity: 1; visibility: visible; }
+        .page-content { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; cursor: pointer; }
+        
+        /* [추가됨] 공통 타이틀 */
+        .title-text { 
+            font-size: var(--font-title); 
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+        }
+        
+        /* Quiz Styles */
+        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; margin-bottom: 1.5rem; text-align: center; } /* [수정됨] text-align 추가 */
+        .quiz-option { 
+            display: inline-block; padding: var(--padding-md); border: 2px solid #d1d5db; 
+            border-radius: 0.5rem; margin: 0.5rem; cursor: pointer; 
+            transition: background-color 0.2s, border-color 0.2s; 
+            font-size: var(--font-xl); font-family: 'Noto Sans KR', sans-serif; 
+            text-align: center; min-width: 150px; 
+        }
+        .quiz-option:hover { background-color: #f3f4f6; }
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7 !important; border-color: #4ade80 !important; }
+        .quiz-option.incorrect { background-color: #fee2e2 !important; border-color: #f87171 !important; }
+        .quiz-option input { display: none; }
+        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
+        .audio-button { background: none; border: none; cursor: pointer; margin-bottom: 2rem; }
+        .audio-icon { width: 4rem; height: 4rem; color: #6b7280; transition: color 0.2s; }
+        .audio-button:hover .audio-icon { color: #1d4ed8; }
+        .page-content img { /* [추가됨] 이미지 스타일 */
+            max-height: 12rem;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Matching Quiz Styles */
+        .matching-container { display: flex; justify-content: space-around; align-items: flex-start; gap: 1rem; width:100%; }
+        .matching-column { display: flex; flex-direction: column; gap: 0.75rem; flex: 1; }
+        .match-option { padding: var(--padding-sm) var(--padding-md); border: 2px solid #d1d5db; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s; font-size: var(--font-base); } /* [수정됨] */
+        .match-option.selected { border-color: #6366f1; background-color: #e0e7ff; }
+        .match-option.paired-1 { background-color: #cffafe; }
+        .match-option.paired-2 { background-color: #fef9c3; }
+        .match-option.paired-3 { background-color: #fce7f3; }
+        .match-option.paired-4 { background-color: #e4e4e7; }
+        .match-option.paired-5 { background-color: #dcfce7; }
+        .match-option.disabled { cursor: not-allowed; opacity: 0.6; }
+        .match-option.correct-match { border-color: #22c55e !important; background-color: #dcfce7 !important; }
+        .match-option.incorrect-match { border-color: #ef4444 !important; background-color: #fee2e2 !important; }
+
+        /* Typing Quiz Styles */
+        .typing-input {
+            font-family: 'Noto Sans KR', sans-serif;
+            text-align: center;
+            font-size: 2rem;
+            padding: 0.5rem;
+            border: 2px solid #d1d5db;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 200px;
+            margin: 1rem auto 0;
+        }
+        .typing-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+
+        /* [수정됨] 표준 반응형 스타일 */
+        @media (max-width: 600px) {
+            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
+            .course-wrapper { height: 100%; max-width: 100%; }
+            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
+            .page { padding: 1.5rem 1rem; border-radius: 0; }
+            .page-content img { max-height: 10rem; }
+            .quiz-option { width: 100%; padding: var(--padding-sm); font-size: var(--font-lg); margin: 0.25rem 0; }
+            .match-option { padding: var(--padding-sm); font-size: var(--font-sm); }
+            .matching-column { gap: 0.5rem; }
+            .matching-container { gap: 0.5rem; }
+            .typing-input { font-size: 1.5rem; max-width: 150px; }
+            .audio-icon { width: 3rem; height: 3rem; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="course-wrapper">
+        <div class="shadow-2xl course-container">
+            
+            <!-- Page 0: Title -->
+            <div id="page-0" class="page active items-center justify-center text-center">
+                <div class="page-content">
+                    <h1 class="title-text text-gray-800 mb-6 leading-tight">Leçon supplémentaire 27 - Activité 6</h1>
+                    <p class="text-lg text-gray-600">40 questions pour pratiquer votre vocabulaire coréen.</p>
+                    <button onclick="showPage('page-1')" class="mt-10 nav-button bg-blue-600 text-white hover:bg-blue-700">Commencer</button>
+                </div>
+            </div>
+
+            <!-- Pages 1-10: Audio -> French Definition -->
+            <div id="page-1" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (1/40)</p>
+                    <button class="audio-button" onclick="playSound('jib')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-1-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-1-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('1', 'page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-2" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (2/40)</p>
+                    <button class="audio-button" onclick="playSound('chaeg')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-2-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-2-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('2', 'page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-3" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (3/40)</p>
+                    <button class="audio-button" onclick="playSound('bat')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-3-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-3-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('3', 'page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-4" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (4/40)</p>
+                    <button class="audio-button" onclick="playSound('yeog')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-4-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-4-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('4', 'page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-5" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (5/40)</p>
+                    <button class="audio-button" onclick="playSound('chajda')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-5-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-5-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('5', 'page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-6" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (6/40)</p>
+                    <button class="audio-button" onclick="playSound('bich')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-6-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-6-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('6', 'page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-7" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (7/40)</p>
+                    <button class="audio-button" onclick="playSound('chubda')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-7-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-7-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('7', 'page-8')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-8" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (8/40)</p>
+                    <button class="audio-button" onclick="playSound('mureup')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-8-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-7')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-8-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('8', 'page-9')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-9" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (9/40)</p>
+                    <button class="audio-button" onclick="playSound('geodda')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-9-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-8')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-9-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('9', 'page-10')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-10" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Écoutez l’audio et choisissez la bonne définition. (10/40)</p>
+                    <button class="audio-button" onclick="playSound('naj')"><svg class="audio-icon mx-auto"><use href="#audio-icon-svg"/></svg></button>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-10-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-9')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-10-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('10', 'page-11')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pages 11-20: Image + French -> Korean -->
+            <div id="page-11" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (11/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_60c97a27a1d54a958e6f66d9fff230f7~mv2.png" alt="Fleur" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Fleur</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-11-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-10')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-11-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('11', 'page-12')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-12" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (12/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_859a1dbf56454c74abbe234e35e5e889~mv2.png" alt="Feuille" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Feuille</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-12-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-11')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-12-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('12', 'page-13')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-13" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (13/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_500511f2ef344228833f1586559fe553~mv2.png" alt="Recevoir" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Recevoir</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-13-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-12')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-13-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('13', 'page-14')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-14" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (14/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_0f653ac2b1034d17ae960900ae6fd31b~mv2.png" alt="Être pareil" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Être pareil</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-14-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-13')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-14-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('14', 'page-15')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-15" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (15/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_1a47943880cd47e9b870dc18f38d9eda~mv2.png" alt="Laver" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Laver</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-15-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-14')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-15-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('15', 'page-16')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-16" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (16/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_f4633d7bad844c769d02c61f994763e4~mv2.png" alt="Corée du Sud" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Corée du Sud</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-16-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-15')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-16-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('16', 'page-17')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-17" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (17/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_4948e3ffef0e4111a846c6b9dfeee986~mv2.png" alt="Soir" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Soir</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-17-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-16')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-17-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('17', 'page-18')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-18" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (18/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_3afc196e1b3a499291b7851ce871e0d6~mv2.png" alt="Pêche" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Pêche</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-18-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-17')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-18-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('18', 'page-19')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-19" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (19/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_ed0a692113d64030b634140a9ee9f2d4~mv2.png" alt="Bébé" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Bébé</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-19-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-18')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-19-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('19', 'page-20')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-20" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis choisissez le bon mot coréen. (20/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_16f447364c134ef4a6aa94d392ee95ba~mv2.png" alt="Chanteur" class="mx-auto rounded-lg mb-2 h-40 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x160/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold mb-2">Chanteur</p>
+                    <div class="w-full text-center options-container"></div>
+                </div>
+                <div id="quiz-20-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-19')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-20-feedback" class="feedback-area"></div>
+                        <button onclick="checkAnswer('20', 'page-21')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pages 21-30: Matching -->
+            <div id="page-21" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Associez les mots français à leur traduction coréenne. (21-25/40)</p>
+                    <div id="match-quiz-21" class="matching-container">
+                        <div class="matching-column" id="match-fr-21">
+                            <button class="match-option" data-word="Pantalon">Pantalon</button>
+                            <button class="match-option" data-word="Tofu">Tofu</button>
+                            <button class="match-option" data-word="Autruche">Autruche</button>
+                            <button class="match-option" data-word="Baseball">Baseball</button>
+                            <button class="match-option" data-word="Horloge">Horloge</button>
+                        </div>
+                        <div class="matching-column" id="match-kr-21">
+                            <button class="match-option" data-word="tajo">타조</button>
+                            <button class="match-option" data-word="baji">바지</button>
+                            <button class="match-option" data-word="sigye">시계</button>
+                            <button class="match-option" data-word="yagu">야구</button>
+                            <button class="match-option" data-word="dubu">두부</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="quiz-21-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-20')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-21-feedback" class="feedback-area"></div>
+                        <button onclick="checkMatchingAnswer('21', 'page-22')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-22" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Associez les mots français à leur traduction coréenne. (26-30/40)</p>
+                    <div id="match-quiz-22" class="matching-container">
+                        <div class="matching-column" id="match-fr-22">
+                            <button class="match-option" data-word="Colis">Colis</button>
+                            <button class="match-option" data-word="Stationnement">Stationnement</button>
+                            <button class="match-option" data-word="Vacances">Vacances</button>
+                            <button class="match-option" data-word="Histoire">Histoire</button>
+                            <button class="match-option" data-word="Timbre">Timbre</button>
+                        </div>
+                        <div class="matching-column" id="match-kr-22">
+                            <button class="match-option" data-word="hyuga">휴가</button>
+                            <button class="match-option" data-word="sopo">소포</button>
+                            <button class="match-option" data-word="upyo">우표</button>
+                            <button class="match-option" data-word="yaegi">얘기</button>
+                            <button class="match-option" data-word="jucha">주차</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="quiz-22-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-21')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-22-feedback" class="feedback-area"></div>
+                        <button onclick="checkMatchingAnswer('22', 'page-23')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pages 23-32: Typing -->
+            <div id="page-23" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (31/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_c3b947b9f891464b8df2d7a2773df29f~mv2.png" alt="Ouvrir" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Ouvrir</p>
+                    <input type="text" name="q23" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-23-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-22')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-23-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('23', '펴다', 'page-24')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-24" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (32/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_3f2e12f5c0ac474db77401809ff398e9~mv2.png" alt="Arbre" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Arbre</p>
+                    <input type="text" name="q24" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-24-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-23')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-24-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('24', '나무', 'page-25')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="page-25" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (33/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_7f855ceaad124b3796e055df662b459e~mv2.png" alt="Pays" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Pays</p>
+                    <input type="text" name="q25" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-25-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-24')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-25-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('25', '나라', 'page-26')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-26" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (34/40)</p>
+                     <img src="https://static.wixstatic.com/media/699687_3e6a2c41a57c4e4bb68e0a859f87c339~mv2.png" alt="Travail" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Travail</p>
+                    <input type="text" name="q26" class="typing-input" placeholder="_" maxlength="1" lang="ko">
+                </div>
+                <div id="quiz-26-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-25')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-26-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('26', '일', 'page-27')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-27" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (35/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_f07a7b74542149ea88b2f7861d899651~mv2.png" alt="Pomme" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Pomme</p>
+                    <input type="text" name="q27" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-27-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-26')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-27-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('27', '사과', 'page-28')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-28" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (36/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_959d23ced9f24847a1a2418d29c7a3a9~mv2.png" alt="Cochon" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Cochon</p>
+                    <input type="text" name="q28" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-28-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-27')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-28-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('28', '돼지', 'page-29')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-29" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (37/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_ecf383f0783b492f8fbf6cc7412d40cb~mv2.png" alt="Chaise" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Chaise</p>
+                    <input type="text" name="q29" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-29-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-28')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-29-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('29', '의자', 'page-30')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-30" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (38/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_ea2168d1f24c4712bc6f654626d4eec2~mv2.png" alt="Jusqu’à" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Jusqu’à</p>
+                    <input type="text" name="q30" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-30-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-29')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-30-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('30', '까지', 'page-31')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-31" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (39/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_ac16ff46a87e434789a644e441dd0833~mv2.png" alt="Encore" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Encore</p>
+                    <input type="text" name="q31" class="typing-input" placeholder="_" maxlength="1" lang="ko">
+                </div>
+                <div id="quiz-31-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-30')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-31-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('31', '또', 'page-32')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-32" class="page">
+                <div class="page-content text-center">
+                    <p class="quiz-question">Regardez l'image et la définition, puis écrivez le mot en coréen. (40/40)</p>
+                    <img src="https://static.wixstatic.com/media/699687_2b878251dd90430dbf0c35e829f7378a~mv2.png" alt="Lapin" class="mx-auto rounded-lg mb-4 h-48 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/200x192/e2e8f0/64748b?text=Image';">
+                    <p class="text-xl font-bold">Lapin</p>
+                    <input type="text" name="q32" class="typing-input" placeholder="_ _" maxlength="2" lang="ko">
+                </div>
+                <div id="quiz-32-nav" class="flex justify-between items-center w-full">
+                    <button onclick="showPage('page-31')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
+                    <div class="flex items-center gap-4">
+                        <div id="quiz-32-feedback" class="feedback-area"></div>
+                        <button onclick="checkTypingAnswer('32', '토끼', 'page-33')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 33: Completion Message -->
+            <div id="page-33" class="page items-center justify-center text-center">
+                <div class="page-content">
+                    <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 class="title-text text-gray-800 mb-3">Activité terminée !</h2> <!-- [수정됨] title-text 적용 -->
+                    <p class="text-gray-600" style="font-size: var(--font-lg);">Félicitations, vous avez terminé les 40 questions.</p> <!-- [수정됨] -->
+                </div>
+                <div class="w-full text-center pb-4">
+                    <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- [추가됨] SVG 아이콘 -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="audio-icon-svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+        </symbol>
+    </svg>
+
+    <script>
+        let currentPageId = 'page-0';
+        let initialNavStates = {}; // [추가됨]
+        
+        const mcqData = {
+            '1': { answer: 'Maison', distractors: ['Livre', 'Champ', 'Gare'] },
+            '2': { answer: 'Livre', distractors: ['Maison', 'Champ', 'Gare'] },
+            '3': { answer: 'Champ', distractors: ['Maison', 'Livre', 'Gare'] },
+            '4': { answer: 'Gare', distractors: ['Maison', 'Livre', 'Champ'] },
+            '5': { answer: 'Chercher', distractors: ['Lumière', 'Faire froid', 'Genou'] },
+            '6': { answer: 'Lumière', distractors: ['Chercher', 'Faire froid', 'Genou'] },
+            '7': { answer: 'Faire froid', distractors: ['Chercher', 'Lumière', 'Genou'] },
+            '8': { answer: 'Genou', distractors: ['Chercher', 'Lumière', 'Faire froid'] },
+            '9': { answer: 'Marcher', distractors: ['Journée', 'Fleur', 'Feuille'] },
+            '10': { answer: 'Journée', distractors: ['Marcher', 'Fleur', 'Feuille'] },
+            '11': { answer: '꽃', distractors: ['스웨터', '의사', '쉬다'] },
+            '12': { answer: '잎', distractors: ['가위', '교회', '사자'] },
+            '13': { answer: '받다', distractors: ['개', '포도', '기차'] },
+            '14': { answer: '같다', distractors: ['우유', '바지', '두부'] },
+            '15': { answer: '씻다', distractors: ['타조', '야구', '시계'] },
+            '16': { answer: '한국', distractors: ['소포', '주차', '휴가'] },
+            '17': { answer: '저녁', distractors: ['얘기', '우표', '펴다'] },
+            '18': { answer: '낚시', distractors: ['나무', '나라', '일'] },
+            '19': { answer: '아기', distractors: ['사과', '돼지', '의자'] },
+            '20': { answer: '가수', distractors: ['까지', '또', '토끼'] }
+        };
+
+        const sounds = {
+            'jib': { file: 'https://static.wixstatic.com/mp3/699687_472e286d3e4b4475a2f08373a7f219e3.mp3' },
+            'chaeg': { file: 'https://static.wixstatic.com/mp3/699687_09246fa59e654f65bb041521ee803f57.mp3' },
+            'bat': { file: 'https://static.wixstatic.com/mp3/699687_e1d11a1c53b841bfa912d33b0077335e.mp3' },
+            'yeog': { file: 'https://static.wixstatic.com/mp3/699687_c3c270d365904ec5999081bee6254400.mp3' },
+            'chajda': { file: 'https://static.wixstatic.com/mp3/699687_51aec296c1074a16857f0ed95541bbf3.mp3' },
+            'bich': { file: 'https://static.wixstatic.com/mp3/699687_143719ecf6424dcdae37b6beb733341b.mp3' },
+            'chubda': { file: 'https://static.wixstatic.com/mp3/699687_44ea5d2318e841c4af555e0cfab3dcef.mp3' },
+            'mureup': { file: 'https://static.wixstatic.com/mp3/699687_6d8d4b6fc01540ffa428e6904191e7e3.mp3' },
+            'geodda': { file: 'https://static.wixstatic.com/mp3/699687_886ffbabb1e140268c6d594c9da5b7f6.mp3' },
+            'naj': { file: 'https://static.wixstatic.com/mp3/699687_d6becf3dca494435a2fe334de0ceec79.mp3' },
+            'saja': { file: 'https://static.wixstatic.com/mp3/699687_43b758e785e341d9a6041da783d8bd31.mp3' },
+            'gae': { file: 'https://static.wixstatic.com/mp3/699687_df8a183ca9a14530a22d8ca61e7d43a9.mp3' },
+            'podo': { file: 'https://static.wixstatic.com/mp3/699687_31327ab0374443c7a77625358120faeb.mp3' },
+            'gicha': { file: 'https://static.wixstatic.com/mp3/699687_d6d02eef338141f4b2e6c0633d444166.mp3' },
+            'uyu': { file: 'https://static.wixstatic.com/mp3/699687_98ccb78733604a9ea3eeb34deb9379c7.mp3' },
+            'baji': { file: 'https://static.wixstatic.com/mp3/699687_62be60a8dc6945a9a90b26e532f450d3.mp3' },
+            'dubu': { file: 'https://static.wixstatic.com/mp3/699687_9f1d9eecb14e4450aebbb20a3e247e22.mp3' },
+            'tajo': { file: 'https://static.wixstatic.com/mp3/699687_faa360e6b45e466e934cd9e5c294ac6d.mp3' },
+            'yagu': { file: 'https://static.wixstatic.com/mp3/699687_32afbdb86c5c407f9d4e35dbd4dc8da1.mp3' },
+            'sigye': { file: 'https://static.wixstatic.com/mp3/699687_c3d5010c86fa4e00b3f58c75ac6e9c2a.mp3' },
+            'sopo': { file: 'https://static.wixstatic.com/mp3/699687_c3e378fa4773459baacecbc75209ace7.mp3' },
+            'jucha': { file: 'https://static.wixstatic.com/mp3/699687_d2081c183c5544508f3616c7fd257ffb.mp3' },
+            'hyuga': { file: 'https://static.wixstatic.com/mp3/699687_1b5b3a3250b7411c841e75529f7f4575.mp3' },
+            'yaegi': { file: 'https://static.wixstatic.com/mp3/699687_281f0a9cf0ec4df5ae9c59f085e5c9cb.mp3' },
+            'upyo': { file: 'https://static.wixstatic.com/mp3/699687_147848ac6f1141f09354c980dcaa396e.mp3' }
+        };
+
+        const matchingAnswers = {
+            '21': { 'Pantalon': 'baji', 'Tofu': 'dubu', 'Autruche': 'tajo', 'Baseball': 'yagu', 'Horloge': 'sigye' },
+            '22': { 'Colis': 'sopo', 'Stationnement': 'jucha', 'Vacances': 'hyuga', 'Histoire': 'yaegi', 'Timbre': 'upyo' }
+        };
+        let matchState = {};
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function setupMcqOptions(quizNum) {
+            const optionsContainer = document.querySelector(`#page-${quizNum} .options-container`);
+            if (!optionsContainer) return;
+
+            const data = mcqData[quizNum];
+            const finalOptions = [data.answer, ...data.distractors];
+            
+            shuffleArray(finalOptions);
+
+            optionsContainer.innerHTML = finalOptions.map(opt => `
+                <label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>
+            `).join('');
+            
+            addRadioEventListeners(quizNum);
+        }
+
+        function addRadioEventListeners(quizNum) {
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
+                        opt.parentElement.classList.remove('selected');
+                    });
+                    if(e.target.checked) {
+                        e.target.parentElement.classList.add('selected');
+                    }
+                });
+            });
+        }
+
+        function playSound(soundKey) {
+            const audioButton = document.querySelector(`#page-${currentPageId.split('-')[1]} .audio-button`);
+            if (!sounds[soundKey] || !sounds[soundKey].file) {
+                console.log(`Audio file for "${soundKey}" not available. This is a placeholder.`);
+                if(audioButton) {
+                    audioButton.style.transform = 'scale(1.1)';
+                    setTimeout(() => { audioButton.style.transform = 'scale(1)'; }, 200);
+                }
+                return;
+            };
+            Tone.start().then(() => {
+                const player = new Tone.Player(sounds[soundKey].file).toDestination();
+                player.autostart = true;
+                player.onstop = () => {
+                    player.dispose();
+                };
+            }).catch(e => {
+                 console.error("Could not start audio context: ", e);
+                 if(audioButton) {
+                     audioButton.style.transform = 'scale(1.1)';
+                     setTimeout(() => { audioButton.style.transform = 'scale(1)'; }, 200);
+                 }
+            });
+        }
+
+        // [수정됨] postMessage 및 resetPage 로직 추가
+        function showPage(pageId) {
+            const currentPage = document.getElementById(currentPageId);
+            if (currentPage) currentPage.classList.remove('active');
+            
+            const nextPage = document.getElementById(pageId);
+            if (nextPage) {
+                nextPage.classList.add('active');
+                currentPageId = pageId;
+
+                // [추가됨] postMessage logic
+                if (pageId === 'page-33') { // This is the completion page
+                    if (window.parent) {
+                        window.parent.postMessage({ type: 'lesson_complete' }, '*');
+                    }
+                }
+
+                // [추가됨] Call to reset page state
+                resetPage(nextPage);
+            }
+        }
+        
+        // [추가됨] 페이지 리셋 함수
+        function resetPage(pageElement) {
+            const pageId = pageElement.id;
+            const quizNumMatch = pageId.match(/^page-(\d+)$/);
+            if (!quizNumMatch) return; // 퀴즈 페이지가 아님
+
+            const quizNum = parseInt(quizNumMatch[1]);
+            // 퀴즈 페이지 범위: 1-32
+            if (quizNum < 1 || quizNum > 32) return; 
+
+            // 1. 네비게이션 바 리셋
+            const navEl = pageElement.querySelector(`#quiz-${quizNum}-nav`);
+            const navId = navEl.id;
+            if (navEl && initialNavStates[navId]) {
+                navEl.innerHTML = initialNavStates[navId];
+                // 버튼 이벤트 다시 바인딩
+                navEl.querySelectorAll('button[onclick]').forEach(btn => {
+                    btn.onclick = new Function(btn.getAttribute('onclick'));
+                });
+            }
+            
+            // 2. 퀴즈 입력 리셋
+            // MCQ (1-20)
+            if (quizNum >= 1 && quizNum <= 20) {
+                 const options = pageElement.querySelectorAll(`input[name="q${quizNum}"]`);
+                 if (options.length > 0) {
+                    options.forEach(opt => {
+                        opt.disabled = false;
+                        opt.checked = false;
+                        opt.parentElement.style.cursor = 'pointer';
+                        opt.parentElement.classList.remove('selected', 'correct', 'incorrect');
+                    });
+                    addRadioEventListeners(quizNum); // 리스너 다시 추가
+                 } else {
+                     // 옵션이 아직 생성되지 않았을 수 있으므로, 생성
+                     setupMcqOptions(quizNum.toString());
+                 }
+            }
+            // Matching (21-22)
+            else if (quizNum >= 21 && quizNum <= 22) {
+                initializeMatchingQuiz(quizNum.toString());
+            }
+            // Typing (23-32)
+            else if (quizNum >= 23 && quizNum <= 32) {
+                const typingInput = pageElement.querySelector(`input[name="q${quizNum}"]`);
+                if (typingInput) {
+                    typingInput.disabled = false;
+                    typingInput.value = '';
+                    typingInput.classList.remove('border-green-500', 'bg-green-50', 'border-red-500', 'bg-red-50');
+                }
+            }
+        }
+        
+        function handleSelection(quizNum, type, selectedBtn) {
+            if (selectedBtn.classList.contains('disabled')) return;
+            const state = matchState[quizNum];
+            if (!state) return; // [추가됨] 방어 코드
+            const columnSelector = type === 'fr' ? `#match-fr-${quizNum}` : `#match-kr-${quizNum}`;
+            const currentlySelected = document.querySelector(`${columnSelector} .match-option.selected`);
+            if (currentlySelected) {
+                currentlySelected.classList.remove('selected');
+            }
+            selectedBtn.classList.add('selected');
+            state.currentSelection[type] = selectedBtn.dataset.word;
+            if (state.currentSelection.fr && state.currentSelection.kr) {
+                state.pairCount++;
+                const frBtn = document.querySelector(`#match-fr-${quizNum} .match-option[data-word="${state.currentSelection.fr}"]`);
+                const krBtn = document.querySelector(`#match-kr-${quizNum} .match-option[data-word="${state.currentSelection.kr}"]`);
+                state.userPairs[state.currentSelection.fr] = state.currentSelection.kr;
+                [frBtn, krBtn].forEach(btn => {
+                    if (btn) { // [추가됨] 방어 코드
+                        btn.classList.remove('selected');
+                        btn.classList.add('disabled', `paired-${state.pairCount}`);
+                    }
+                });
+                state.currentSelection = { fr: null, kr: null };
+            }
+        }
+
+        function initializeMatchingQuiz(quizNum) {
+            // [수정됨] 매칭 퀴즈 리셋 로직 강화
+            const matchingContainer = document.getElementById(`page-${quizNum}`).querySelector(`.matching-container`);
+            if (matchingContainer) {
+                const matchOptions = matchingContainer.querySelectorAll('.match-option');
+                matchOptions.forEach(opt => {
+                    opt.className = 'match-option'; // 모든 클래스 초기화
+                });
+            }
+
+            matchState[quizNum] = {
+                currentSelection: { fr: null, kr: null },
+                userPairs: {},
+                pairCount: 0
+            };
+            const frButtons = document.querySelectorAll(`#match-fr-${quizNum} .match-option`);
+            const krButtons = document.querySelectorAll(`#match-kr-${quizNum} .match-option`);
+            frButtons.forEach(btn => btn.onclick = () => handleSelection(quizNum, 'fr', btn));
+            krButtons.forEach(btn => btn.onclick = () => handleSelection(quizNum, 'kr', btn));
+            
+            const krContainer = document.getElementById(`match-kr-${quizNum}`);
+            if (krContainer && !krContainer.dataset.shuffled) { // [수정됨] 방어 코드
+                const buttonsToShuffle = Array.from(krContainer.children);
+                shuffleArray(buttonsToShuffle);
+                buttonsToShuffle.forEach(button => krContainer.appendChild(button));
+                krContainer.dataset.shuffled = 'true';
+            }
+        }
+
+        function checkMatchingAnswer(quizNum, nextPageId) {
+            const correctPairs = matchingAnswers[quizNum];
+            const userPairs = matchState[quizNum].userPairs;
+            let allCorrect = true;
+
+            if (Object.keys(userPairs).length < Object.keys(correctPairs).length) {
+                allCorrect = false;
+            } else {
+                 for (const frWord in correctPairs) {
+                     if (userPairs[frWord] !== correctPairs[frWord]) {
+                         allCorrect = false;
+                         break;
+                     }
+                 }
+            }
+
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            const validerButton = navEl.querySelector('button[onclick^="checkMatchingAnswer"]');
+            if (validerButton) validerButton.style.display = 'none';
+
+            if (allCorrect) {
+                const frButtons = document.querySelectorAll(`#match-fr-${quizNum} .match-option`);
+                frButtons.forEach(btn => {
+                    const frWord = btn.dataset.word;
+                    const userKrWord = userPairs[frWord];
+                    const krBtn = document.querySelector(`#match-kr-${quizNum} .match-option[data-word="${userKrWord}"]`);
+                    btn.classList.add('correct-match');
+                    if (krBtn) krBtn.classList.add('correct-match');
+                });
+                const buttonText = 'Suivant &rarr;';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                feedbackContainer.innerHTML = `<button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+
+        function checkTypingAnswer(quizNum, correctAnswer, nextPageId) {
+            const inputEl = document.querySelector(`input[name="q${quizNum}"]`);
+            const userAnswer = inputEl.value.trim();
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            if (!userAnswer) {
+                const originalButtonHtml = feedbackContainer.innerHTML;
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold mr-2" style="font-size: var(--font-base);">Veuillez entrer.</p>` + originalButtonHtml;
+                setTimeout(() => { 
+                    if (feedbackContainer.querySelector('p')) {
+                         feedbackContainer.innerHTML = originalButtonHtml;
+                         const newButton = feedbackContainer.querySelector('button');
+                         if (newButton) {
+                             newButton.onclick = new Function(newButton.getAttribute('onclick'));
+                         }
+                    }
+                }, 2000);
+                return;
+            }
+            inputEl.disabled = true;
+            const validerButton = navEl.querySelector('button[onclick^="checkTypingAnswer"]');
+            if(validerButton) validerButton.style.display = 'none';
+
+            if (userAnswer === correctAnswer) {
+                inputEl.classList.add('border-green-500', 'bg-green-50');
+                const buttonText = nextPageId === 'page-33' ? 'Terminer' : 'Suivant &rarr;'; // [수정됨]
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                inputEl.classList.add('border-red-500', 'bg-red-50');
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+
+        function checkAnswer(quizNum, nextPageId) {
+            const selectedOption = document.querySelector(`input[name="q${quizNum}"]:checked`);
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            if (!selectedOption) {
+                 const originalButtonHtml = feedbackContainer.innerHTML;
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold mr-2" style="font-size: var(--font-base);">Veuillez sélectionner.</p>` + originalButtonHtml;
+                setTimeout(() => { 
+                    if (feedbackContainer.querySelector('p')) {
+                         feedbackContainer.innerHTML = originalButtonHtml;
+                         const newButton = feedbackContainer.querySelector('button');
+                         if (newButton) {
+                             newButton.onclick = new Function(newButton.getAttribute('onclick'));
+                         }
+                    }
+                }, 2000);
+                return;
+            }
+            document.querySelectorAll(`input[name="q${quizNum}"]`).forEach(opt => {
+                opt.disabled = true;
+                opt.parentElement.style.cursor = 'default';
+            });
+            const validerButton = navEl.querySelector('button[onclick^="checkAnswer"]');
+            if (validerButton) validerButton.style.display = 'none';
+
+            const correctAnswer = mcqData[quizNum].answer;
+            if (selectedOption.value === correctAnswer) {
+                selectedOption.parentElement.classList.add('correct');
+                const buttonText = 'Suivant &rarr;';
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+            } else {
+                selectedOption.parentElement.classList.add('incorrect');
+                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz('${quizNum}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+            }
+        }
+        
+        // [수정됨] resetQuiz가 resetPage를 호출하도록
+        function resetQuiz(quizNum) {
+            const pageElement = document.getElementById(`page-${quizNum}`);
+            if (pageElement) resetPage(pageElement);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            for (let i = 1; i <= 20; i++) {
+                setupMcqOptions(i.toString());
+            }
+            for (let i = 21; i <= 22; i++) {
+                initializeMatchingQuiz(i.toString());
+            }
+            
+            // [추가됨] Store initial nav states
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                initialNavStates[nav.id] = nav.innerHTML;
+            });
+
+            showPage('page-0');
+        });
+
+    </script>
+</body>
+</html>
