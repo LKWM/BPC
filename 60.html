@@ -234,7 +234,8 @@
     
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
         <symbol id="audio-icon-svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.svg15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+             <!-- [오류 수정] .svg 텍스트 제거 -->
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
         </symbol>
     </svg>
 
@@ -332,7 +333,7 @@
 
              // [추가됨] 네비게이션 초기 상태 저장
              document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-                initialNavStates[nav.id] = nav.innerHTML;
+                 initialNavStates[nav.id] = nav.innerHTML;
             });
 
             showPage('page-0');
@@ -367,22 +368,22 @@
                 case 'audio-to-kr':
                     questionText = "Choisissez la bonne écriture.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option korean"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
+                                       <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option korean"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
                     break;
                 case 'img-to-audio':
                     questionText = "Choisissez le bon son.";
                     contentHtml = `<img src="${data.image}" alt="Quiz Image" class="quiz-image mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e2e8f0/64748b?text=Image';">
-                                     <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}"><button class="audio-button !m-0 !p-0" onclick="event.stopPropagation(); playSound('${opt}')"><svg class="audio-icon"><use href="#audio-icon-svg"/></svg></button></label>`).join('')}</div>`;
+                                       <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}"><button class="audio-button !m-0 !p-0" onclick="event.stopPropagation(); playSound('${opt}')"><svg class="audio-icon"><use href="#audio-icon-svg"/></svg></button></label>`).join('')}</div>`;
                     break;
                 case 'audio-to-img':
                     questionText = "Choisissez la bonne image.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="quiz-options-horizontal">${Object.entries(data.options).map(([key, src]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${key}"><img src="${src}" onerror="this.onerror=null;this.src='https://placehold.co/100x80/e2e8f0/64748b?text=Image';"></label>`).join('')}</div>`;
+                                       <div class="quiz-options-horizontal">${Object.entries(data.options).map(([key, src]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${key}"><img src="${src}" onerror="this.onerror=null;this.src='https://placehold.co/100x80/e2e8f0/64748b?text=Image';"></label>`).join('')}</div>`;
                     break;
                 case 'audio-to-fr':
                     questionText = "Choisissez la bonne signification.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="quiz-options-vertical ${data.options.length === 4 ? 'four-options' : ''}">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt.replace(/'/g, "\\'")}">${opt}</label>`).join('')}</div>`;
+                                       <div class="quiz-options-vertical ${data.options.length === 4 ? 'four-options' : ''}">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt.replace(/'/g, "\\'")}">${opt}</label>`).join('')}</div>`;
                     break;
                 case 'dictation':
                     questionText = "Écrivez en Hangeul.";
@@ -391,8 +392,8 @@
                         inputs += `<div id="input-${quizNum}-${i}" class="syllable-input" onclick="setActiveDictationBox(${quizNum}, ${i})"></div>`;
                     }
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="input-zone-container">${inputs}</div>
-                                     <div id="keyboard-container-${quizNum}" class="keyboard-container"></div>`;
+                                       <div class="input-zone-container">${inputs}</div>
+                                       <div id="keyboard-container-${quizNum}" class="keyboard-container"></div>`;
                     break;
             }
 
@@ -458,9 +459,9 @@
                     const quizNum = parseInt(quizNumMatch[0]);
                      if(quizData[quizNum]?.type === 'dictation'){
                          if (quizNum >= 5 && quizNum <= 34) { // <--- *** ADAPTED (5-34)
-                            playSound(quizData[quizNum].audio);
+                             playSound(quizData[quizNum].audio);
                          }
-                     }
+                    }
                 }
                 
                 // [추가됨] 페이지 상태 리셋
@@ -680,7 +681,7 @@
                          if (combined && Hangul.JONGSEONG.includes(combined)) {
                              buffer[2] = combined;
                          } else {
-                              moveToNextBox(quizNum, boxIndex);
+                             moveToNextBox(quizNum, boxIndex);
                              processJamo(quizNum, jamo);
                              return;
                          }
@@ -729,9 +730,9 @@
 
             if (jamoArray.length > 2) {
                  if (Hangul.JONGSEONG.includes(jamoArray[2])) {
-                     jong = jamoArray[2];
+                      jong = jamoArray[2];
                  } else {
-                     return String.fromCharCode(0xAC00 + (Hangul.CHOSEONG.indexOf(cho) * 21 * 28) + (Hangul.JUNGSEONG.indexOf(jung) * 28)) + jamoArray.slice(2).join('');
+                       return String.fromCharCode(0xAC00 + (Hangul.CHOSEONG.indexOf(cho) * 21 * 28) + (Hangul.JUNGSEONG.indexOf(jung) * 28)) + jamoArray.slice(2).join('');
                  }
             }
             if (jamoArray.length > 3) {
