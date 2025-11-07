@@ -180,7 +180,8 @@
                 <div class="page-content">
                     <div class="vocab-card-container">
                         <div class="vocab-card"><img src="https://static.wixstatic.com/media/699687_4948e3ffef0e4111a846c6b9dfeee986~mv2.png" alt="soir" onerror="this.onerror=null;this.src='https://placehold.co/200x200/e2e8f0/64748b?text=Image';"></div>
-                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('jeonyeok')">저녘</span></div>
+                        <!-- [수정됨] 저녘 -> 저녁 -->
+                        <div class="vocab-card"><span class="vocab-text" onclick="playSound('jeonyeok')">저녁</span></div>
                     </div>
                 </div>
                 <div class="flex justify-between items-center">
@@ -266,7 +267,8 @@
             5: { type: 'img-to-fr', audio: 'jeonyeok', image: 'https://static.wixstatic.com/media/699687_4948e3ffef0e4111a846c6b9dfeee986~mv2.png', answer: 'soir', options: ['soir', 'pêche', 'lit'] },
             6: { type: 'img-to-fr', audio: 'nakksi', image: 'https://static.wixstatic.com/media/699687_3afc196e1b3a499291b7851ce871e0d6~mv2.png', answer: 'pêche', options: ['pêche', 'corée du sud', 'bébé'] },
             7: { type: 'audio-to-kr', audio: 'hanguk', answer: '한국', options: ['한국', '항국', '한곡'] },
-            8: { type: 'audio-to-kr', audio: 'jeonyeok', answer: '저녘', options: ['저녘', '저녁'] },
+            // [수정됨] 저녘 -> 저녁
+            8: { type: 'audio-to-kr', audio: 'jeonyeok', answer: '저녁', options: ['저녁', '저녘'] },
             9: { type: 'audio-to-kr', audio: 'nakksi', answer: '낚시', options: ['낚시', '낙시', '낚씨'] },
             10: { type: 'audio-to-kr', audio: 'appa', answer: '아빠', options: ['아빠', '아파', '아바'] },
             11: { type: 'audio-to-kr', audio: 'hyuga', answer: '휴가', options: ['휴가', '효가', '후가'] },
@@ -283,7 +285,8 @@
             22: { type: 'audio-to-fr', audio: 'sopo', answer: 'colis', options: ['colis', 'stationnement', 'encore', 'tête'] },
             23: { type: 'audio-to-fr', audio: 'il', answer: 'travail', options: ['travail', 'cheval', 'rivière'] },
             24: { type: 'dictation', audio: 'hanguk', answer: '한국', syllables: 2 },
-            25: { type: 'dictation', audio: 'jeonyeok', answer: '저녘', syllables: 2 },
+            // [수정됨] 저녘 -> 저녁
+            25: { type: 'dictation', audio: 'jeonyeok', answer: '저녁', syllables: 2 },
             26: { type: 'dictation', audio: 'nakksi', answer: '낚시', syllables: 2 },
             27: { type: 'dictation', audio: 'uyu', answer: '우유', syllables: 2 },
             28: { type: 'dictation', audio: 'yagu', answer: '야구', syllables: 2 },
@@ -311,7 +314,7 @@
             
              // [추가됨] 네비게이션 초기 상태 저장
              document.querySelectorAll('[id$="-nav"]').forEach(nav => {
-                initialNavStates[nav.id] = nav.innerHTML;
+                 initialNavStates[nav.id] = nav.innerHTML;
             });
             
             showPage('page-0');
@@ -342,22 +345,22 @@
                 case 'audio-to-kr':
                     questionText = "Choisissez la bonne écriture.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option korean"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
+                                       <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option korean"><input type="radio" name="q${quizNum}" value="${opt}">${opt}</label>`).join('')}</div>`;
                     break;
                 case 'img-to-audio':
                     questionText = "Choisissez le bon son.";
                     contentHtml = `<img src="${data.image}" alt="Quiz Image" class="quiz-image mx-auto" onerror="this.onerror=null;this.src='https://placehold.co/150x150/e2e8f0/64748b?text=Image';">
-                                     <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}"><button class="audio-button !m-0 !p-0" onclick="event.stopPropagation(); playSound('${opt}')"><svg class="audio-icon"><use href="#audio-icon-svg"/></svg></button></label>`).join('')}</div>`;
+                                       <div class="quiz-options-horizontal">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt}"><button class="audio-button !m-0 !p-0" onclick="event.stopPropagation(); playSound('${opt}')"><svg class="audio-icon"><use href="#audio-icon-svg"/></svg></button></label>`).join('')}</div>`;
                     break;
                 case 'audio-to-img':
                     questionText = "Choisissez la bonne image.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="quiz-options-horizontal">${Object.entries(data.options).map(([key, src]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${key}"><img src="${src}" onerror="this.onerror=null;this.src='https://placehold.co/100x80/e2e8f0/64748b?text=Image';"></label>`).join('')}</div>`;
+                                       <div class="quiz-options-horizontal">${Object.entries(data.options).map(([key, src]) => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${key}"><img src="${src}" onerror="this.onerror=null;this.src='https://placehold.co/100x80/e2e8f0/64748b?text=Image';"></label>`).join('')}</div>`;
                     break;
                 case 'audio-to-fr':
                     questionText = "Choisissez la bonne signification.";
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="quiz-options-vertical ${data.options.length === 4 ? 'four-options' : ''}">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt.replace(/'/g, "\\'")}">${opt}</label>`).join('')}</div>`;
+                                       <div class="quiz-options-vertical ${data.options.length === 4 ? 'four-options' : ''}">${data.options.map(opt => `<label class="quiz-option"><input type="radio" name="q${quizNum}" value="${opt.replace(/'/g, "\\'")}">${opt}</label>`).join('')}</div>`;
                     break;
                 case 'dictation':
                     questionText = "Écrivez en Hangeul.";
@@ -366,10 +369,13 @@
                         inputs += `<div id="input-${quizNum}-${i}" class="syllable-input" onclick="setActiveDictationBox(${quizNum}, ${i})"></div>`;
                     }
                     contentHtml = `<button class="audio-button mx-auto" onclick="playSound('${data.audio}')"><svg class="audio-icon" style="width:4rem; height:4rem;"><use href="#audio-icon-svg"/></svg></button>
-                                     <div class="input-zone-container">${inputs}</div>
-                                     <div id="keyboard-container-${quizNum}" class="keyboard-container"></div>`;
+                                       <div class="input-zone-container">${inputs}</div>
+                                       <div id="keyboard-container-${quizNum}" class="keyboard-container"></div>`;
                     break;
             }
+
+            const nextPageNum = quizNum + 1;
+            const nextPageId = (quizNum === 30) ? 'page-31' : `page-${nextPageNum}`; // [수정됨] 30 -> 31
 
             const pageHtml = `
                 <div id="page-${quizNum}" class="page">
@@ -380,7 +386,7 @@
                     <div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full">
                         <button onclick="showPage('page-${quizNum - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                         <div class="feedback-area">
-                           <button onclick="${data.type === 'dictation' ? `validateDictation(${quizNum}, '${data.answer}', 'page-${quizNum + 1}')` : `checkAnswer(${quizNum}, '${data.answer.replace(/'/g, "\\'")}', 'page-${quizNum + 1}')`}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                           <button onclick="${data.type === 'dictation' ? `validateDictation(${quizNum}, '${data.answer}', '${nextPageId}')` : `checkAnswer(${quizNum}, '${data.answer.replace(/'/g, "\\'")}', '${nextPageId}')`}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                         </div>
                     </div>
                 </div>`;
@@ -430,9 +436,9 @@
                      if(quizData[quizNum]?.type === 'dictation'){
                          // [수정됨] 0, 1, 2, 3, 31 페이지가 아닐 때만 자동 재생
                          if (quizNum >= 4 && quizNum <= 30) {
-                            playSound(quizData[quizNum].audio);
+                             playSound(quizData[quizNum].audio);
                          }
-                     }
+                    }
                 }
                 
                 // [추가됨] 페이지 상태 리셋
@@ -490,7 +496,6 @@
                 setTimeout(() => { 
                     if (feedbackContainer.querySelector('p')) {
                          feedbackContainer.innerHTML = originalButtonHtml;
-                         // 버튼 재-바인딩
                          const newButton = feedbackContainer.querySelector('button');
                          if (newButton) {
                              newButton.onclick = new Function(newButton.getAttribute('onclick'));
@@ -507,10 +512,12 @@
             
             const validerButton = feedbackContainer.querySelector('button[onclick^="checkAnswer"]');
             if(validerButton) validerButton.style.display = 'none';
+            
+            const buttonText = (nextPageId === 'page-31') ? 'Terminer' : 'Suivant &rarr;';
 
             if (selectedOption.value === correctAnswer) {
                 selectedOption.parentElement.classList.add('correct');
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">Suivant &rarr;</button>`;
+                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
                 selectedOption.parentElement.classList.add('incorrect');
                 feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz(${quizNum}, '${correctAnswer.replace(/'/g, "\\'")}', '${nextPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
@@ -651,7 +658,7 @@
                          if (combined && Hangul.JONGSEONG.includes(combined)) {
                              buffer[2] = combined;
                          } else {
-                              moveToNextBox(quizNum, boxIndex);
+                             moveToNextBox(quizNum, boxIndex);
                              processJamo(quizNum, jamo);
                              return;
                          }
@@ -672,9 +679,7 @@
             if(newBuffer.length >= 2 && Hangul.JUNGSEONG.includes(newBuffer[1])) {
                 const lastJamo = newBuffer[newBuffer.length - 1];
                 if (!Hangul.JUNGSEONG.includes(lastJamo) && Hangul.JONGSEONG.indexOf(lastJamo) === 0) {
-                    // 'ㅇ' 받침 (예: 강) - 다음으로 이동 안 함
                 } else if (!Hangul.JUNGSEONG.includes(lastJamo)){
-                    // 'ㄱ' 받침 (예: 각) - 다음으로 이동
                      moveToNextBox(quizNum, boxIndex, false); // force=false
                 }
             }
@@ -685,7 +690,6 @@
             if (currentBoxIndex < boxCount - 1) {
                 setActiveDictationBox(quizNum, currentBoxIndex + 1);
             } else if (force) {
-                // 마지막 상자에서 강제로 이동하려 할 때 (현재는 아무것도 안 함)
             }
         }
         
@@ -703,9 +707,9 @@
 
             if (jamoArray.length > 2) {
                  if (Hangul.JONGSEONG.includes(jamoArray[2])) {
-                     jong = jamoArray[2];
+                      jong = jamoArray[2];
                  } else {
-                     return String.fromCharCode(0xAC00 + (Hangul.CHOSEONG.indexOf(cho) * 21 * 28) + (Hangul.JUNGSEONG.indexOf(jung) * 28)) + jamoArray.slice(2).join('');
+                       return String.fromCharCode(0xAC00 + (Hangul.CHOSEONG.indexOf(cho) * 21 * 28) + (Hangul.JUNGSEONG.indexOf(jung) * 28)) + jamoArray.slice(2).join('');
                  }
             }
             if (jamoArray.length > 3) {
@@ -759,8 +763,10 @@
             const validerButton = feedbackEl.querySelector('button[onclick^="validate"]');
             if(validerButton) validerButton.style.display = 'none';
 
+            const buttonText = (nextPageId === 'page-31') ? 'Terminer' : 'Suivant &rarr;'; // [수정됨] 30 -> 31
+
             if (userAnswer === correctAnswer) {
-                feedbackEl.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">Suivant &rarr;</button>`;
+                feedbackEl.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
                 feedbackEl.innerHTML = `<p class="text-red-600 font-bold mr-4" style="font-size: var(--font-base);">Incorrect.</p> <button onclick="resetDictationQuiz(${quizNum}, '${correctAnswer}', '${nextPageId}')" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
             }
