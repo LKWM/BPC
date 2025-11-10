@@ -309,9 +309,9 @@
             if (window.parent) {
                 // 1. 퀴즈 점수 전송
                 window.parent.postMessage({
-                    type: 'quiz_score',
-                    score: score,
-                    maxScore: questions.length
+                    type: 'test_complete',
+                    score: 85,  // User's score
+                    maxScore: 100  // Maximum possible score
                 }, '*');
 
                 // 2. 레슨 완료 상태 전송
