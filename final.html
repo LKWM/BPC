@@ -7,7 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Poppins', 'Noto Sans KR', sans-serif; }
+        body { 
+            font-family: 'Poppins', 'Noto Sans KR', sans-serif; 
+            /* MODIFIED: Changed min-height to height for better mobile viewport handling */
+            height: 100vh;
+            overflow-y: auto; /* Allow scrolling if content overflows */
+        }
         .card { background-color: white; border-radius: 1rem; padding: 2.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
         .modal-overlay.visible { opacity: 1; visibility: visible; }
@@ -24,16 +29,16 @@
         .checkbox-label input { margin-right: 0.75rem; }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 flex items-center justify-center">
 
     <div id="app-container" class="w-full max-w-2xl mx-auto p-4 my-8">
         <div class="card">
-            <header class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-violet-800">Test - Bien Prononcer le Coréen - Apprendre le Hangeul</h1>
             
-            </header>
-
+            <!-- MODIFIED (Request 1): Header is now INSIDE start-screen -->
             <div id="start-screen">
+                <header class="text-center mb-8">
+                    <h1 class="text-2xl font-bold text-violet-800">Test - Bien Prononcer le Coréen - Apprendre le Hangeul</h1>
+                </header>
                 <div class="text-left bg-gray-50 p-6 rounded-lg">
                     <h3 class="text-xl font-bold text-center mb-4">시험 안내 / Instructions</h3>
                     <p class="mb-2">이 시험은 "Bien Prononcer le Coréen" 교재의 내용을 바탕으로 한 한글 발음 능력 평가입니다.</p>
@@ -141,17 +146,6 @@
             quizFooter.classList.add('hidden');
             clearInterval(overallTimer);
             timerDisplay.textContent = `Temps restant : 30:00`;
-
-            // const emailSubmissionArea = document.getElementById('email-submission-area'); // 삭제
-            // const submissionConfirmMsg = document.getElementById('submission-confirm-msg'); // 삭제
-            // const sendResultBtn = document.getElementById('send-result-btn'); // 삭제
-
-            // if (emailSubmissionArea) emailSubmissionArea.classList.remove('hidden'); // 삭제
-            // if (submissionConfirmMsg) submissionConfirmMsg.classList.add('hidden'); // 삭제
-            // if (sendResultBtn) { // 삭제
-            //     sendResultBtn.disabled = false; // 삭제
-            //     sendResultBtn.textContent = "Envoyer mes résultats"; // 삭제
-            // } // 삭제
         }
 
         function startQuiz() {
@@ -307,17 +301,15 @@
 
             // --- START: 부모 페이지로 결과 전송 ---
             if (window.parent) {
-                // 1. 퀴즈 점수 전송
+                // 1. 퀴즈 점수 전송 (MODIFIED: Send actual score)
                 window.parent.postMessage({
                     type: 'test_complete',
-                    score: 85,  // User's score
-                    maxScore: 100  // Maximum possible score
+                    score: score,  // User's actual score
+                    maxScore: questions.length  // Maximum possible score
                 }, '*');
 
-                // 2. 레슨 완료 상태 전송
-                window.parent.postMessage({
-                    type: 'lesson_complete'
-                }, '*');
+                // 2. 레슨 완료 상태 전송 (MODIFIED (Request 2): Send 'lessonCompleted' string)
+                window.parent.postMessage('lessonCompleted', '*');
             }
             // --- END: 부모 페이지로 결과 전송 ---
 
@@ -331,11 +323,6 @@
                 feedbackHTML = `<p class="font-bold">Merci pour vos efforts.</p><p>Le Hangeul est une écriture facile et scientifique, mais il peut être difficile à mémoriser et à utiliser parfaitement sans une pratique suffisante. Suivez le cours "Bien Prononcer le coréen - Apprendre le Hangeul" et réessayez le test ! Vous ne pouvez passer le test qu'une fois tous les 3 jours.</p>`;
             }
             scoreFeedbackMessage.innerHTML = feedbackHTML;
-
-            // const sendResultBtn = document.getElementById('send-result-btn'); // 삭제
-            // sendResultBtn.onclick = async () => { // 삭제
-                // ... 모든 이메일 전송 로직 삭제 ...
-            // }; // 삭제
         }
 
         startBtn.addEventListener('click', startQuiz);
@@ -345,8 +332,8 @@
             showResults();
         });
         
-        document.addEventListener('DOMContentLoaded', init);
+        // This should be init, not DOMContentLoaded, as init is defined
+        init();
     </script>
 </body>
 </html>
-
