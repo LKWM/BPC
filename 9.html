@@ -132,8 +132,19 @@
             min-width: 60px;
         }
         .quiz-option:hover { background-color: #f3f4f6; }
-        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
         .quiz-option input { display: none; }
+
+        /* Styles de feedback */
+        .quiz-option.correct {
+            background-color: #dcfce7; /* Green-100 */
+            border-color: #16a34a;    /* Green-600 */
+            color: #14532d;           /* Green-900 */
+        }
+        .quiz-option.incorrect {
+            background-color: #fee2e2; /* Red-100 */
+            border-color: #dc2626;     /* Red-600 */
+            color: #7f1d1d;            /* Red-900 */
+        }
 
         .nav-button {
             padding: var(--padding-sm) var(--padding-md);
@@ -141,6 +152,13 @@
             font-weight: 600;
             transition: background-color 0.2s;
         }
+        /* Style pour bouton désactivé */
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #9ca3af;
+        }
+
         .feedback-area {
             text-align: center;
             min-height: 50px;
@@ -165,12 +183,13 @@
             </div>
 
             <!-- QUIZ PAGES -->
+            <!-- Q1 -->
             <div id="quiz-page-1" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">1 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('g')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="1">
                         <label class="quiz-option"><input type="radio" name="q1" value="g"><span>ㄱ</span></label>
                         <label class="quiz-option"><input type="radio" name="q1" value="d"><span>ㄷ</span></label>
                         <label class="quiz-option"><input type="radio" name="q1" value="b"><span>ㅂ</span></label>
@@ -180,16 +199,17 @@
                 </div>
                 <div id="q1-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(1)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-1" onclick="nextQuestion(1)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q2 -->
             <div id="quiz-page-2" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">2 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('s')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="2">
                         <label class="quiz-option"><input type="radio" name="q2" value="g"><span>ㄱ</span></label>
                         <label class="quiz-option"><input type="radio" name="q2" value="d"><span>ㄷ</span></label>
                         <label class="quiz-option"><input type="radio" name="q2" value="b"><span>ㅂ</span></label>
@@ -199,16 +219,17 @@
                 </div>
                 <div id="q2-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(2)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-2" onclick="nextQuestion(2)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
             
+            <!-- Q3 -->
             <div id="quiz-page-3" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">3 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('j')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="3">
                         <label class="quiz-option"><input type="radio" name="q3" value="g"><span>ㄱ</span></label>
                         <label class="quiz-option"><input type="radio" name="q3" value="d"><span>ㄷ</span></label>
                         <label class="quiz-option"><input type="radio" name="q3" value="b"><span>ㅂ</span></label>
@@ -218,16 +239,17 @@
                 </div>
                 <div id="q3-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(3)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-3" onclick="nextQuestion(3)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q4 -->
             <div id="quiz-page-4" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">4 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('d')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="4">
                         <label class="quiz-option"><input type="radio" name="q4" value="g"><span>ㄱ</span></label>
                         <label class="quiz-option"><input type="radio" name="q4" value="d"><span>ㄷ</span></label>
                         <label class="quiz-option"><input type="radio" name="q4" value="b"><span>ㅂ</span></label>
@@ -237,16 +259,17 @@
                 </div>
                 <div id="q4-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(4)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-4" onclick="nextQuestion(4)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q5 -->
             <div id="quiz-page-5" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">5 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('b')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="5">
                         <label class="quiz-option"><input type="radio" name="q5" value="g"><span>ㄱ</span></label>
                         <label class="quiz-option"><input type="radio" name="q5" value="d"><span>ㄷ</span></label>
                         <label class="quiz-option"><input type="radio" name="q5" value="b"><span>ㅂ</span></label>
@@ -256,16 +279,17 @@
                 </div>
                 <div id="q5-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(5)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-5" onclick="nextQuestion(5)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q6 -->
             <div id="quiz-page-6" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">6 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('a')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="6">
                         <label class="quiz-option"><input type="radio" name="q6" value="a"><span>ㅏ</span></label>
                         <label class="quiz-option"><input type="radio" name="q6" value="o"><span>ㅗ</span></label>
                         <label class="quiz-option"><input type="radio" name="q6" value="u"><span>ㅜ</span></label>
@@ -274,16 +298,17 @@
                 </div>
                 <div id="q6-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(6)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-6" onclick="nextQuestion(6)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q7 -->
             <div id="quiz-page-7" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">7 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('i')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="7">
                         <label class="quiz-option"><input type="radio" name="q7" value="a"><span>ㅏ</span></label>
                         <label class="quiz-option"><input type="radio" name="q7" value="o"><span>ㅗ</span></label>
                         <label class="quiz-option"><input type="radio" name="q7" value="u"><span>ㅜ</span></label>
@@ -292,16 +317,17 @@
                 </div>
                 <div id="q7-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(7)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-7" onclick="nextQuestion(7)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q8 -->
             <div id="quiz-page-8" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">8 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('u')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="8">
                         <label class="quiz-option"><input type="radio" name="q8" value="a"><span>ㅏ</span></label>
                         <label class="quiz-option"><input type="radio" name="q8" value="o"><span>ㅗ</span></label>
                         <label class="quiz-option"><input type="radio" name="q8" value="u"><span>ㅜ</span></label>
@@ -310,16 +336,17 @@
                 </div>
                 <div id="q8-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(8)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-8" onclick="nextQuestion(8)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q9 -->
             <div id="quiz-page-9" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">9 / 15</div>
                     <p class="quiz-question">Choisissez le bon caractère.</p>
                     <button class="audio-button mb-8" onclick="playSound('o')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="9">
                         <label class="quiz-option"><input type="radio" name="q9" value="a"><span>ㅏ</span></label>
                         <label class="quiz-option"><input type="radio" name="q9" value="o"><span>ㅗ</span></label>
                         <label class="quiz-option"><input type="radio" name="q9" value="u"><span>ㅜ</span></label>
@@ -328,16 +355,17 @@
                 </div>
                 <div id="q9-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(9)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-9" onclick="nextQuestion(9)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q10 -->
             <div id="quiz-page-10" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">10 / 15</div>
                     <p class="quiz-question">Choisissez la bonne syllabe.</p>
                     <button class="audio-button mb-8" onclick="playSound('sa')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="10">
                         <label class="quiz-option"><input type="radio" name="q10" value="ga"><span>가</span></label>
                         <label class="quiz-option"><input type="radio" name="q10" value="du"><span>두</span></label>
                         <label class="quiz-option"><input type="radio" name="q10" value="bi"><span>비</span></label>
@@ -346,16 +374,17 @@
                 </div>
                 <div id="q10-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(10)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-10" onclick="nextQuestion(10)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q11 -->
             <div id="quiz-page-11" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">11 / 15</div>
                     <p class="quiz-question">Choisissez la bonne syllabe.</p>
                     <button class="audio-button mb-8" onclick="playSound('bu')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="11">
                         <label class="quiz-option"><input type="radio" name="q11" value="gi"><span>기</span></label>
                         <label class="quiz-option"><input type="radio" name="q11" value="du"><span>두</span></label>
                         <label class="quiz-option"><input type="radio" name="q11" value="so"><span>소</span></label>
@@ -364,16 +393,17 @@
                 </div>
                 <div id="q11-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(11)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-11" onclick="nextQuestion(11)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q12 -->
             <div id="quiz-page-12" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">12 / 15</div>
                     <p class="quiz-question">Choisissez la bonne syllabe.</p>
                     <button class="audio-button mb-8" onclick="playSound('jo')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="12">
                         <label class="quiz-option"><input type="radio" name="q12" value="ju"><span>주</span></label>
                         <label class="quiz-option"><input type="radio" name="q12" value="go"><span>고</span></label>
                         <label class="quiz-option"><input type="radio" name="q12" value="jo"><span>조</span></label>
@@ -382,16 +412,17 @@
                 </div>
                 <div id="q12-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(12)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-12" onclick="nextQuestion(12)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q13 -->
             <div id="quiz-page-13" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">13 / 15</div>
                     <p class="quiz-question">Choisissez la bonne syllabe.</p>
                     <button class="audio-button mb-8" onclick="playSound('go')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="13">
                         <label class="quiz-option"><input type="radio" name="q13" value="do"><span>도</span></label>
                         <label class="quiz-option"><input type="radio" name="q13" value="jo"><span>조</span></label>
                         <label class="quiz-option"><input type="radio" name="q13" value="bo"><span>보</span></label>
@@ -400,16 +431,17 @@
                 </div>
                 <div id="q13-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(13)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-13" onclick="nextQuestion(13)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q14 -->
             <div id="quiz-page-14" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">14 / 15</div>
                     <p class="quiz-question">Choisissez la bonne syllabe.</p>
                     <button class="audio-button mb-8" onclick="playSound('di')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="14">
                         <label class="quiz-option"><input type="radio" name="q14" value="di"><span>디</span></label>
                         <label class="quiz-option"><input type="radio" name="q14" value="gi"><span>기</span></label>
                         <label class="quiz-option"><input type="radio" name="q14" value="to"><span>토</span></label>
@@ -418,16 +450,17 @@
                 </div>
                 <div id="q14-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(14)" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button>
+                    <button id="btn-next-14" onclick="nextQuestion(14)" class="nav-button bg-blue-600 text-white hover:bg-blue-700" disabled>Suivant &rarr;</button>
                 </div>
             </div>
 
+            <!-- Q15 -->
             <div id="quiz-page-15" class="page">
                 <div class="page-content">
                     <div class="page-header w-full">15 / 15</div>
                     <p class="quiz-question">Choisissez la bonne syllabe.</p>
                     <button class="audio-button mb-8" onclick="playSound('si')"><svg class="audio-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button>
-                    <div class="flex gap-4 flex-wrap justify-center">
+                    <div class="flex gap-4 flex-wrap justify-center options-container" data-question="15">
                         <label class="quiz-option"><input type="radio" name="q15" value="ji"><span>지</span></label>
                         <label class="quiz-option"><input type="radio" name="q15" value="so"><span>소</span></label>
                         <label class="quiz-option"><input type="radio" name="q15" value="ga"><span>가</span></label>
@@ -436,7 +469,7 @@
                 </div>
                 <div id="q15-feedback" class="feedback-area"></div>
                 <div class="w-full flex justify-end">
-                    <button onclick="nextQuestion(15)" class="nav-button bg-green-600 text-white hover:bg-green-700">Terminer le test</button>
+                    <button id="btn-next-15" onclick="nextQuestion(15)" class="nav-button bg-green-600 text-white hover:bg-green-700" disabled>Terminer le test</button>
                 </div>
             </div>
 
@@ -447,23 +480,10 @@
                     <p id="score-display" class="text-5xl font-bold text-blue-600 mb-6"></p>
                     <p id="score-message" class="lesson-text text-gray-600"></p>
                 </div>
-                <div class="flex justify-center items-center gap-4">
-                    <button onclick="retakeQuiz()" class="nav-button bg-gray-500 text-white hover:bg-gray-600">Réessayer</button>
-                    <button id="finish-button" onclick="showPage('final-completion-message')" class="nav-button bg-green-600 text-white hover:bg-green-700 hidden">Terminer</button>
-                </div>
+                <!-- 버튼 제거됨: 여기서 멈춤 -->
             </div>
             
-            <!-- Final Completion Message -->
-            <div id="final-completion-message" class="page items-center justify-center text-center">
-                <div class="page-content">
-                     <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                     <h2 class="title-text font-bold text-gray-800 mb-3">Félicitations !</h2>
-                     <p class="lesson-text text-gray-600">Vous avez terminé le Chapitre 1.</p>
-                </div>
-                 <div class="w-full text-center pb-4">
-                     <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
-                 </div>
-            </div>
+            <!-- Final Completion Message 삭제됨 -->
 
         </div>
     </div>
@@ -471,7 +491,8 @@
     <script>
         let currentPageId = 'page-0';
         const totalQuestions = 15;
-        const userAnswers = [];
+        // 각 문제의 첫 시도 결과 저장 (true: 정답, false: 오답, null: 미시도)
+        const firstAttempts = new Array(totalQuestions).fill(null);
         const correctAnswers = ['g', 's', 'j', 'd', 'b', 'a', 'i', 'u', 'o', 'sa', 'bu', 'jo', 'go', 'di', 'si'];
 
         const sounds = {
@@ -520,40 +541,63 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
-                
-                // --- START: 오류 수정 ---
-                // 'if (pageId === 'completion-message')' 블록이
-                // 'if (nextPage)' 블록 안으로 이동되었고,
-                // 올바른 완료 페이지 ID('final-completion-message')를 사용하도록 수정되었습니다.
-                // 또한, 이전에 누락되었던 'if (nextPage)'의 닫는 괄호 '}'가 추가되었습니다.
-                
-                if (pageId === 'final-completion-message') { // 'completion-message'가 아닌 'final-completion-message'를 확인합니다.
-                    if (window.parent) {
-                        window.parent.postMessage({
-                            type: 'lesson_complete'
-                        }, '*');
-                    }
-                }
-            } // <-- 이 닫는 괄호 '}'가 누락되어 있었습니다.
+            }
         }
-        // --- END: 오류 수정 ---
 
-        function nextQuestion(questionNumber) {
-            const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
-            const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
+        function handleRadioClick(e) {
+            const input = e.target;
+            const container = input.closest('.options-container');
+            if(!container) return;
 
-            // Clear previous feedback
-            if (feedbackEl) feedbackEl.innerHTML = '';
+            const questionNum = parseInt(container.getAttribute('data-question'), 10);
+            const selectedValue = input.value;
+            const correctValue = correctAnswers[questionNum - 1];
+            const parentLabel = input.parentElement;
+            const feedbackEl = document.getElementById(`q${questionNum}-feedback`);
+            const nextBtn = document.getElementById(`btn-next-${questionNum}`);
 
-            // Check if an answer was selected
-            if (!selectedOption) {
-                if (feedbackEl) {
-                    feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold">Veuillez sélectionner une réponse.</p>`;
-                }
-                return; // Stop execution
+            // 1. 점수 산정 로직: 이 문제에 대해 아직 채점되지 않았다면 결과 기록
+            if (firstAttempts[questionNum - 1] === null) {
+                firstAttempts[questionNum - 1] = (selectedValue === correctValue);
             }
 
-            userAnswers[questionNumber - 1] = selectedOption.value;
+            // 2. 정오답 시각적 처리 및 버튼 활성화
+            // 먼저 모든 옵션의 선택 스타일 제거 (기본 선택 스타일)
+            container.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected');
+                // 정답/오답 스타일은 클릭한 것만 유지하거나, 재선택시 초기화
+                // 여기서는 사용자가 다른 답을 고르면 이전 오답 표시는 지우고 새로 표시
+                opt.classList.remove('correct', 'incorrect');
+            });
+            parentLabel.classList.add('selected'); // 기본 선택 스타일 유지
+
+            if (selectedValue === correctValue) {
+                // 정답인 경우
+                parentLabel.classList.add('correct');
+                feedbackEl.innerHTML = '<span class="text-green-600 font-bold text-lg">Correct !</span>';
+                
+                // 다음 버튼 활성화
+                if(nextBtn) {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            } else {
+                // 오답인 경우
+                parentLabel.classList.add('incorrect');
+                feedbackEl.innerHTML = '<span class="text-red-600 font-bold text-lg">Incorrect, essayez encore.</span>';
+                
+                // 다음 버튼 비활성화 (이미 비활성화 상태지만 확실히 하기 위해)
+                if(nextBtn) {
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        function nextQuestion(questionNumber) {
+            // 버튼이 비활성화 상태면 동작 안 함 (HTML disabled 속성으로도 막히지만 JS로도 체크)
+            const nextBtn = document.getElementById(`btn-next-${questionNumber}`);
+            if (nextBtn && nextBtn.disabled) return;
 
             if (questionNumber < totalQuestions) {
                 showPage(`quiz-page-${questionNumber + 1}`);
@@ -563,17 +607,12 @@
         }
 
         function showResults() {
-            let score = 0;
-            for (let i = 0; i < totalQuestions; i++) {
-                if (userAnswers[i] === correctAnswers[i]) {
-                    score++;
-                }
-            }
+            // firstAttempts 배열에서 true인 개수 계산
+            let score = firstAttempts.filter(result => result === true).length;
 
             document.getElementById('score-display').textContent = `${score} / ${totalQuestions}`;
             
             const messageEl = document.getElementById('score-message');
-            const finishButton = document.getElementById('finish-button');
             
             if (score === 15) {
                 messageEl.textContent = "Très bien ! Êtes-vous prêt(e) pour la suite ?";
@@ -587,38 +626,48 @@
                 messageEl.textContent = "Bon travail. Essayez de revoir la leçon et de refaire le test.";
             }
 
-            if (score >= 13) {
-                finishButton.classList.remove('hidden');
-            } else {
-                finishButton.classList.add('hidden');
+            // 점수 확인 페이지 진입 시 즉시 메시지 전송
+            if (window.parent) {
+                window.parent.postMessage({
+                    type: 'lesson_complete'
+                }, '*');
             }
+
+            // 버튼 로직 제거됨 - 여기서 멈춤
             
-            // 점수 전송 로직은 요청하지 않으셨으므로 추가하지 않았습니다.
             showPage('results-page');
         }
 
+        // retakeQuiz 함수는 더 이상 사용되지 않지만 코드 구조상 남겨둡니다.
         function retakeQuiz() {
-            userAnswers.length = 0;
-            const options = document.querySelectorAll('.quiz-option');
-            options.forEach(opt => {
+            // 점수 기록 초기화
+            firstAttempts.fill(null);
+            
+            // 모든 라디오 버튼 선택 해제 및 스타일 초기화
+            document.querySelectorAll('.quiz-option').forEach(opt => {
                 const radio = opt.querySelector('input');
                 if(radio) radio.checked = false;
-                opt.classList.remove('selected');
+                opt.classList.remove('selected', 'correct', 'incorrect');
             });
-            // Also clear all feedback messages
+
+            // 피드백 메시지 초기화
             document.querySelectorAll('.feedback-area').forEach(el => el.innerHTML = '');
+
+            // 다음 버튼들 다시 비활성화
+            for(let i=1; i<=totalQuestions; i++) {
+                const btn = document.getElementById(`btn-next-${i}`);
+                if(btn) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
             showPage('quiz-page-1');
         }
         
+        // 이벤트 리스너 등록
         document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => {
-                    opt.parentElement.classList.remove('selected');
-                });
-                if(e.target.checked) {
-                    e.target.parentElement.classList.add('selected');
-                }
-            });
+            radio.addEventListener('change', handleRadioClick);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -627,4 +676,3 @@
     </script>
 </body>
 </html>
-
