@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Chapitre 4 - Récapitulatif</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,14 +12,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
-            /* 기본 폰트 사이즈 조정 */
             --font-sm: clamp(0.75rem, 1.5vh, 0.875rem);
             --font-base: clamp(0.875rem, 2vh, 1rem);
             --font-lg: clamp(1rem, 2.5vh, 1.25rem);
             --font-xl: clamp(1.125rem, 3vh, 1.5rem);
             --font-title: clamp(1.5rem, 4vh, 2rem);
-            
-            /* 패딩 변수 */
             --padding-lg: clamp(1rem, 3vh, 2rem);
         }
         html, body {
@@ -33,22 +30,21 @@
 
         .course-wrapper {
             width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            /* 데스크탑에서는 적절한 패딩을 줍니다 */
             padding: 1rem;
             box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
+
         .course-container {
             width: 100%;
             max-width: 600px;
-            /* 화면 비율에 맞춰 꽉 차게 보이되, 정사각형 비율 유지 시도 */
-            height: auto;
-            aspect-ratio: 1 / 1; 
-            max-height: 100%;
-            
+            /* [기존 유지] 데스크탑 기본: 정사각형 비율 */
             position: relative;
+            aspect-ratio: 1 / 1; 
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
             border-radius: 0.75rem;
             overflow: hidden;
@@ -57,19 +53,28 @@
             flex-direction: column;
         }
 
-        /* 가로가 더 긴 화면(PC, 태블릿 가로)에서는 높이를 꽉 채우고 너비 자동 조정 */
-        @media (min-aspect-ratio: 1/1) {
-            .course-container {
-                height: 100%;
-                width: auto; 
+        /* [수정] 모바일 화면(너비 600px 이하)에 대한 강제 스타일 오버라이드 */
+        @media (max-width: 600px) {
+            body {
+                padding: 0; /* 바디 패딩 제거 */
+                background-color: white; /* 모바일 배경 흰색 */
             }
-        }
-        
-        /* 세로가 더 긴 화면(모바일)에서는 너비를 꽉 채우고 높이 자동 조정 */
-        @media (max-aspect-ratio: 1/1) {
+            .course-wrapper {
+                padding: 0; /* 래퍼 패딩 제거 */
+                height: 100vh; /* 전체 높이 사용 */
+                width: 100vw;
+            }
             .course-container {
+                max-width: none; /* 최대 너비 제한 해제 */
                 width: 100%;
-                height: auto;
+                height: 100%; /* 높이 100%로 강제 (비율 무시) */
+                aspect-ratio: auto; /* 비율 해제 */
+                border-radius: 0; /* 둥근 모서리 제거 */
+                box-shadow: none; /* 그림자 제거 */
+            }
+            .page {
+                border-radius: 0; /* 페이지 둥근 모서리 제거 */
+                padding: 1.5rem 1rem; /* 모바일용 패딩 */
             }
         }
 
@@ -80,13 +85,10 @@
             padding: var(--padding-lg);
             box-sizing: border-box;
         }
-        #page-0 {
-            justify-content: center;
-        }
-        #page-0 .page-content {
-            flex-grow: 0;
-        }
+        #page-0 { justify-content: center; }
+        #page-0 .page-content { flex-grow: 0; }
         .page.active { opacity: 1; visibility: visible; }
+        
         .page-content {
             flex-grow: 1; 
             overflow-y: auto; 
@@ -98,7 +100,7 @@
             text-align: center;
         }
 
-        /* 요소 간격 자동 조정을 위한 유틸리티 클래스 오버라이드 (공간 확보를 위해 간격 축소) */
+        /* 요소 간격 */
         .mb-8 { margin-bottom: 2.5vh !important; }
         .mb-6 { margin-bottom: 2vh !important; }
         .mb-4 { margin-bottom: 1.5vh !important; }
@@ -109,12 +111,12 @@
         .title-text { font-size: var(--font-title); }
         .lesson-text { font-size: var(--font-lg); }
 
-        /* [수정] 버튼 스타일: 크기 복원 및 강조 */
+        /* 버튼 스타일 (기존 복구) */
         .nav-button {
-            padding: clamp(0.6rem, 2vh, 0.8rem) clamp(1.2rem, 4vh, 1.6rem); /* 넉넉한 패딩 */
+            padding: clamp(0.6rem, 2vh, 0.8rem) clamp(1.2rem, 4vh, 1.6rem);
             border-radius: 0.5rem;
             font-weight: 600;
-            font-size: clamp(1rem, 2.5vh, 1.1rem); /* 폰트 크기 키움 */
+            font-size: clamp(1rem, 2.5vh, 1.1rem);
             transition: background-color 0.2s;
         }
         .nav-button:disabled { opacity: 0.5; cursor: not-allowed; background-color: #9ca3af; color: white; }
@@ -130,26 +132,25 @@
 
         .quiz-question { font-size: var(--font-lg); font-weight: 600; margin-bottom: 1.5vh; }
         
-        /* [수정] 선택지 스타일: 공간 확보를 위해 크기 및 여백 축소 */
+        /* 선택지 스타일 (기존 복구) */
         .quiz-option {
             display: inline-block; 
-            padding: clamp(0.25rem, 1vh, 0.4rem) clamp(0.5rem, 1.5vh, 0.8rem); /* 패딩 축소 */
+            padding: clamp(0.25rem, 1vh, 0.4rem) clamp(0.5rem, 1.5vh, 0.8rem);
             border: 2px solid #d1d5db; 
             border-radius: 0.5rem; 
-            margin: 0.2rem; /* 마진 축소 */
+            margin: 0.2rem;
             cursor: pointer; 
             transition: background-color 0.2s, border-color 0.2s;
             font-family: 'Noto Sans KR', sans-serif; 
             text-align: center; 
-            min-width: clamp(40px, 8vmin, 50px); /* 최소 너비 축소 */
+            min-width: clamp(40px, 8vmin, 50px);
         }
         .quiz-option span { 
-            font-size: clamp(1rem, 2.5vh, 1.3rem); /* 글자 크기 약간 축소하여 핏 맞춤 */
+            font-size: clamp(1rem, 2.5vh, 1.3rem);
         }
         .quiz-option:hover { background-color: #f3f4f6; }
         .quiz-option input { display: none; }
         
-        /* Feedback Styles */
         .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
         .quiz-option.correct { background-color: #dcfce7; border-color: #16a34a; color: #14532d; }
         .quiz-option.incorrect { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
@@ -174,8 +175,6 @@
 
     <div class="course-wrapper">
         <div class="course-container">
-            
-            <!-- Page 0: Title -->
             <div id="page-0" class="page active">
                 <div class="page-content">
                     <h1 class="title-text font-bold text-gray-800 mb-6 leading-tight">Chapitre 4 - Récapitulatif</h1>
@@ -183,26 +182,20 @@
                     <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-10">Commencer le test</button>
                 </div>
             </div>
-
-            <!-- Quiz Pages generated by JS -->
-            
         </div>
     </div>
 
     <script>
         let currentPageId = 'page-0';
         const totalQuestions = 20;
-        // firstAttempts: null = not attempted, true = correct on first try, false = incorrect on first try
         let firstAttempts = new Array(totalQuestions).fill(null);
 
         const sounds = {
-            'o': { file: 'https://static.wixstatic.com/mp3/699687_58ae738b4c2f4673bb8aace39a46b41b.mp3' }, 'yu': { file: 'https://static.wixstatic.com/mp3/699687_1c184aa8e8744e4899f62292ca5dd805.mp3' }, 'e': { file: 'https://static.wixstatic.com/mp3/699687_d7b6e67bca704af08dfbc519c7b8481f.mp3' }, 'j': { file: 'https://static.wixstatic.com/mp3/699687_5b225746266e4329ad05d50b82a6b6e9.mp3' }, 'eu': { file: 'https://static.wixstatic.com/mp3/699687_eb9d67f6852c4319a308d12d7a4c1a4a.mp3' }, 'yae': { file: 'https://static.wixstatic.com/mp3/699687_9705c5ddc22b49cb902748202357b4f0.mp3' }, 'u': { file: 'https://static.wixstatic.com/mp3/699687_b11e5a88156d46a383099c42bfd4f814.mp3' }, 'ch': { file: 'https://static.wixstatic.com/mp3/699687_89cd630338fc441b9b82757953e4572f.mp3' }, 'yo': { file: 'https://static.wixstatic.com/mp3/699687_827ff50526b04b30bc3415b57f1ff267.mp3' }, 'd': { file: 'https://static.wixstatic.com/mp3/699687_87a9f8b74219436d93beb9b795320bc7.mp3' }, 'a': { file: 'https://static.wixstatic.com/mp3/699687_23c826488a4041f488691d65bbecea21.mp3' }, 'k': { file: 'https://static.wixstatic.com/mp3/699687_1ae51315c24f4d72bcb16ca5a9de4aa8.mp3' }, 'i': { file: 'https://static.wixstatic.com/mp3/699687_641a5e9958a8416a917cc0c267310c13.mp3' }, 'pyeo': { file: 'https://static.wixstatic.com/mp3/699687_91548cfe1d404d9ab006693df60d5a97.mp3' }, 'hyo': { file: 'https://static.wixstatic.com/mp3/699687_c939e8377cf2421b939adabd58134102.mp3' }, 'gye': { file: 'https://static.wixstatic.com/mp3/699687_dc4117cf0265463ea57a5a8051f234f4.mp3' }, 'gyu': { file: 'https://static.wixstatic.com/mp3/699687_8104fc516f704be7929bb1e73d41bda9.mp3' }, 'yeo': { file: 'https://static.wixstatic.com/mp3/699687_93483a9eca854c18a7d92ac9ed5f1baa.mp3' }, 'te': { file: 'https://static.wixstatic.com/mp3/699687_373f8119c8104a438db3f3f32b8eceba.mp3' }, 'hya': { file: 'https://static.wixstatic.com/mp3/699687_ddf5d2e0fd7c475d93725edd13fd1a34.mp3' },
+            'o': { file: 'https://static.wixstatic.com/mp3/699687_58ae738b4c2f4673bb8aace39a46b41b.mp3' }, 'yu': { file: 'https://static.wixstatic.com/mp3/699687_1c184aa8e8744e4899f62292ca5dd805.mp3' }, 'e': { file: 'https://static.wixstatic.com/mp3/699687_d7b6e67bca704af08dfbc519c7b8481f.mp3' }, 'j': { file: 'https://static.wixstatic.com/mp3/699687_5b225746266e4329ad05d50b82a6b6e9.mp3' }, 'eu': { file: 'https://static.wixstatic.com/mp3/699687_eb9d67f6852c4319a308d12d7a4c1a4a.mp3' }, 'yae': { file: 'https://static.wixstatic.com/mp3/699687_9705c5ddc22b49cb902748202357b4f0.mp3' }, 'u': { file: 'https://static.wixstatic.com/mp3/699687_b11e5a88156d46a383099c42bfd4f814.mp3' }, 'ch': { file: 'https://static.wixstatic.com/mp3/699687_89cd630338fc441b9b82757953e4572f.mp3' }, 'yo': { file: 'https://static.wixstatic.com/mp3/699687_827ff50526b04b30bc3415b57f1ff267.mp3' }, 'd': { file: 'https://static.wixstatic.com/mp3/699687_87a9f8b74219436d93beb9b795320bc7.mp3' }, 'a': { file: 'https://static.wixstatic.com/mp3/699687_23c826488a4041f488691d65bbecea21.mp3' }, 'k': { file: 'https://static.wixstatic.com/mp3/699687_1ae51315c24f4d72bcb16ca5a9de4aa8.mp3' }, 'i': { file: 'https://static.wixstatic.com/mp3/699687_641a5e9958a8416a917cc0c267310c13.mp3' }, 'pyeo': { file: 'https://static.wixstatic.com/mp3/699687_91548cfe1d404d9ab006693df60d5a97.mp3' }, 'hyo': { file: 'https://static.wixstatic.com/mp3/699687_c939e8377cf2421b939adabd58134102.mp3' }, 'gye': { file: 'https://static.wixstatic.com/mp3/699687_dc4117cf0265463ea57a5a8051f234f4.mp3' }, 'gyu': { file: 'https://static.wixstatic.com/mp3/699687_8104fc516f704be7929bb1e73d41bda9.mp3' }, 'yeo': { file: 'https://static.wixstatic.com/mp3/699687_93483a9eca854c18a7d92ac9ed5f1baa.mp3' }, 'te': { file: 'https://static.wixstatic.com/mp3/373f8119c8104a438db3f3f32b8eceba.mp3' }, 'hya': { file: 'https://static.wixstatic.com/mp3/699687_ddf5d2e0fd7c475d93725edd13fd1a34.mp3' },
         };
         
         const quizData = [
-            // Questions 1-13: Character recognition
             { type: 'jamo', sound: 'o', answer: 'ㅗ' }, { type: 'jamo', sound: 'yu', answer: 'ㅠ' }, { type: 'jamo', sound: 'e', answer: 'ㅔ' }, { type: 'jamo', sound: 'j', answer: 'ㅈ' }, { type: 'jamo', sound: 'eu', answer: 'ㅡ' }, { type: 'jamo', sound: 'yae', answer: 'ㅒ' }, { type: 'jamo', sound: 'u', answer: 'ㅜ' }, { type: 'jamo', sound: 'ch', answer: 'ㅊ' }, { type: 'jamo', sound: 'yo', answer: 'ㅛ' }, { type: 'jamo', sound: 'd', answer: 'ㄷ' }, { type: 'jamo', sound: 'a', answer: 'ㅏ' }, { type: 'jamo', sound: 'k', answer: 'ㅋ' }, { type: 'jamo', sound: 'i', answer: 'ㅣ' },
-            // Questions 14-20: Syllable recognition
             { type: 'syllable', sound: 'pyeo', options: ['버', '벼', '퍼', '펴', '푸', '퓨'], answer: '펴' },
             { type: 'syllable', sound: 'hyo', options: ['요', '유', '효', '혀', '휴'], answer: '효' },
             { type: 'syllable', sound: 'gye', options: ['개', '계', '캐', '겨'], answer: '계' },
@@ -255,7 +248,6 @@
                 `;
             });
             
-            // Result Page
             pagesHtml += `
                 <div id="results-page" class="page items-center justify-center text-center">
                     <div class="page-content flex flex-col items-center justify-center">
@@ -283,7 +275,7 @@
                 });
                 optionsHtml += '</div>';
 
-            } else { // syllable
+            } else { 
                 optionsHtml += '<div class="flex gap-4 flex-wrap justify-center">';
                 data.options.forEach(opt => {
                     optionsHtml += `<label class="quiz-option"><input type="radio" name="q${questionNumber}" value="${opt}"><span>${opt}</span></label>`;
@@ -328,13 +320,10 @@
             const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
             const nextBtn = document.getElementById(`btn-next-${questionNumber}`);
             
-            // 1. Score first attempt
             if (firstAttempts[questionNumber - 1] === null) {
                 firstAttempts[questionNumber - 1] = (radio.value === data.answer);
             }
 
-            // 2. Visual Feedback
-            // Clear previous styles
             container.querySelectorAll('.quiz-option').forEach(opt => {
                 opt.classList.remove('selected', 'correct', 'incorrect');
             });
@@ -365,7 +354,6 @@
             else if (score >= 10) messageEl.textContent = "Bien joué ! Essayez de revoir la leçon.";
             else messageEl.textContent = "Bon travail. Essayez de revoir la leçon et de refaire le test.";
 
-            // Send message immediately when showing results
             if (window.parent) {
                 window.parent.postMessage({
                     type: 'lesson_complete'
@@ -378,7 +366,6 @@
         function initializeQuiz() {
             createQuizPages();
             
-            // Radio Listeners
             document.body.addEventListener('change', function(e) {
                 if (e.target.matches('input[type="radio"]')) {
                     handleRadioChange(e);
