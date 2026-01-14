@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Chapitre 6 - Récapitulatif</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,14 +12,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
-            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
-            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
-            --font-lg: clamp(1rem, 3vmin, 1.25rem);
-            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
-            --font-title: clamp(1.5rem, 5vmin, 2rem);
-            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
-            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
-            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+            --font-sm: clamp(0.75rem, 1.5vh, 0.875rem);
+            --font-base: clamp(0.875rem, 2vh, 1rem);
+            --font-lg: clamp(1rem, 2.5vh, 1.25rem);
+            --font-xl: clamp(1.125rem, 3vh, 1.5rem);
+            --font-title: clamp(1.5rem, 4vh, 2rem);
+            --padding-lg: clamp(1rem, 3vh, 2rem);
         }
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
@@ -27,118 +25,142 @@
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+            background-color: #f3f4f6;
         }
 
         .course-wrapper {
             width: 100%;
-            max-width: 600px;
+            padding: 1rem;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
+
         .course-container {
             width: 100%;
+            max-width: 600px;
             position: relative;
-            aspect-ratio: 1 / 1;
+            aspect-ratio: 1 / 1; 
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
             border-radius: 0.75rem;
             overflow: hidden;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* [수정] 모바일 화면(너비 600px 이하) 오버라이드 */
+        @media (max-width: 600px) {
+            body { padding: 0; background-color: white; }
+            .course-wrapper { padding: 0; height: 100vh; width: 100vw; }
+            .course-container {
+                max-width: none;
+                width: 100%;
+                height: 100%;
+                aspect-ratio: auto;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .page { border-radius: 0; padding: 1.5rem 1rem; }
+        }
+
         .page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
             opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
-            background-color: white; padding: var(--padding-lg);
-            border-radius: 0.75rem;
-            box-sizing: border-box; /* Added for consistent padding */
+            padding: var(--padding-lg);
+            box-sizing: border-box;
         }
-        #page-0 {
-            justify-content: center;
-        }
-        #page-0 .page-content {
-            flex-grow: 0;
-        }
+        #page-0 { justify-content: center; }
+        #page-0 .page-content { flex-grow: 0; }
         .page.active { opacity: 1; visibility: visible; }
+        
         .page-content {
-            flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-            width: 100%; /* Ensure content area takes full width */
+            flex-grow: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            text-align: center;
         }
 
-        @media (max-width: 600px) {
-            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
-            .course-wrapper { height: 100%; max-width: 100%; }
-            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
-            .page { padding: 1.5rem 1rem; border-radius: 0; }
-        }
+        .mb-8 { margin-bottom: 2.5vh !important; }
+        .mb-6 { margin-bottom: 2vh !important; }
+        .mb-4 { margin-bottom: 1.5vh !important; }
+        .mt-10 { margin-top: 3vh !important; }
+        .mt-4 { margin-top: 1.5vh !important; }
+        .gap-4 { gap: 1vh !important; }
 
         .title-text { font-size: var(--font-title); }
         .lesson-text { font-size: var(--font-lg); }
-        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+
+        .nav-button {
+            padding: clamp(0.6rem, 2vh, 0.8rem) clamp(1.2rem, 4vh, 1.6rem);
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: clamp(1rem, 2.5vh, 1.1rem);
+            transition: background-color 0.2s;
+        }
+        .nav-button:disabled { opacity: 0.5; cursor: not-allowed; background-color: #9ca3af; color: white; }
+
         .page-header {
             text-align: center; color: #4b5563; font-size: var(--font-lg);
-            font-weight: 600; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 1.5rem; flex-shrink: 0;
-            width: 100%; /* Ensure header takes full width */
+            font-weight: 600; padding-bottom: 1vh; border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1.5vh; flex-shrink: 0;
         }
         .audio-button { background: none; border: none; cursor: pointer; }
-        .audio-icon { width: 3rem; height: 3rem; color: #6b7280; transition: color 0.2s; }
+        .audio-icon { width: clamp(2.5rem, 5vh, 3rem); height: clamp(2.5rem, 5vh, 3rem); color: #6b7280; transition: color 0.2s; }
         .audio-button:hover .audio-icon { color: #1d4ed8; }
 
-        .quiz-question { font-size: var(--font-lg); font-weight: 600; margin-bottom: 1rem; }
+        .quiz-question { font-size: var(--font-lg); font-weight: 600; margin-bottom: 1.5vh; }
         
         .quiz-option {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #d1d5db;
-            border-radius: 0.5rem;
-            cursor: pointer;
+            display: inline-block; 
+            padding: clamp(0.25rem, 1vh, 0.4rem) clamp(0.5rem, 1.5vh, 0.8rem);
+            border: 2px solid #d1d5db; 
+            border-radius: 0.5rem; 
+            margin: 0.2rem;
+            cursor: pointer; 
             transition: background-color 0.2s, border-color 0.2s;
-            font-family: 'Noto Sans KR', sans-serif;
-            text-align: center;
-            aspect-ratio: 1 / 1;
+            font-family: 'Noto Sans KR', sans-serif; 
+            text-align: center; 
+            min-width: clamp(40px, 8vmin, 50px);
         }
-        .quiz-option span {
-            font-size: var(--font-lg);
-            line-height: 1;
-        }
+        .quiz-option span { font-size: clamp(1rem, 2.5vh, 1.3rem); }
         .quiz-option:hover { background-color: #f3f4f6; }
-        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
         .quiz-option input { display: none; }
+        
+        .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7; border-color: #16a34a; color: #14532d; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
 
+        /* 자모 그리드: 40개 이상의 선택지가 나오므로 모바일에서 너무 작아지지 않게 조정 */
         .jamo-options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
-            gap: 0.25rem;
+            grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
+            gap: 0.2rem;
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             margin: 0 auto;
         }
 
-        .syllable-options-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .syllable-options-container .quiz-option {
-            aspect-ratio: unset;
-            width: auto;
-            padding: var(--padding-sm) var(--padding-md);
+        .feedback-area {
+            text-align: center; min-height: 30px; display: flex;
+            align-items: center; justify-content: center;
+            font-size: var(--font-base);
+            margin-top: 0.5vh;
         }
         
-        @media (min-width: 601px) {
-            .jamo-options-grid {
-                grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
-                gap: 0.5rem;
-            }
-            .syllable-options-container .quiz-option {
-                padding: var(--padding-md);
-            }
-        }
-
-        .feedback-area {
-            text-align: center; min-height: 50px; display: flex;
-            align-items: center; justify-content: center;
+        .options-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -146,25 +168,20 @@
 
     <div class="course-wrapper">
         <div class="course-container">
-            
             <div id="page-0" class="page active">
                 <div class="page-content">
                     <h1 class="title-text font-bold text-gray-800 mb-6 leading-tight">Chapitre 6 - Récapitulatif</h1>
                     <p class="lesson-text text-gray-600">Vérifiez ce que vous avez appris au Chapitre 6.<br>C'est un test composé de 20 questions.</p>
                     <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-10">Commencer le test</button>
                 </div>
-                <div></div>
             </div>
-
-            <!-- QUIZ AND RESULT PAGES WILL BE GENERATED HERE -->
-
         </div>
     </div>
 
     <script>
         let currentPageId = 'page-0';
         const totalQuestions = 20;
-        let questionResults = new Array(totalQuestions).fill(false);
+        let firstAttempts = new Array(totalQuestions).fill(null);
 
         const sounds = {
             'ㅍ': { file: 'https://static.wixstatic.com/mp3/699687_403dfbb707824b86a975912b14fe1bdc.mp3' }, 'ㅝ': { file: 'https://static.wixstatic.com/mp3/699687_f44e3c19d4e44015851843bdd944bda9.mp3' }, 'ㅢ': { file: 'https://static.wixstatic.com/mp3/699687_f0383fe2fe5b4553b12b8a8516886075.mp3' }, 'ㅋ': { file: 'https://static.wixstatic.com/mp3/699687_1ae51315c24f4d72bcb16ca5a9de4aa8.mp3' }, 'ㅙ': { file: 'https://static.wixstatic.com/mp3/699687_a8e098c18ed146108dfdc60f67e3b358.mp3' }, 'ㅟ': { file: 'https://static.wixstatic.com/mp3/699687_d89d5a5928f64b59a2e6c5ce8cbd662a.mp3' }, 'ㅔ': { file: 'https://static.wixstatic.com/mp3/699687_d7b6e67bca704af08dfbc519c7b8481f.mp3' }, 'ㅎ': { file: 'https://static.wixstatic.com/mp3/699687_465b64ac84e94f5eb10feebc6ac0027a.mp3' }, 'ㅈ': { file: 'https://static.wixstatic.com/mp3/699687_5b225746266e4329ad05d50b82a6b6e9.mp3' }, 'ㅘ': { file: 'https://static.wixstatic.com/mp3/699687_b89b465f6bef48bdb5327ddb6f0df679.mp3' }, 'ㅗ': { file: 'https://static.wixstatic.com/mp3/699687_58ae738b4c2f4673bb8aace39a46b41b.mp3' }, 'ㄸ': { file: 'https://static.wixstatic.com/mp3/699687_d1d7b6f646384330b8e83dcec2528b58.mp3' }, 'ㅕ': { file: 'https://static.wixstatic.com/mp3/699687_93483a9eca854c18a7d92ac9ed5f1baa.mp3' },
@@ -188,25 +205,30 @@
 
             quizData.forEach((data, index) => {
                 const questionNumber = index + 1;
+                let contentHtml = '';
+
                 const questionText = data.type === 'jamo' ? 'Choisissez le bon caractère.' : 'Choisissez la bonne syllabe.';
-                const contentHtml = `
+                contentHtml = `
                     <p class="quiz-question">${questionText}</p>
                     <button class="audio-button mb-8" onclick="playSound('${data.sound}')">
                         <svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg>
                     </button>
-                    ${generateOptions(questionNumber, data)}
+                    <div id="options-container-${questionNumber}" class="options-container" data-question="${questionNumber}">
+                        ${generateOptions(questionNumber, data)}
+                    </div>
                 `;
 
                 const nextButtonText = questionNumber === totalQuestions ? 'Terminer le test' : 'Suivant &rarr;';
-                const prevButtonHtml = questionNumber > 1 ? `<button onclick="showPage('quiz-page-${questionNumber - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>` : `<div></div>`;
+                const nextButtonClass = questionNumber === totalQuestions ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700';
 
                 const navButtonHtml = `
-                    <div id="quiz-${questionNumber}-nav" class="flex justify-between items-center w-full">
-                        ${prevButtonHtml}
-                        <div class="flex items-center gap-4">
-                           <div id="q${questionNumber}-feedback" class="feedback-area" style="min-height: 40px; padding: 0;"></div>
-                           <button onclick="submitAnswerAndProceed(${questionNumber})" class="nav-button text-white bg-blue-600 hover:bg-blue-700">${nextButtonText}</button>
+                    <div id="quiz-${questionNumber}-nav" class="flex justify-between items-center w-full mt-4">
+                        <div style="width: 24px;"></div>
+                        <div class="flex flex-col items-center gap-2">
+                           <div id="q${questionNumber}-feedback" class="feedback-area"></div>
+                           <button id="btn-next-${questionNumber}" onclick="nextQuestion(${questionNumber})" class="nav-button text-white ${nextButtonClass}" disabled>${nextButtonText}</button>
                         </div>
+                         <div style="width: 24px;"></div>
                     </div>`;
 
                 pagesHtml += `
@@ -227,20 +249,6 @@
                         <p id="score-display" class="text-5xl font-bold text-blue-600 mb-6"></p>
                         <p id="score-message" class="lesson-text text-gray-600"></p>
                     </div>
-                    <div class="flex justify-center items-center gap-4">
-                        <button onclick="retakeQuiz()" class="nav-button bg-gray-500 text-white hover:bg-gray-600">Réessayer</button>
-                        <button id="finish-button" onclick="showPage('final-completion-message')" class="nav-button bg-green-600 text-white hover:bg-green-700 hidden">Terminer</button>
-                    </div>
-                </div>
-                <div id="final-completion-message" class="page items-center justify-center text-center">
-                    <div class="page-content flex flex-col items-center justify-center">
-                         <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                         <h2 class="title-text font-bold text-gray-800 mb-3">Félicitations !</h2>
-                         <p class="lesson-text text-gray-600">Vous avez terminé le Chapitre 6.</p>
-                    </div>
-                    <div class="w-full text-center pb-4">
-                         <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
-                    </div>
                 </div>
             `;
 
@@ -251,8 +259,8 @@
             let optionsHtml = '';
             if (data.type === 'jamo') {
                 const allJamo = [
-                    'ㄱ', 'ㅋ', 'ㄲ', 'ㄷ', 'ㅌ', 'ㄸ', 'ㅂ', 'ㅍ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅈ', 'ㅊ', 'ㅉ', 'ㅇ', 'ㅎ',
-                    'ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅒ', 'ㅔ', 'ㅖ',
+                    'ㄱ','ㅋ','ㄲ','ㄷ','ㅌ','ㄸ','ㅂ','ㅍ','ㅃ','ㅅ','ㅆ','ㅈ','ㅊ','ㅉ','ㅇ','ㅎ',
+                    'ㅏ','ㅑ','ㅓ','ㅕ','ㅗ','ㅛ','ㅜ','ㅠ','ㅡ','ㅣ','ㅐ','ㅒ','ㅔ','ㅖ',
                     'ㅘ', 'ㅚ', 'ㅙ', 'ㅝ', 'ㅟ', 'ㅞ', 'ㅢ'
                 ];
                 
@@ -262,8 +270,8 @@
                 });
                 optionsHtml += '</div>';
 
-            } else { // syllable
-                optionsHtml += '<div class="syllable-options-container">';
+            } else { 
+                optionsHtml += '<div class="flex gap-4 flex-wrap justify-center">';
                 data.options.forEach(opt => {
                     optionsHtml += `<label class="quiz-option"><input type="radio" name="q${questionNumber}" value="${opt}"><span>${opt}</span></label>`;
                 });
@@ -289,39 +297,9 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
             }
-
-            // [ADDED] postMessage logic for final completion page
-            if (pageId === 'final-completion-message') {
-                if (window.parent) {
-                    try {
-                        window.parent.postMessage({
-                            type: 'lesson_complete'
-                        }, '*');
-                    } catch (e) {
-                        console.error('postMessage failed:', e);
-                    }
-                }
-            }
         }
 
-        function submitAnswerAndProceed(questionNumber) {
-            const data = quizData[questionNumber - 1];
-            let isAnswered = false;
-            
-            const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
-            if(selectedOption){
-                const userAnswer = selectedOption.value;
-                questionResults[questionNumber - 1] = (userAnswer === data.answer);
-                isAnswered = true;
-            }
-
-            if (!isAnswered) {
-                 const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
-                 if(feedbackEl) feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`; // Smaller text
-                 setTimeout(() => { if(feedbackEl) feedbackEl.innerHTML = ''; }, 2000);
-                 return;
-            }
-
+        function nextQuestion(questionNumber) {
             if (questionNumber < totalQuestions) {
                 showPage(`quiz-page-${questionNumber + 1}`);
             } else {
@@ -329,12 +307,41 @@
             }
         }
 
+        function handleRadioChange(e) {
+            const radio = e.target;
+            const container = radio.closest('.options-container');
+            const questionNumber = parseInt(container.getAttribute('data-question'), 10);
+            const data = quizData[questionNumber - 1];
+            const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
+            const nextBtn = document.getElementById(`btn-next-${questionNumber}`);
+            
+            if (firstAttempts[questionNumber - 1] === null) {
+                firstAttempts[questionNumber - 1] = (radio.value === data.answer);
+            }
+
+            container.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            const parentLabel = radio.parentElement;
+            parentLabel.classList.add('selected');
+
+            if (radio.value === data.answer) {
+                parentLabel.classList.add('correct');
+                feedbackEl.innerHTML = '<span class="text-green-600 font-bold" style="font-size: var(--font-lg);">Correct !</span>';
+                if(nextBtn) nextBtn.disabled = false;
+            } else {
+                parentLabel.classList.add('incorrect');
+                feedbackEl.innerHTML = '<span class="text-red-600 font-bold" style="font-size: var(--font-lg);">Incorrect, essayez encore.</span>';
+                if(nextBtn) nextBtn.disabled = true;
+            }
+        }
+
         function showResults() {
-            const score = questionResults.filter(Boolean).length;
+            const score = firstAttempts.filter(r => r === true).length;
             document.getElementById('score-display').textContent = `${score} / ${totalQuestions}`;
             
             const messageEl = document.getElementById('score-message');
-            const finishButton = document.getElementById('finish-button');
             
             if (score === 20) messageEl.textContent = "Très bien ! Êtes-vous prêt(e) pour la suite ?";
             else if (score >= 17) messageEl.textContent = "Bien joué ! Vous y êtes presque !";
@@ -342,44 +349,27 @@
             else if (score >= 10) messageEl.textContent = "Bien joué ! Essayez de revoir la leçon.";
             else messageEl.textContent = "Bon travail. Essayez de revoir la leçon et de refaire le test.";
 
-            if (score >= 17) finishButton.classList.remove('hidden');
-            else finishButton.classList.add('hidden');
+            if (window.parent) {
+                window.parent.postMessage({
+                    type: 'lesson_complete'
+                }, '*');
+            }
 
             showPage('results-page');
         }
 
-        function retakeQuiz() {
-            questionResults.fill(false);
-            // Clear dynamic content except page-0
-            const container = document.querySelector('.course-container');
-            const page0 = container.querySelector('#page-0');
-            container.innerHTML = ''; // Clear all
-            container.appendChild(page0); // Add page-0 back
-            
-            initializeQuiz(); // Re-create quiz pages
-            showPage('page-0'); // Show start page
-        }
-        
-        function addOptionListeners() {
-             document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                 radio.addEventListener('change', (e) => {
-                     document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
-                     if(e.target.checked) e.target.parentElement.classList.add('selected');
-                 });
-             });
-        }
-
         function initializeQuiz() {
             createQuizPages();
-            addOptionListeners();
+            
+            document.body.addEventListener('change', function(e) {
+                if (e.target.matches('input[type="radio"]')) {
+                    handleRadioChange(e);
+                }
+            });
         }
         
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeQuiz();
-            showPage('page-0');
-        });
+        initializeQuiz();
 
     </script>
 </body>
 </html>
-
