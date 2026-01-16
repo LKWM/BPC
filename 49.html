@@ -41,7 +41,7 @@
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
             border-radius: 0.75rem;
             overflow: hidden;
-            background-color: white; /* [ADDED] Ensure background */
+            background-color: white;
         }
         .page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -49,7 +49,7 @@
             opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
             background-color: white; padding: var(--padding-lg);
             border-radius: 0.75rem;
-            box-sizing: border-box; /* [ADDED] Ensure padding is included */
+            box-sizing: border-box;
         }
         #page-0 {
             justify-content: center;
@@ -70,7 +70,6 @@
             .page { padding: 1.5rem 1rem; border-radius: 0; }
         }
 
-        /* [MODIFIED] Unified title style */
         .title-text { 
             font-size: var(--font-title); 
             font-weight: 700;
@@ -79,6 +78,8 @@
         }
         .lesson-text { font-size: var(--font-lg); }
         .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; cursor: pointer; }
+        .nav-button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        
         .page-header {
             text-align: center; color: #4b5563; font-size: var(--font-lg);
             font-weight: 600; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb;
@@ -100,14 +101,20 @@
         .quiz-option span { font-size: var(--font-xl); }
         .quiz-option:hover { background-color: #f3f4f6; }
         .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #15803d; }
+        .quiz-option.wrong { background-color: #fee2e2; border-color: #ef4444; color: #b91c1c; }
         .quiz-option input { display: none; }
+        
         .feedback-area {
-            text-align: right; /* Changed from center */
+            text-align: right;
             min-height: 50px; 
             display: flex;
             align-items: center; 
-            justify-content: flex-end; /* Changed from center */
-            gap: 0.5rem; /* [ADDED] Gap for feedback */
+            justify-content: flex-end;
+            gap: 0.5rem;
+            flex-grow: 1;
+            font-size: var(--font-base);
+            font-weight: 600;
         }
         
         .input-zone-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; min-height: clamp(60px, 20vmin, 80px); gap: 0.5rem;}
@@ -128,6 +135,7 @@
             flex: 1; min-width: 0;
         }
         .jamo-key:hover { background-color: #f3f4f6; }
+        .jamo-key:active { background-color: #e5e7eb; transform: translateY(1px); }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -137,7 +145,6 @@
             
             <div id="page-0" class="page active">
                 <div class="page-content">
-                    <!-- [MODIFIED] Removed leading-tight -->
                     <h1 class="title-text font-bold text-gray-800 mb-6">Chapitre 8 - Récapitulatif</h1>
                     <p class="lesson-text text-gray-600">Vérifiez ce que vous avez appris au Chapitre 8.<br>C'est un test composé de 20 questions.</p>
                     <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-10">Commencer le test</button>
@@ -161,7 +168,16 @@
         const totalQuestions = 20;
         let questionResults = new Array(totalQuestions).fill(false);
         let dictationState = {};
-        let initialNavStates = {}; // [ADDED]
+        let dictationAttempts = {}; 
+        let initialNavStates = {};
+
+        // Valid Hangul Jamos to allow input
+        const validJamos = [
+            'ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ',
+            'ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ',
+            'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ',
+            'ㅃ', 'ㅉ', 'ㄸ', 'ㄲ', 'ㅆ', 'ㅒ', 'ㅖ'
+        ];
 
         const sounds = {
             'gam': { file: 'https://static.wixstatic.com/mp3/699687_023f3517caaf417985825a6f1ffc2928.mp3' }, 'tal': { file: 'https://static.wixstatic.com/mp3/699687_15d3e451e8ec4333a648d7320fcc05ab.mp3' }, 'mun': { file: 'https://static.wixstatic.com/mp3/699687_ba3cbab7c5564a5790edb89f3c9ad2d5.mp3' }, 'chang': { file: 'https://static.wixstatic.com/mp3/699687_7ba0d1da2caf4bbbac35378f049ff0e6.mp3' }, 'bom': { file: 'https://static.wixstatic.com/mp3/699687_0f8b1278611346d0a048ef5ea8d5e05e.mp3' }, 'yeonghwa': { file: 'https://static.wixstatic.com/mp3/699687_690073b12fce4ec69779a69eb4543160.mp3' }, 'jongi': { file: 'https://static.wixstatic.com/mp3/699687_221fcc2e070c48b58bc39daaaded8356.mp3' }, 'namu': { file: 'https://static.wixstatic.com/mp3/699687_8b95668f1d944283b80dea27b3d48f8d.mp3' }, 'kkaji': { file: 'https://static.wixstatic.com/mp3/699687_3a900e5abb6940d48fad2568d64edadf.mp3' }, 'swida': { file: 'https://static.wixstatic.com/mp3/699687_027ca43bbb55488ca464dae0b0d6907a.mp3' }, 'ma': { file: 'https://static.wixstatic.com/mp3/699687_a97f6a1309a9494b8be961e0f5666c56.mp3' }, 'jong': { file: 'https://static.wixstatic.com/mp3/699687_1f37c39b0a0d4dffb18877e5a34f65c4.mp3' }, 'gong': { file: 'https://static.wixstatic.com/mp3/699687_8392306375964831bd7e254e283d7ab8.mp3' }, 'saem': { file: 'https://static.wixstatic.com/mp3/699687_1f34a2922b1c423c846381403fdc6bd2.mp3' }, 'tol': { file: 'https://static.wixstatic.com/mp3/699687_503118e7e8e4469a8eb3994dc5d93b17.mp3' }, 'mal': { file: 'https://static.wixstatic.com/mp3/699687_62ae5f30cbf14749806d28bd351ba42f.mp3' }, 'gang': { file: 'https://static.wixstatic.com/mp3/699687_44c30ee2cd9e42ff8eb001f66a0b44f3.mp3' }, 'bang': { file: 'https://static.wixstatic.com/mp3/699687_c065955a571544588c47617c39f40b55.mp3' }, 'sigye': { file: 'https://static.wixstatic.com/mp3/699687_c3d5010c86fa4e00b3f58c75ac6e9c2a.mp3' }, 'dosi': { file: 'https://static.wixstatic.com/mp3/699687_1d0912a8fc5646e1ac36d590310dc1a8.mp3' },
@@ -211,15 +227,14 @@
                     `;
                 }
 
-                const nextButtonText = questionNumber === totalQuestions ? 'Terminer le test' : 'Suivant &rarr;';
-                const prevButtonHtml = questionNumber > 1 ? `<button onclick="showPage('quiz-page-${questionNumber - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>` : `<div></div>`;
+                const prevButtonHtml = questionNumber > 1 ? `<button onclick="showPage('quiz-page-${questionNumber - 1}')" class="nav-button text-gray-600 hover:bg-gray-200" id="prev-btn-${questionNumber}">&larr; Précédent</button>` : `<div></div>`;
 
                 const navButtonHtml = `
                     <div id="quiz-${questionNumber}-nav" class="flex justify-between items-center w-full">
                         ${prevButtonHtml}
-                        <div class="flex items-center gap-4">
-                           <div id="q${questionNumber}-feedback" class="feedback-area" style="min-height: 40px; padding: 0;"></div>
-                           <button onclick="submitAnswerAndProceed(${questionNumber})" class="nav-button text-white bg-blue-600 hover:bg-blue-700">${nextButtonText}</button>
+                        <div class="flex items-center gap-2 flex-grow justify-end">
+                            <div id="q${questionNumber}-feedback" class="feedback-area"></div>
+                            <button id="submit-btn-${questionNumber}" data-state="check" onclick="submitAnswerAndProceed(${questionNumber})" class="nav-button text-white bg-blue-600 hover:bg-blue-700 whitespace-nowrap">Vérifier</button>
                         </div>
                     </div>`;
 
@@ -232,6 +247,8 @@
                         ${navButtonHtml}
                     </div>
                 `;
+                
+                dictationAttempts[questionNumber] = 0;
             });
             
             pagesHtml += `
@@ -240,20 +257,6 @@
                         <h2 class="title-text font-bold text-gray-800 mb-4">Résultats du test</h2>
                         <p id="score-display" class="text-5xl font-bold text-blue-600 mb-6"></p>
                         <p id="score-message" class="lesson-text text-gray-600"></p>
-                    </div>
-                    <div class="flex justify-center items-center gap-4">
-                        <button onclick="retakeQuiz()" class="nav-button bg-gray-500 text-white hover:bg-gray-600">Réessayer</button>
-                        <button id="finish-button" onclick="showPage('final-completion-message')" class="nav-button bg-green-600 text-white hover:bg-green-700 hidden">Terminer</button>
-                    </div>
-                </div>
-                <div id="final-completion-message" class="page items-center justify-center text-center">
-                    <div class="page-content flex flex-col items-center justify-center">
-                         <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                         <h2 class="title-text font-bold text-gray-800 mb-3">Félicitations !</h2>
-                         <p class="lesson-text text-gray-600">Vous avez terminé le Chapitre 8.</p>
-                    </div>
-                    <div class="w-full text-center pb-4">
-                         <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
                     </div>
                 </div>
             `;
@@ -266,11 +269,10 @@
             Tone.start().then(() => {
                 const player = new Tone.Player(sounds[soundKey].file).toDestination();
                 player.autostart = true;
-                player.onstop = () => player.dispose(); // [ADDED] Dispose player
+                player.onstop = () => player.dispose();
             });
         }
 
-        // [MODIFIED] Added postMessage and resetPage logic
         function showPage(pageId) {
             const currentPage = document.getElementById(currentPageId);
             if (currentPage) currentPage.classList.remove('active');
@@ -279,60 +281,62 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
-
-                // [ADDED] postMessage logic
-                if (pageId === 'final-completion-message') {
-                    if (window.parent) {
-                        window.parent.postMessage({ type: 'lesson_complete' }, '*');
-                    }
-                }
-
-                // [ADDED] Call to reset page state
                 resetPageState(nextPage);
             }
         }
-
-        // [ADDED] Function to reset page state
+        
         function resetPageState(pageElement) {
             const pageId = pageElement.id;
             const quizNumMatch = pageId.match(/quiz-page-(\d+)/);
-            if (!quizNumMatch) return; // Not a quiz page
+            if (!quizNumMatch) return;
             
             const questionNumber = parseInt(quizNumMatch[1], 10);
             const data = quizData[questionNumber - 1];
             if (!data) return;
 
             const quizNav = pageElement.querySelector(`#quiz-${questionNumber}-nav`);
-            
-            // Restore nav bar
             if (quizNav && initialNavStates[quizNav.id]) {
                  quizNav.innerHTML = initialNavStates[quizNav.id];
-                 // Re-bind buttons
                  const newCheckButton = quizNav.querySelector('button[onclick^="submit"]');
                  if (newCheckButton) {
                     newCheckButton.onclick = () => submitAnswerAndProceed(questionNumber);
                  }
+                 const newPrevButton = quizNav.querySelector(`#prev-btn-${questionNumber}`);
+                 if(newPrevButton) {
+                    newPrevButton.onclick = () => showPage(`quiz-page-${questionNumber - 1}`);
+                 }
             }
+            
+            dictationAttempts[questionNumber] = 0;
 
-            // Reset MCQ options
             if (data.type.startsWith('mcq')) {
                 const options = pageElement.querySelectorAll(`input[name="q${questionNumber}"]`);
                 options.forEach(opt => {
                     opt.disabled = false;
                     opt.checked = false;
-                    opt.parentElement.classList.remove('selected');
+                    opt.parentElement.classList.remove('selected', 'correct', 'wrong');
+                    opt.parentElement.style.cursor = 'pointer';
                 });
             } 
-            // Reset Dictation
             else if (data.type === 'dictation') {
                 setupDictationQuiz(questionNumber);
+                const jamoKeys = pageElement.querySelectorAll('.jamo-key');
+                jamoKeys.forEach(k => k.disabled = false);
             }
         }
 
         function submitAnswerAndProceed(questionNumber) {
+            const submitBtn = document.getElementById(`submit-btn-${questionNumber}`);
+            // Check button state. If it is 'next', proceed.
+            if (submitBtn && submitBtn.dataset.state === 'next') {
+                goToNext(questionNumber);
+                return;
+            }
+
             const data = quizData[questionNumber - 1];
             let isAnswered = false;
             let userAnswer = null;
+            let isCorrect = false;
 
             if (data.type.startsWith('mcq')) {
                 const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
@@ -344,26 +348,98 @@
                 const state = dictationState[questionNumber];
                 if (state) {
                     userAnswer = state.inputs.map(syllableArray => combineHangeul(syllableArray)).join('');
-                    if (userAnswer.length > 0) { // Only count as answered if not empty
-                         isAnswered = true;
-                    }
+                    if (userAnswer.length > 0) isAnswered = true;
                 }
             }
             
+            const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
             if (!isAnswered) {
-                 const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
-                 // [MODIFIED] Added font-size
-                 if(feedbackEl) feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p>`;
-                 setTimeout(() => { 
-                    if(feedbackEl && feedbackEl.querySelector('p')?.textContent.includes('Veuillez')) {
-                        feedbackEl.innerHTML = ''; 
-                    }
-                }, 2000);
+                 if(feedbackEl) feedbackEl.innerHTML = `<span class="text-yellow-600">Veuillez répondre.</span>`;
+                 setTimeout(() => { if(feedbackEl && feedbackEl.textContent.includes('Veuillez')) feedbackEl.innerHTML = ''; }, 2000);
                  return;
             }
 
-            questionResults[questionNumber - 1] = (userAnswer === data.answer);
+            isCorrect = (userAnswer === data.answer);
+            
+            // --- MCQ Logic ---
+            if (data.type.startsWith('mcq')) {
+                if (isCorrect) {
+                    const selectedLabel = document.querySelector(`input[name="q${questionNumber}"]:checked`).parentElement;
+                    selectedLabel.classList.add('correct');
+                    
+                    // Disable inputs
+                    const allOptions = document.querySelectorAll(`input[name="q${questionNumber}"]`);
+                    allOptions.forEach(opt => opt.disabled = true);
+                    
+                    feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
+                    questionResults[questionNumber - 1] = true;
+                    
+                    // Change button to Suivant
+                    submitBtn.textContent = 'Suivant';
+                    submitBtn.dataset.state = 'next';
+                    submitBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    submitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
 
+                } else {
+                    const selectedLabel = document.querySelector(`input[name="q${questionNumber}"]:checked`).parentElement;
+                    selectedLabel.classList.add('wrong');
+                    feedbackEl.innerHTML = `<span class="text-red-500">Mauvaise réponse.</span>`;
+                    
+                    // Allow retry - uncheck after short delay so user can select again, or just let them change selection
+                    // Here we just leave it so they can see what was wrong, but they can select another one.
+                    const options = document.querySelectorAll(`input[name="q${questionNumber}"]`);
+                    options.forEach(opt => {
+                        opt.addEventListener('click', () => {
+                             selectedLabel.classList.remove('wrong'); // remove red from previous
+                        }, {once:true});
+                    });
+                }
+            } 
+            // --- Dictation Logic ---
+            else {
+                if (isCorrect) {
+                    // Disable keyboard
+                    const jamoKeys = document.getElementById(`jamo-bank-${questionNumber}`).querySelectorAll('.jamo-key');
+                    jamoKeys.forEach(k => k.disabled = true);
+
+                    feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
+                    questionResults[questionNumber - 1] = true;
+
+                    // Change button to Suivant
+                    submitBtn.textContent = 'Suivant';
+                    submitBtn.dataset.state = 'next';
+                    submitBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    submitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+
+                } else {
+                    dictationAttempts[questionNumber]++;
+                    const attempts = dictationAttempts[questionNumber];
+
+                    if (attempts < 3) {
+                        feedbackEl.innerHTML = `<span class="text-red-500">Mauvaise réponse.</span>`;
+                        // Clear inputs
+                        const state = dictationState[questionNumber];
+                        state.inputs = Array.from({ length: data.answer.length }, () => []);
+                        updateDictationDisplay(questionNumber);
+                        setActiveSyllable(questionNumber, 0);
+                        
+                    } else {
+                        // 3rd Failure: Show Answer
+                        feedbackEl.innerHTML = `<span class="text-red-600 font-bold">Réponse : ${data.answer}</span>`;
+                        
+                        // Clear inputs so user can type the answer
+                        const state = dictationState[questionNumber];
+                        state.inputs = Array.from({ length: data.answer.length }, () => []);
+                        updateDictationDisplay(questionNumber);
+                        setActiveSyllable(questionNumber, 0);
+
+                        // User must type answer then click check again.
+                    }
+                }
+            }
+        }
+
+        function goToNext(questionNumber) {
             if (questionNumber < totalQuestions) {
                 showPage(`quiz-page-${questionNumber + 1}`);
             } else {
@@ -376,28 +452,30 @@
             document.getElementById('score-display').textContent = `${score} / ${totalQuestions}`;
             
             const messageEl = document.getElementById('score-message');
-            const finishButton = document.getElementById('finish-button');
             
-            if (score === 20) messageEl.textContent = "Très bien ! Êtes-vous prêt(e) pour la suite ?";
-            else if (score >= 17) messageEl.textContent = "Bien joué ! Vous y êtes presque !";
-            else if (score >= 13) messageEl.textContent = "Bien joué ! Entraînons-nous encore un peu.";
-            else if (score >= 10) messageEl.textContent = "Bien joué ! Essayez de revoir la leçon.";
-            else messageEl.textContent = "Bon travail. Essayez de revoir la leçon et de refaire le test.";
-
-            if (score >= 17) finishButton.classList.remove('hidden');
-            else finishButton.classList.add('hidden');
+            if (score === 20) messageEl.textContent = "Parfait !";
+            else if (score >= 17) messageEl.textContent = "Bien joué !";
+            else if (score >= 13) messageEl.textContent = "Pas mal !";
+            else if (score >= 10) messageEl.textContent = "Courage !";
+            else messageEl.textContent = "Bon travail.";
 
             showPage('results-page');
+            
+            // Send completion message immediately
+            if (window.parent) {
+                window.parent.postMessage({ type: 'lesson_complete' }, '*');
+            }
         }
 
         function retakeQuiz() {
             questionResults.fill(false);
             dictationState = {};
+            dictationAttempts = {}; 
+            
             const container = document.querySelector('.course-container');
             container.innerHTML = `
                 <div id="page-0" class="page active">
                     <div class="page-content">
-                        <!-- [MODIFIED] Removed leading-tight -->
                         <h1 class="title-text font-bold text-gray-800 mb-6">Chapitre 8 - Récapitulatif</h1>
                         <p class="lesson-text text-gray-600">Vérifiez ce que vous avez appris au Chapitre 8.<br>C'est un test composé de 20 questions.</p>
                         <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-10">Commencer le test</button>
@@ -405,7 +483,7 @@
                     <div></div>
                 </div>`;
             initializeQuiz();
-            // [ADDED] Re-store nav states after re-initializing
+            
             document.querySelectorAll('[id$="-nav"]').forEach(nav => {
                 initialNavStates[nav.id] = nav.innerHTML;
             });
@@ -414,14 +492,13 @@
         function addOptionListeners() {
              document.querySelectorAll('input[type="radio"]').forEach(radio => {
                  radio.addEventListener('change', (e) => {
+                     if (e.target.disabled) return;
                      document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
                      if(e.target.checked) e.target.parentElement.classList.add('selected');
                  });
              });
         }
         
-        // --- Dictation Logic ---
-        // (Ensuring the complex dictation logic is preserved)
         function setupDictationQuiz(quizNum) {
             const data = quizData[quizNum - 1];
             const inputContainer = document.getElementById(`input-zone-${quizNum}`);
@@ -508,6 +585,10 @@
         function processJamo(quizNum, jamo) {
             const state = dictationState[quizNum];
             if (!state) return;
+            
+            // Check if input is disabled (on correct answer)
+            if (document.getElementById(`submit-btn-${quizNum}`).dataset.state === 'next') return;
+
             const currentJamoArray = state.inputs[state.activeSyllableIndex];
             if (jamo === 'DELETE') {
                 currentJamoArray.pop();
@@ -555,9 +636,30 @@
             });
         }
         
+        // Physical Keyboard Support: Allow INPUT ONLY if keyboard language is Korean (Hangul)
+        document.addEventListener('keydown', (e) => {
+            if (!currentPageId.startsWith('quiz-page-')) return;
+            
+            const questionNumber = parseInt(currentPageId.replace('quiz-page-', ''), 10);
+            const data = quizData[questionNumber - 1];
+            
+            if (data && data.type === 'dictation') {
+                if (e.key === 'Backspace') {
+                    processJamo(questionNumber, 'DELETE');
+                    return;
+                }
+                
+                // Allow ONLY valid Hangul Jamos. 
+                // This forces the user to switch their input method to Korean.
+                // QWERTY/AZERTY English characters will be ignored.
+                if (validJamos.includes(e.key)) {
+                    processJamo(questionNumber, e.key);
+                }
+            }
+        });
+        
         document.addEventListener('DOMContentLoaded', () => {
             initializeQuiz();
-            // [ADDED] Store nav states *after* they are created
             document.querySelectorAll('[id$="-nav"]').forEach(nav => {
                 initialNavStates[nav.id] = nav.innerHTML;
             });
