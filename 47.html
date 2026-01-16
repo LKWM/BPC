@@ -2,27 +2,24 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Chapitre 8 - Les consonnes finales</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
-            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
-            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
-            --font-lg: clamp(1rem, 3vmin, 1.25rem);
-            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
-            --font-title: clamp(1.5rem, 5vmin, 2rem);
-            --font-display: clamp(5rem, 20vmin, 8rem);
-            --font-char-btn: clamp(4rem, 15vmin, 5rem);
-            --font-jamo-key: clamp(0.8rem, 2.5vmin, 1rem);
-            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
-            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
-            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+            --font-sm: clamp(0.75rem, 1.5vh, 0.875rem);
+            --font-base: clamp(0.875rem, 2vh, 1rem);
+            --font-lg: clamp(1rem, 2.5vh, 1.25rem);
+            --font-xl: clamp(1.125rem, 3vh, 1.5rem);
+            --font-title: clamp(1.5rem, 4vh, 2rem);
+            --font-char-btn: clamp(2rem, 10vw, 3rem);
+            --font-jamo-key: clamp(0.9rem, 2.2vh, 1.1rem);
+            --padding-lg: clamp(1rem, 3vh, 2rem);
         }
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
@@ -30,84 +27,141 @@
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+            background-color: #f3f4f6;
         }
 
-        /* --- Layout --- */
-        .course-wrapper { width: 100%; max-width: 600px; }
-        .course-container {
-            width: 100%; position: relative; aspect-ratio: 1 / 1;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            border-radius: 0.75rem; overflow: hidden; background-color: white;
+        .course-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            box-sizing: border-box;
         }
+
+        .course-container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            /* 데스크탑 기본: 정사각형 비율 */
+            aspect-ratio: 1 / 1; 
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* [모바일 화면 대응] 비율 해제 및 전체 화면 채움 */
+        @media (max-width: 600px) {
+            body { padding: 0; background-color: white; }
+            .course-wrapper { padding: 0; height: 100vh; width: 100vw; }
+            .course-container {
+                max-width: none;
+                width: 100%;
+                height: 100%;
+                aspect-ratio: auto; /* 비율 강제 해제 */
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .page { border-radius: 0; padding: 1rem; }
+        }
+
         .page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
             opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
-            background-color: white; padding: var(--padding-lg); box-sizing: border-box;
+            padding: var(--padding-lg);
+            box-sizing: border-box;
         }
         .page.active { opacity: 1; visibility: visible; }
-        .page-content {
-            flex-grow: 1; overflow: hidden; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
-        }
         
-        /* --- Mobile Responsive --- */
-        @media (max-width: 600px) {
-            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
-            .course-wrapper { height: 100%; max-width: 100%; }
-            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
-            .page { padding: 1.5rem 1rem; border-radius: 0; }
+        .page-content {
+            flex-grow: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            text-align: center;
+            width: 100%;
         }
 
-        /* --- Common Elements --- */
-        .title-text { font-size: var(--font-title); font-weight: 700; text-align: center; }
-        .lesson-text { font-size: var(--font-lg); color: #4b5563; line-height: 1.6; }
-        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        /* 텍스트 스타일 */
+        .title-text { font-size: var(--font-title); font-weight: 700; text-align: center; margin-bottom: 2vh; color: #1f2937; }
+        .lesson-text { font-size: var(--font-lg); color: #4b5563; line-height: 1.6; max-width: 90%; margin: 0 auto; }
+        
+        /* 버튼 스타일 */
+        .nav-button { 
+            padding: clamp(0.6rem, 2vh, 0.8rem) clamp(1.2rem, 4vh, 1.6rem);
+            border-radius: 0.5rem; 
+            font-weight: 600; 
+            font-size: clamp(1rem, 2.5vh, 1.1rem);
+            transition: background-color 0.2s; 
+        }
+        
         .char-button {
             font-size: var(--font-char-btn); font-weight: 700; font-family: 'Noto Sans KR', sans-serif;
             background-color: #eff6ff; border: 2px solid #93c5fd;
-            border-radius: 1rem; padding: var(--padding-sm) var(--padding-md);
+            border-radius: 1rem; padding: 1rem 1.5rem;
             cursor: pointer; transition: background-color 0.2s, transform 0.1s;
             line-height: 1.1;
         }
         .char-button:hover { background-color: #dbeafe; }
         .char-button:active { transform: scale(0.95); }
 
-        /* --- Quiz --- */
-        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; }
-        .audio-button { background: none; border: none; cursor: pointer; }
-        .audio-icon { width: clamp(2.5rem, 8vmin, 3rem); height: clamp(2.5rem, 8vmin, 3rem); color: #6b7280; transition: color 0.2s; }
+        /* 퀴즈 스타일 */
+        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; margin-bottom: 2vh; }
+        .audio-button { background: none; border: none; cursor: pointer; margin-bottom: 2vh; }
+        .audio-icon { width: clamp(3rem, 8vh, 4rem); height: clamp(3rem, 8vh, 4rem); color: #6b7280; transition: color 0.2s; }
         .audio-button:hover .audio-icon { color: #1d4ed8; }
-        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
         
-        /* Writing Quiz */
-        .writing-quiz-content { gap: clamp(0.25rem, 1.5vh, 1rem); }
-        .syllable-container { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; align-items: center; min-height: clamp(80px, 22vmin, 100px); }
+        .feedback-area { 
+            text-align: right; min-height: 40px; 
+            display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center; 
+            font-size: var(--font-base);
+        }
+        
+        /* 쓰기 퀴즈 스타일 */
+        .syllable-container { 
+            display: flex; flex-wrap: wrap; gap: 0.5rem; 
+            justify-content: center; align-items: center; 
+            min-height: clamp(80px, 15vh, 100px); 
+            margin-bottom: 2vh;
+        }
         .syllable-input { 
             border: 2px solid #cbd5e1; background-color: #f9fafb; 
-            width: clamp(80px, 22vmin, 100px); height: clamp(80px, 22vmin, 100px); 
+            width: clamp(70px, 18vw, 100px); height: clamp(70px, 18vw, 100px); 
             font-size: var(--font-char-btn); font-family: 'Noto Sans KR', sans-serif; 
             font-weight: 700; display: flex; justify-content: center; align-items: center; 
             cursor: pointer; transition: border-color 0.2s; border-radius: 0.5rem;
         }
-        .syllable-input.active { border-color: #3b82f6; }
-        .jamo-bank { display: flex; flex-direction: column; gap: 4px; justify-content: center; padding: clamp(0.5rem, 1vmin, 0.75rem); border-top: 1px solid #e5e7eb; margin-top: clamp(0.5rem, 2vh, 1rem); align-items: center; width:100%;}
-        .jamo-row { display: flex; flex-wrap: nowrap; gap: 4px; justify-content: center; width: 100%; }
+        .syllable-input.active { border-color: #3b82f6; background-color: #eff6ff; }
+        
+        /* 자모 키보드 */
+        .jamo-bank { 
+            display: flex; flex-direction: column; gap: 0.3rem; 
+            justify-content: center; padding: 0.5rem; 
+            border-top: 1px solid #e5e7eb; 
+            width: 100%; max-width: 500px;
+        }
+        .jamo-row { display: flex; flex-wrap: nowrap; gap: 0.3rem; justify-content: center; width: 100%; }
         .jamo-key {
-            height: clamp(35px, 8vmin, 45px); font-size: var(--font-jamo-key);
+            flex: 1; height: clamp(36px, 6vh, 48px);
+            font-size: var(--font-jamo-key);
             font-family: 'Noto Sans KR', sans-serif; font-weight: 600;
             border: 1px solid #d1d5db; border-bottom-width: 3px;
             border-radius: 0.375rem; background-color: #ffffff;
-            cursor: pointer; display:flex; align-items:center; justify-content:center;
-            flex-grow: 1; min-width: 0;
-            transition: background-color 0.1s, border-color 0.1s, transform 0.1s;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.1s;
             -webkit-tap-highlight-color: transparent;
         }
-        .jamo-key:hover { background-color: #f9fafb; }
-        .jamo-key:active { background-color: #e5e7eb; border-bottom-width: 1px; transform: translateY(2px);}
+        .jamo-key:active { background-color: #e5e7eb; border-bottom-width: 1px; transform: translateY(2px); }
         .shift-key { flex-grow: 1.5; }
-        .shift-key.active { background-color: #a5b4fc; color: white; border-color: #6366f1;}
+        .shift-key.active { background-color: #a5b4fc; color: white; border-color: #6366f1; }
         .backspace-key { flex-grow: 1.5; }
     </style>
 </head>
@@ -115,7 +169,7 @@
 
     <div class="course-wrapper">
         <div class="course-container">
-            <!-- Content will be generated by JavaScript -->
+            <!-- Content generated by JS -->
         </div>
     </div>
 
@@ -124,7 +178,8 @@
         let dictationAssemblers = {};
         let activeDictationBox = { quizNum: -1, boxIndex: -1 };
         let isShiftActive = false;
-        let initialNavStates = {}; // [ADDED] To store initial nav states for reset
+        let initialNavStates = {};
+        let attemptCounts = {}; // Track incorrect attempts
 
         const sounds = {
             'gang': { file: 'https://static.wixstatic.com/mp3/699687_44c30ee2cd9e42ff8eb001f66a0b44f3.mp3' },
@@ -199,11 +254,9 @@
             Tone.start().then(() => {
                 const player = new Tone.Player(sounds[soundKey].file).toDestination();
                 player.autostart = true;
-                player.onstop = () => player.dispose();
-            }).catch(e => console.error("Audio could not start:", e));
+            }).catch(e => console.error(e));
         }
 
-        // [MODIFIED] Added postMessage and resetPage logic
         function showPage(pageId) {
             const currentPage = document.getElementById(currentPageId);
             if (currentPage) currentPage.classList.remove('active');
@@ -213,7 +266,6 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
 
-                // [ADDED] postMessage logic
                 if (pageId === 'completion-page') {
                     if (window.parent) {
                         window.parent.postMessage({ type: 'lesson_complete' }, '*');
@@ -229,7 +281,6 @@
             }
         }
         
-        // [MODIFIED] Renamed and adapted from previous file
         function resetPageState(pageId) {
             const pageElement = document.getElementById(pageId);
             if (!pageElement) return;
@@ -239,10 +290,8 @@
             const quizNum = quizDataEntry.id;
             const quizNav = pageElement.querySelector(`#quiz-${quizNum}-nav`);
             
-            // Restore nav from stored HTML
-             if (quizNav && initialNavStates[quizNav.id]) {
+            if (quizNav && initialNavStates[quizNav.id]) {
                 quizNav.innerHTML = initialNavStates[quizNav.id];
-                // Re-bind buttons
                 const newCheckButton = quizNav.querySelector('button[onclick^="validate"]');
                 if (newCheckButton) {
                     newCheckButton.onclick = () => validateDictation(quizNum);
@@ -250,7 +299,11 @@
             }
 
             isShiftActive = false;
-            // Re-setup the dictation quiz (clears inputs and redraws keyboard)
+            // Clear attempts when fully resetting page entrance (optional, usually kept if retrying same session)
+            // But here "resetPageState" is called on navigation.
+            // If we want to persist "3 strikes" logic, we shouldn't clear it here unless it's a full restart.
+            // For now, let's keep it persistent per session.
+            
             setupDictationQuiz(quizNum, true); 
         }
 
@@ -260,13 +313,15 @@
 
             if (isInitialSetup) {
                  dictationAssemblers[quizNum] = Array(data.syllables).fill(0).map(() => new HangeulAssembler());
+                 // Reset attempt count for this quiz? 
+                 // If we re-enter the page, we might want to reset.
+                 attemptCounts[quizNum] = 0;
             }
             
             const jamoBank = document.getElementById(`jamo-keyboard-${quizNum}`);
             if (!jamoBank) return;
             jamoBank.innerHTML = ''; 
 
-            // Clear visual inputs
             for(let i=0; i < data.syllables; i++) {
                 const inputEl = document.getElementById(`input-${quizNum}-${i}`);
                 if (inputEl) inputEl.textContent = '';
@@ -275,12 +330,12 @@
             const keyboardLayout = [
                 ['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ','ㅛ','ㅕ','ㅑ','ㅐ','ㅔ'],
                 ['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],
-                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Backspace']
+                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Del']
             ];
             const shiftedLayout = [
                 ['ㅃ','ㅉ','ㄸ','ㄲ','ㅆ','ㅛ','ㅕ','ㅑ','ㅒ','ㅖ'],
                 ['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],
-                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Backspace']
+                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Del']
             ];
 
             keyboardLayout.forEach((row, rowIndex) => {
@@ -291,14 +346,13 @@
                 currentLayout.forEach((key) => {
                     const keyEl = document.createElement('button');
                     keyEl.className = 'jamo-key';
-                    keyEl.textContent = key;
+                    keyEl.textContent = key === 'Del' ? '←' : key;
                     if (key === 'Shift') {
                         keyEl.classList.add('shift-key');
                         if(isShiftActive) keyEl.classList.add('active');
                         keyEl.onclick = () => { isShiftActive = !isShiftActive; setupDictationQuiz(quizNum); };
-                    } else if (key === 'Backspace') {
+                    } else if (key === 'Del') {
                         keyEl.classList.add('backspace-key');
-                        keyEl.textContent = '←';
                         keyEl.onclick = () => processJamoInput('Backspace');
                     } else {
                         keyEl.onclick = () => processJamoInput(key);
@@ -336,60 +390,39 @@
                     assembler.remove();
                 }
             } else if (isVowel(jamo)) {
+                // ... (Logic shortened for brevity, assumes standard Hangul assembly) ...
                 if (assembler.state === 'jong_typed') {
                     const jongChar = JONG[assembler.jong];
-                    let lastConsOfPrevSyllable;
-                    let firstConsOfNextSyllable;
-
-                    if (JONG_SPLIT[jongChar]) {
-                        const parts = JONG_SPLIT[jongChar];
-                        lastConsOfPrevSyllable = parts[0];
-                        firstConsOfNextSyllable = parts[1];
-                    } else { 
-                        lastConsOfPrevSyllable = '';
-                        firstConsOfNextSyllable = jongChar;
-                    }
-
-                    assembler.jong = JONG.indexOf(lastConsOfPrevSyllable);
+                    let lastCons, firstCons;
+                    if (JONG_SPLIT[jongChar]) { lastCons = JONG_SPLIT[jongChar][0]; firstCons = JONG_SPLIT[jongChar][1]; } 
+                    else { lastCons = ''; firstCons = jongChar; }
+                    assembler.jong = JONG.indexOf(lastCons);
                     assembler.state = (assembler.jong > 0) ? 'jong_typed' : 'jung_typed';
-
                     if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
                         setActiveDictationBox(quizNum, boxIndex + 1);
-                        const nextAssembler = dictationAssemblers[quizNum][boxIndex + 1];
-                        nextAssembler.add(firstConsOfNextSyllable);
-                        nextAssembler.add(jamo);
+                        const nextAss = dictationAssemblers[quizNum][boxIndex + 1];
+                        nextAss.add(firstCons); nextAss.add(jamo);
                     }
-                } else {
-                    assembler.add(jamo);
-                }
+                } else { assembler.add(jamo); }
             } else if (isConsonant(jamo)) {
                 if (assembler.state === 'jung_typed') {
-                    if (JONG.indexOf(jamo) > 0) { 
-                        assembler.add(jamo);
-                    } else {
-                        if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
-                            setActiveDictationBox(quizNum, boxIndex + 1);
-                            dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
-                        }
+                    if (JONG.indexOf(jamo) > 0) assembler.add(jamo);
+                    else if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
+                        setActiveDictationBox(quizNum, boxIndex + 1);
+                        dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
                     }
                 } else if (assembler.state === 'jong_typed') {
                     const prevJong = JONG[assembler.jong];
-                    if (CONSONANT_PAIRS[prevJong] && CONSONANT_PAIRS[prevJong][jamo]) {
-                        assembler.add(jamo);
-                    } else {
-                        if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
-                            setActiveDictationBox(quizNum, boxIndex + 1);
-                            dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
-                        }
+                    if (CONSONANT_PAIRS[prevJong] && CONSONANT_PAIRS[prevJong][jamo]) assembler.add(jamo);
+                    else if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
+                        setActiveDictationBox(quizNum, boxIndex + 1);
+                        dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
                     }
-                } else { // state is 'start' or 'cho_typed'
-                    if (assembler.state === 'start') {
-                        assembler.add(jamo);
-                    } else { // 'cho_typed' - C + new C -> move to next box
-                        if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
-                            setActiveDictationBox(quizNum, boxIndex + 1);
-                            dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
-                        }
+                } else {
+                    if (assembler.state === 'start') assembler.add(jamo);
+                    else if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
+                        setActiveDictationBox(quizNum, boxIndex + 1);
+                        dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
                     }
                 }
             }
@@ -421,41 +454,124 @@
 
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
 
             const isCorrect = userAnswer === data.answer;
             
-            // [MODIFIED] Corrected next page logic
-            const nextPageId = (quizNum === quizData[quizData.length - 1].id) ? 'completion-page' : `page-${data.page + 1}`;
-            const buttonText = (quizNum === quizData[quizData.length - 1].id) ? 'Terminer' : 'Suivant &rarr;';
+            // [MODIFIED] Logic for next page button
+            const isLast = (quizNum === quizData[quizData.length - 1].id);
+            const nextPageId = isLast ? 'completion-page' : `page-${data.page + 1}`;
+            const buttonText = isLast ? 'Terminer' : 'Suivant &rarr;';
+            const nextButtonHtml = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             
             if (isCorrect) {
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+                validateBtn.style.display = 'none';
+                feedbackContainer.innerHTML = nextButtonHtml;
             } else {
-                // [MODIFIED] Added font-size to feedback
-                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                // Increment attempts
+                if (!attemptCounts[quizNum]) attemptCounts[quizNum] = 0;
+                attemptCounts[quizNum]++;
+
+                if (attemptCounts[quizNum] >= 3) {
+                    // 3 strikes: Show answer and let proceed
+                    validateBtn.style.display = 'none';
+                    // Show Correct Answer in inputs visually
+                    const correctChars = data.answer.split('');
+                    correctChars.forEach((char, idx) => {
+                        const box = document.getElementById(`input-${quizNum}-${idx}`);
+                        if(box) {
+                            box.textContent = char;
+                            box.style.color = '#dc2626'; // Mark red to indicate it was wrong
+                            box.style.borderColor = '#dc2626';
+                        }
+                    });
+                    
+                    feedbackContainer.innerHTML = `<span class="text-red-600 font-bold mr-2 text-sm">3 fautes. Réponse : ${data.answer}</span> ${nextButtonHtml}`;
+                } else {
+                    // Less than 3 strikes: Retry
+                    feedbackContainer.innerHTML = `<span class="text-red-600 font-bold mr-2 text-sm">Incorrect.</span><button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                    validateBtn.style.display = 'none';
+                }
             }
         }
         
         function resetQuiz(quizNum) {
+            // This is called by "Réessayer" button
+            // Just clear feedback and inputs
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            feedbackContainer.innerHTML = '';
+            
+            // Restore Validate button
+            // We need to re-inject the validate button since it was hidden/removed
+            // Simplest way is to reload the nav state or just show the hidden button if we didn't remove it.
+            // But we modified innerHTML or display.
+            
+            // Let's rely on resetPageState logic which redraws keyboard and inputs
             const pageId = `page-${quizData.find(q => q.id === quizNum).page}`;
-            resetPageState(pageId);
+            
+            // Restore nav HTML from initial state to bring back "Valider" button
+            const quizNav = document.getElementById(`quiz-${quizNum}-nav`);
+            if (quizNav && initialNavStates[quizNav.id]) {
+                quizNav.innerHTML = initialNavStates[quizNav.id];
+                const newCheckButton = quizNav.querySelector('button[onclick^="validate"]');
+                if (newCheckButton) newCheckButton.onclick = () => validateDictation(quizNum);
+            }
+            
+            // Re-setup quiz inputs
+            setupDictationQuiz(quizNum, false); 
         }
 
         function createPages() {
             const container = document.querySelector('.course-container');
             let pagesHtml = `
-                <div id="page-0" class="page active"> <div class="page-content text-center"> 
-                    <!-- [MODIFIED] Removed leading-tight -->
-                    <h1 class="title-text font-bold text-gray-800">Chapitre 8<br>Les consonnes finales - comment-elles fonctionnent?</h1> 
-                    <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> 
-                </div> <div></div> </div>
-                <div id="page-1" class="page"> <div class="page-content items-center"> <p class="lesson-text text-center leading-relaxed"><strong class="font-semibold text-blue-600">받침</strong> (batchim / consonne finale) est une consonne supplémentaire qui se met <strong class="font-semibold text-blue-600">au-dessous</strong> d’une syllabe. Toutes les consonnes sauf &lt;ㄸ,ㅃ,ㅉ&gt; peuvent se trouver en position finale.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button> <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-2" class="page"> <div class="page-content items-center"> <p class="lesson-text text-center leading-relaxed">Les consonnes, quand elles se prononcent en position finale, ne se prononcent pas entièrement comme elles ne sont pas suivies d’une voyelle et il n’est alors plus nécessaire d’expirer l’air ou de rouvrir la bouche.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-3" class="page"> <div class="page-content items-center"> <p class="lesson-text text-center leading-relaxed">Par conséquent, les sons aspirés et tendus sont tous les deux représentés par les sons basiques en position finale et <strong class="font-semibold text-blue-600">il n’existe que 7 manières &lt;ㄱ,ㄴ,ㄷ,ㄹ,ㅁ,ㅂ,ㅇ&gt; de prononcer les consonnes finales.</strong></p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-4" class="page"> <div class="page-content items-center"> <p class="lesson-text text-center leading-relaxed">Il faut bien distinguer les sons selon leurs positions et ne pas les confondre aux sons finals du français.</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-5" class="page"> <div class="page-content items-center"> <p class="lesson-text text-center leading-relaxed">La liaison d’une consonne finale est obligatoire quand elle est suivie par une voyelle (quand le caractère suivant n’as pas de consonne prononcée et il est rempli par &lt;ᄋ&gt; muet).</p> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-6" class="page"> <div class="page-content"> <p class="lesson-text mb-6">Pratiquons avec &lt;ㅇ&gt; que nous avons appris au chapitre 6. Les consonnes finales se placent en bas d'une syllabe, au milieu.</p> <div class="flex justify-center gap-2 sm:gap-4"> <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('gang')">강</button> <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('bang')">방</button> <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('jong')">종</button> </div> </div> <div class="flex justify-between items-center"> <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button> </div> </div>
+                <div id="page-0" class="page active"> 
+                    <div class="page-content text-center"> 
+                        <h1 class="title-text font-bold text-gray-800">Chapitre 8<br>Les consonnes finales</h1> 
+                        <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> 
+                    </div> 
+                </div>
+                <div id="page-1" class="page"> 
+                    <div class="page-content items-center"> 
+                        <p class="lesson-text text-center"><strong class="font-semibold text-blue-600">받침</strong> (batchim / consonne finale) est une consonne supplémentaire qui se met <strong class="font-semibold text-blue-600">au-dessous</strong> d’une syllabe.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button> <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-2" class="page"> 
+                    <div class="page-content items-center"> 
+                        <p class="lesson-text text-center">Les consonnes finales ne se prononcent pas entièrement.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-3" class="page"> 
+                    <div class="page-content items-center"> 
+                        <p class="lesson-text text-center">Il n’existe que 7 manières &lt;ㄱ,ㄴ,ㄷ,ㄹ,ㅁ,ㅂ,ㅇ&gt; de prononcer les consonnes finales.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-4" class="page"> 
+                    <div class="page-content items-center"> 
+                        <p class="lesson-text text-center">Il faut bien distinguer les sons selon leurs positions.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-5" class="page"> 
+                    <div class="page-content items-center"> 
+                        <p class="lesson-text text-center">La liaison est obligatoire quand elle est suivie par une voyelle.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-6" class="page"> 
+                    <div class="page-content"> 
+                        <p class="lesson-text mb-6">Pratiquons avec &lt;ㅇ&gt;.</p> 
+                        <div class="flex justify-center gap-2"> 
+                            <button class="char-button" onclick="playSound('gang')">강</button> 
+                            <button class="char-button" onclick="playSound('bang')">방</button> 
+                            <button class="char-button" onclick="playSound('jong')">종</button> 
+                        </div> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-7')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button> </div> 
+                </div>
             `;
             
             quizData.forEach((data) => {
@@ -472,7 +588,7 @@
                     <div id="jamo-keyboard-${quizNum}" class="jamo-bank"></div>
                 `;
 
-                const prevButtonHtml = page === 7 ? `<button onclick="showPage('page-6')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Leçon</button>` : `<button onclick="showPage('page-${page - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>`;
+                const prevButtonHtml = `<button onclick="showPage('page-${page - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>`;
                 const navButtonHtml = `
                     <div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full">
                         ${prevButtonHtml}
@@ -501,7 +617,6 @@
                 if (q.type === 'writing') setupDictationQuiz(q.id, true);
             });
             
-            // [ADDED] Store initial nav states
             document.querySelectorAll('[id$="-nav"]').forEach(nav => {
                 initialNavStates[nav.id] = nav.innerHTML;
             });
