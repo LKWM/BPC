@@ -41,6 +41,7 @@
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
             border-radius: 0.75rem;
             overflow: hidden;
+            background-color: white;
         }
         .page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -48,7 +49,7 @@
             opacity: 0; visibility: hidden; transition: opacity 0.4s ease-in-out;
             background-color: white; padding: var(--padding-lg);
             border-radius: 0.75rem;
-            box-sizing: border-box; /* [추가됨] 패딩 계산 일관성 보장 */
+            box-sizing: border-box;
         }
         #page-0 {
             justify-content: center;
@@ -69,9 +70,16 @@
             .page { padding: 1.5rem 1rem; border-radius: 0; }
         }
 
-        .title-text { font-size: var(--font-title); }
+        .title-text { 
+            font-size: var(--font-title); 
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+        }
         .lesson-text { font-size: var(--font-lg); }
-        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; cursor: pointer; }
+        .nav-button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        
         .page-header {
             text-align: center; color: #4b5563; font-size: var(--font-lg);
             font-weight: 600; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb;
@@ -93,13 +101,20 @@
         .quiz-option span { font-size: var(--font-xl); }
         .quiz-option:hover { background-color: #f3f4f6; }
         .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; }
+        .quiz-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #15803d; }
+        .quiz-option.wrong { background-color: #fee2e2; border-color: #ef4444; color: #b91c1c; }
         .quiz-option input { display: none; }
+        
         .feedback-area {
-            text-align: right; /* [수정됨] 피드백 정렬 */
-            min-height: 40px; /* [수정됨] 높이 일관성 */
+            text-align: right;
+            min-height: 50px; 
             display: flex;
-            align-items: center; justify-content: flex-end; /* [수정됨] 피드백 정렬 */
-            gap: 0.5rem; /* [추가됨] 버튼과의 간격 */
+            align-items: center; 
+            justify-content: flex-end;
+            gap: 0.5rem;
+            flex-grow: 1;
+            font-size: var(--font-base);
+            font-weight: 600;
         }
         
         .input-zone-container { display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; min-height: clamp(60px, 20vmin, 80px); gap: 0.5rem;}
@@ -109,34 +124,31 @@
             font-size: clamp(2rem, 10vmin, 3rem);
             font-family: 'Noto Sans KR', sans-serif; font-weight: 700;
             display: flex; justify-content: center; align-items: center; cursor: pointer; transition: border-color 0.2s;
-            border-radius: 0.5rem; /* [추가됨] */
+            border-radius: 0.5rem;
         }
-        /* [추가됨] 활성 입력 상자 스타일 */
         .syllable-input.active {
             border-color: #3b82f6;
         }
-        .jamo-bank { display: flex; flex-direction: column; gap: 4px; /* [수정됨] 간격 */ justify-content: center; width: 100%; max-width: 500px; padding-top: 1rem; border-top: 1px solid #e5e7eb; margin-top: 1rem; align-items: center; }
-        .jamo-row { display: flex; flex-wrap: nowrap; gap: 4px; /* [수정됨] 간격 */ justify-content: center; width: 100%; }
+        .jamo-bank { display: flex; flex-direction: column; gap: 4px; justify-content: center; width: 100%; max-width: 500px; padding-top: 1rem; border-top: 1px solid #e5e7eb; margin-top: 1rem; align-items: center; }
+        .jamo-row { display: flex; flex-wrap: nowrap; gap: 4px; justify-content: center; width: 100%; }
         .jamo-key {
-            height: clamp(35px, 8vmin, 45px); /* [수정됨] 키보드 높이 */
-            font-size: var(--font-jamo-key); /* [수정됨] CSS 변수 사용 */
+            height: clamp(35px, 8vmin, 45px);
+            font-size: clamp(0.8rem, 3.5vw, 1.1rem);
             font-family: 'Noto Sans KR', sans-serif; 
-            border: 1px solid #d1d5db; border-bottom-width: 3px; /* [수정됨] 입체감 */
-            border-radius: 0.375rem; /* [수정됨] */
-            background-color: #ffffff; /* [수정됨] */
+            border: 1px solid #d1d5db; border-bottom-width: 3px;
+            border-radius: 0.375rem;
+            background-color: #ffffff;
             cursor: pointer; display:flex; align-items:center; justify-content:center;
             flex: 1; min-width: 0;
-            transition: background-color 0.1s, border-color 0.1s, transform 0.1s; /* [추가됨] */
-            -webkit-tap-highlight-color: transparent; /* [추가됨] */
+            transition: background-color 0.1s, border-color 0.1s, transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .jamo-key:hover { background-color: #f9fafb; } /* [수정됨] */
-        /* [추가됨] 키 클릭 효과 */
+        .jamo-key:hover { background-color: #f9fafb; }
         .jamo-key:active {
             background-color: #e5e7eb;
             border-bottom-width: 1px;
             transform: translateY(2px);
         }
-        /* [추가됨] 컨트롤 키 스타일 */
         .control-key {
             flex: 2;
         }
@@ -175,8 +187,17 @@
         let currentPageId = 'page-0';
         const totalQuestions = 20;
         let questionResults = new Array(totalQuestions).fill(false);
-        let dictationState = {}; // { quizNum: { inputs: [[]], isShifted: false, ... } }
-        let navInitialStates = {}; // 하단 네비게이션바 초기 상태 저장
+        let dictationState = {}; 
+        let dictationAttempts = {}; 
+        let initialNavStates = {};
+
+        // Valid Hangul Jamos to allow input
+        const validJamos = [
+            'ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ',
+            'ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ',
+            'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ',
+            'ㅃ', 'ㅉ', 'ㄸ', 'ㄲ', 'ㅆ', 'ㅒ', 'ㅖ'
+        ];
 
         const sounds = {
             'gam': { file: 'https://static.wixstatic.com/mp3/699687_023f3517caaf417985825a6f1ffc2928.mp3' },
@@ -235,7 +256,7 @@
             { type: 'dictation', audio: 'baji', answer: ['바지'] }
         ];
 
-        // --- Hangeul Logic (Simplified) ---
+        // --- Hangeul Logic ---
         const HANGEUL_OFFSET = 0xAC00;
         const CHO = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
         const JUNG = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
@@ -253,7 +274,6 @@
             if (jong === -1) jong = 0;
             return String.fromCharCode(HANGEUL_OFFSET + (cho * 21 * 28) + (jung * 28) + jong);
         }
-        // --- End Hangeul Logic ---
 
         function createQuizPages() {
             const container = document.querySelector('.course-container');
@@ -281,15 +301,14 @@
                     `;
                 }
 
-                const nextButtonText = questionNumber === totalQuestions ? 'Terminer le test' : 'Suivant &rarr;';
-                const prevButtonHtml = questionNumber > 1 ? `<button onclick="showPage('quiz-page-${questionNumber - 1}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>` : `<div class="w-24"></div>`; // Placeholder for alignment
+                const prevButtonHtml = questionNumber > 1 ? `<button onclick="showPage('quiz-page-${questionNumber - 1}')" class="nav-button text-gray-600 hover:bg-gray-200" id="prev-btn-${questionNumber}">&larr; Précédent</button>` : `<div class="w-24"></div>`;
 
                 const navButtonHtml = `
                     <div id="quiz-${questionNumber}-nav" class="flex justify-between items-center w-full">
                         ${prevButtonHtml}
-                        <div class="flex items-center gap-4">
-                           <div id="q${questionNumber}-feedback" class="feedback-area"></div>
-                           <button onclick="submitAnswerAndProceed(${questionNumber})" class="nav-button text-white bg-blue-600 hover:bg-blue-700">${nextButtonText}</button>
+                        <div class="flex items-center gap-2 flex-grow justify-end">
+                            <div id="q${questionNumber}-feedback" class="feedback-area"></div>
+                            <button id="submit-btn-${questionNumber}" data-state="check" onclick="submitAnswerAndProceed(${questionNumber})" class="nav-button text-white bg-blue-600 hover:bg-blue-700 whitespace-nowrap">Vérifier</button>
                         </div>
                     </div>`;
 
@@ -302,8 +321,11 @@
                         ${navButtonHtml}
                     </div>
                 `;
+                
+                dictationAttempts[questionNumber] = 0;
             });
             
+            // Result Page (Final)
             pagesHtml += `
                 <div id="results-page" class="page items-center justify-center text-center">
                     <div class="page-content flex flex-col items-center justify-center">
@@ -311,25 +333,10 @@
                         <p id="score-display" class="text-5xl font-bold text-blue-600 mb-6"></p>
                         <p id="score-message" class="lesson-text text-gray-600"></p>
                     </div>
-                    <div class="flex justify-center items-center gap-4">
-                        <button onclick="retakeQuiz()" class="nav-button bg-gray-500 text-white hover:bg-gray-600">Réessayer</button>
-                        <button id="finish-button" onclick="showPage('final-completion-message')" class="nav-button bg-green-600 text-white hover:bg-green-700 hidden">Terminer</button>
-                    </div>
-                </div>
-                <div id="final-completion-message" class="page items-center justify-center text-center">
-                    <div class="page-content flex flex-col items-center justify-center">
-                         <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                         <h2 class="title-text font-bold text-gray-800 mb-3">Félicitations !</h2>
-                         <p class="lesson-text text-gray-600">Vous avez terminé le Chapitre 9.</p>
-                    </div>
-                    <div class="w-full text-center pb-4">
-                         <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button>
-                    </div>
                 </div>
             `;
 
-            // Insert after page-0
-            document.getElementById('page-0').insertAdjacentHTML('afterend', pagesHtml);
+            container.innerHTML += pagesHtml;
         }
 
         function playSound(soundKey) {
@@ -337,11 +344,10 @@
             Tone.start().then(() => {
                 const player = new Tone.Player(sounds[soundKey].file).toDestination();
                 player.autostart = true;
-                player.onstop = () => player.dispose(); // [수정됨] 오디오가 끝나면 플레이어 제거
+                player.onstop = () => player.dispose();
             });
         }
 
-        // [수정됨] postMessage 로직 추가
         function showPage(pageId) {
             const currentPage = document.getElementById(currentPageId);
             if (currentPage) currentPage.classList.remove('active');
@@ -350,27 +356,62 @@
             if (nextPage) {
                 nextPage.classList.add('active');
                 currentPageId = pageId;
+                
+                resetPageState(nextPage);
+            }
+        }
+        
+        function resetPageState(pageElement) {
+            const pageId = pageElement.id;
+            const quizNumMatch = pageId.match(/quiz-page-(\d+)/);
+            if (!quizNumMatch) return;
+            
+            const questionNumber = parseInt(quizNumMatch[1], 10);
+            const data = quizData[questionNumber - 1];
+            if (!data) return;
 
-                // [추가됨] 퀴즈 페이지가 아닌 경우, 또는 특정 퀴즈 페이지에서 상태 리셋
-                if (pageId.startsWith('quiz-page-')) {
-                     // 퀴즈 페이지로 이동할 때 특별한 로직이 필요하면 여기에 추가
-                     // (예: 오디오 자동 재생 - 현재는 필요 없음)
-                } else if (pageId === 'final-completion-message') {
-                     // [추가됨] 최종 완료 페이지에서 postMessage 전송
-                    if (window.parent) {
-                        window.parent.postMessage({ type: 'lesson_complete' }, '*');
-                    }
-                } else if (pageId === 'page-0') {
-                    // [추가됨] 타이틀 페이지로 돌아갈 때, 퀴즈 리셋 (다시하기를 누르지 않은 경우 대비)
-                    retakeQuiz(false); // false: 페이지 전환 없음
-                }
+            const quizNav = pageElement.querySelector(`#quiz-${questionNumber}-nav`);
+            if (quizNav && initialNavStates[quizNav.id]) {
+                 quizNav.innerHTML = initialNavStates[quizNav.id];
+                 const newCheckButton = quizNav.querySelector('button[onclick^="submit"]');
+                 if (newCheckButton) {
+                    newCheckButton.onclick = () => submitAnswerAndProceed(questionNumber);
+                 }
+                 const newPrevButton = quizNav.querySelector(`#prev-btn-${questionNumber}`);
+                 if(newPrevButton) {
+                    newPrevButton.onclick = () => showPage(`quiz-page-${questionNumber - 1}`);
+                 }
+            }
+            
+            dictationAttempts[questionNumber] = 0;
+
+            if (data.type.startsWith('mcq')) {
+                const options = pageElement.querySelectorAll(`input[name="q${questionNumber}"]`);
+                options.forEach(opt => {
+                    opt.disabled = false;
+                    opt.checked = false;
+                    opt.parentElement.classList.remove('selected', 'correct', 'wrong');
+                    opt.parentElement.style.cursor = 'pointer';
+                });
+            } 
+            else if (data.type === 'dictation') {
+                setupDictationQuiz(questionNumber);
+                const jamoKeys = pageElement.querySelectorAll('.jamo-key');
+                jamoKeys.forEach(k => k.disabled = false);
             }
         }
 
         function submitAnswerAndProceed(questionNumber) {
+            const submitBtn = document.getElementById(`submit-btn-${questionNumber}`);
+            if (submitBtn && submitBtn.dataset.state === 'next') {
+                goToNext(questionNumber);
+                return;
+            }
+
             const data = quizData[questionNumber - 1];
             let isAnswered = false;
             let userAnswer = null;
+            let isCorrect = false;
 
             if (data.type.startsWith('mcq')) {
                 const selectedOption = document.querySelector(`input[name="q${questionNumber}"]:checked`);
@@ -382,32 +423,98 @@
                 const state = dictationState[questionNumber];
                 if (state) {
                     userAnswer = state.inputs.map(syllableArray => combineHangeul(syllableArray)).join('');
-                    if (userAnswer) { // [수정됨] 빈칸이 아닌지 확인
-                        isAnswered = true; 
-                    }
+                    if (userAnswer.length > 0) isAnswered = true;
                 }
             }
             
+            const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
             if (!isAnswered) {
-                 const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
-                 if(feedbackEl) {
-                    feedbackEl.innerHTML = `<p class="text-yellow-600 font-bold" style="font-size: var(--font-base);">Veuillez répondre.</p>`; // [수정됨] 폰트 크기 적용
-                    setTimeout(() => { if(feedbackEl) feedbackEl.innerHTML = ''; }, 2000);
-                 }
+                 if(feedbackEl) feedbackEl.innerHTML = `<span class="text-yellow-600">Veuillez répondre.</span>`;
+                 setTimeout(() => { if(feedbackEl && feedbackEl.textContent.includes('Veuillez')) feedbackEl.innerHTML = ''; }, 2000);
                  return;
             }
 
-            const correctAnswer = data.answer;
-            if (Array.isArray(correctAnswer)) {
-                questionResults[questionNumber - 1] = correctAnswer.includes(userAnswer);
+            // Check correctness
+            if (Array.isArray(data.answer)) {
+                isCorrect = data.answer.includes(userAnswer);
             } else {
-                questionResults[questionNumber - 1] = (userAnswer === correctAnswer);
+                isCorrect = (userAnswer === data.answer);
             }
+            
+            // --- MCQ Logic ---
+            if (data.type.startsWith('mcq')) {
+                if (isCorrect) {
+                    const selectedLabel = document.querySelector(`input[name="q${questionNumber}"]:checked`).parentElement;
+                    selectedLabel.classList.add('correct');
+                    
+                    const allOptions = document.querySelectorAll(`input[name="q${questionNumber}"]`);
+                    allOptions.forEach(opt => opt.disabled = true);
+                    
+                    feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
+                    questionResults[questionNumber - 1] = true;
+                    
+                    submitBtn.textContent = 'Suivant';
+                    submitBtn.dataset.state = 'next';
+                    submitBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    submitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
 
-            // [수정됨] 피드백 영역 클리어
-            const feedbackEl = document.getElementById(`q${questionNumber}-feedback`);
-            if(feedbackEl) feedbackEl.innerHTML = '';
+                } else {
+                    const selectedLabel = document.querySelector(`input[name="q${questionNumber}"]:checked`).parentElement;
+                    selectedLabel.classList.add('wrong');
+                    feedbackEl.innerHTML = `<span class="text-red-500">Mauvaise réponse.</span>`;
+                    
+                    const options = document.querySelectorAll(`input[name="q${questionNumber}"]`);
+                    options.forEach(opt => {
+                        opt.addEventListener('click', () => {
+                             selectedLabel.classList.remove('wrong');
+                        }, {once:true});
+                    });
+                }
+            } 
+            // --- Dictation Logic ---
+            else {
+                if (isCorrect) {
+                    const jamoKeys = document.getElementById(`jamo-bank-${questionNumber}`).querySelectorAll('.jamo-key');
+                    jamoKeys.forEach(k => k.disabled = true);
 
+                    feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
+                    questionResults[questionNumber - 1] = true;
+
+                    submitBtn.textContent = 'Suivant';
+                    submitBtn.dataset.state = 'next';
+                    submitBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    submitBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+
+                } else {
+                    dictationAttempts[questionNumber]++;
+                    const attempts = dictationAttempts[questionNumber];
+
+                    if (attempts < 3) {
+                        feedbackEl.innerHTML = `<span class="text-red-500">Mauvaise réponse.</span>`;
+                        // Clear inputs for retry
+                        const state = dictationState[questionNumber];
+                        const answerWord = Array.isArray(data.answer) ? data.answer[0] : data.answer;
+                        state.inputs = Array.from({ length: answerWord.length }, () => []);
+                        updateDictationDisplay(questionNumber);
+                        setActiveSyllable(questionNumber, 0);
+                        
+                    } else {
+                        // 3rd Failure: Show Answer
+                        const shownAnswer = Array.isArray(data.answer) ? data.answer[0] : data.answer;
+                        feedbackEl.innerHTML = `<span class="text-red-600 font-bold">Réponse : ${shownAnswer}</span>`;
+                        
+                        // Clear inputs for user to type correct answer
+                        const state = dictationState[questionNumber];
+                        const answerWord = Array.isArray(data.answer) ? data.answer[0] : data.answer;
+                        state.inputs = Array.from({ length: answerWord.length }, () => []);
+                        updateDictationDisplay(questionNumber);
+                        setActiveSyllable(questionNumber, 0);
+                    }
+                }
+            }
+        }
+
+        function goToNext(questionNumber) {
             if (questionNumber < totalQuestions) {
                 showPage(`quiz-page-${questionNumber + 1}`);
             } else {
@@ -420,81 +527,30 @@
             document.getElementById('score-display').textContent = `${score} / ${totalQuestions}`;
             
             const messageEl = document.getElementById('score-message');
-            const finishButton = document.getElementById('finish-button');
             
-            if (score === 20) messageEl.textContent = "Très bien ! Êtes-vous prêt(e) pour la suite ?";
-            else if (score >= 17) messageEl.textContent = "Bien joué ! Vous y êtes presque !";
-            else if (score >= 13) messageEl.textContent = "Bien joué ! Entraînons-nous encore un peu.";
-            else if (score >= 10) messageEl.textContent = "Bien joué ! Essayez de revoir la leçon.";
-            else messageEl.textContent = "Bon travail. Essayez de revoir la leçon et de refaire le test.";
-
-            if (score >= 17) finishButton.classList.remove('hidden');
-            else finishButton.classList.add('hidden');
+            if (score === 20) messageEl.textContent = "Parfait !";
+            else if (score >= 17) messageEl.textContent = "Bien joué !";
+            else if (score >= 13) messageEl.textContent = "Pas mal !";
+            else if (score >= 10) messageEl.textContent = "Courage !";
+            else messageEl.textContent = "Bon travail.";
 
             showPage('results-page');
-        }
-
-        // [수정됨] retakeQuiz 로직 수정
-        function retakeQuiz(navigateToPage0 = true) {
-            questionResults.fill(false);
-            dictationState = {};
             
-            // DOM을 완전히 재생성하는 대신, 기존 퀴즈 페이지를 리셋
-            quizData.forEach((data, index) => {
-                const qNum = index + 1;
-                const page = document.getElementById(`quiz-page-${qNum}`);
-                if (!page) return;
-
-                // MCQ 리셋
-                if (data.type.startsWith('mcq')) {
-                    const options = page.querySelectorAll(`input[name="q${qNum}"]`);
-                    options.forEach(opt => {
-                        opt.checked = false;
-                        opt.parentElement.classList.remove('selected');
-                    });
-                }
-                // Dictation 리셋
-                else if (data.type === 'dictation') {
-                    setupDictationQuiz(qNum); // setup이 리셋 로직을 포함
-                }
-                
-                // 네비게이션 바 리셋
-                const navEl = document.getElementById(`quiz-${qNum}-nav`);
-                if (navEl && navInitialStates[navEl.id]) {
-                    navEl.innerHTML = navInitialStates[navEl.id];
-                    // 버튼 이벤트 다시 바인딩
-                    const nextButton = navEl.querySelector('button[onclick^="submitAnswer"]');
-                    if (nextButton) {
-                        nextButton.onclick = () => submitAnswerAndProceed(qNum);
-                    }
-                    const prevButton = navEl.querySelector('button[onclick^="showPage"]');
-                    if (prevButton) {
-                        const prevPageId = qNum > 1 ? `quiz-page-${qNum - 1}` : 'page-0';
-                        prevButton.onclick = () => showPage(prevPageId);
-                    }
-                }
-            });
-
-            // 점수판 리셋
-            document.getElementById('score-display').textContent = '';
-            document.getElementById('score-message').textContent = '';
-            document.getElementById('finish-button').classList.add('hidden');
-            
-            if (navigateToPage0) {
-                showPage('page-0');
+            if (window.parent) {
+                window.parent.postMessage({ type: 'lesson_complete' }, '*');
             }
         }
-        
+
         function addOptionListeners() {
              document.querySelectorAll('input[type="radio"]').forEach(radio => {
                  radio.addEventListener('change', (e) => {
+                     if (e.target.disabled) return;
                      document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(opt => opt.parentElement.classList.remove('selected'));
                      if(e.target.checked) e.target.parentElement.classList.add('selected');
                  });
              });
         }
         
-        // --- Dictation Logic (개선됨) ---
         function setupDictationQuiz(quizNum) {
             const data = quizData[quizNum - 1];
             const inputContainer = document.getElementById(`input-zone-${quizNum}`);
@@ -527,14 +583,12 @@
         function setActiveSyllable(quizNum, syllableIndex) {
             dictationState[quizNum].activeSyllableIndex = syllableIndex;
             dictationState[quizNum].syllableInputs.forEach((inputEl, index) => {
-                inputEl.classList.toggle('active', index === syllableIndex); // [수정됨] .active 클래스 사용
+                inputEl.classList.toggle('active', index === syllableIndex);
             });
         }
 
         function renderKeyboard(quizNum) {
-            const state = dictationState[quizNum];
-            if (!state) return;
-            const { jamoBank, isShifted } = state;
+            const { jamoBank, isShifted } = dictationState[quizNum];
             if (!jamoBank) return;
             jamoBank.innerHTML = ''; 
 
@@ -581,12 +635,15 @@
 
         function processJamo(quizNum, jamo) {
             const state = dictationState[quizNum];
-            if (!state) return; // [추가됨] 방어 코드
+            if (!state) return;
+            
+            // Block input if answer already submitted and correct
+            if (document.getElementById(`submit-btn-${quizNum}`).dataset.state === 'next') return;
+
             const currentJamoArray = state.inputs[state.activeSyllableIndex];
             if (jamo === 'DELETE') {
                 currentJamoArray.pop();
             } else {
-                // [수정됨] 한글 조합 로직 단순화 (최대 3개 자모)
                 if (currentJamoArray.length < 3) currentJamoArray.push(jamo);
             }
             updateDictationDisplay(quizNum);
@@ -598,7 +655,7 @@
 
         function updateDictationDisplay(quizNum) {
             const state = dictationState[quizNum];
-            if (!state) return; // [추가됨] 방어 코드
+            if (!state) return;
             state.syllableInputs.forEach((inputEl, index) => {
                 inputEl.textContent = combineHangeul(state.inputs[index]);
             });
@@ -612,11 +669,30 @@
                     setupDictationQuiz(index + 1);
                 }
             });
-            // [추가됨] 네비게이션 초기 상태 저장
-            document.querySelectorAll('[id^="quiz-"][id$="-nav"]').forEach(nav => {
-                navInitialStates[nav.id] = nav.innerHTML;
+            document.querySelectorAll('[id$="-nav"]').forEach(nav => {
+                initialNavStates[nav.id] = nav.innerHTML;
             });
         }
+        
+        // Physical Keyboard Support: Allow INPUT ONLY if keyboard language is Korean (Hangul)
+        document.addEventListener('keydown', (e) => {
+            if (!currentPageId.startsWith('quiz-page-')) return;
+            
+            const questionNumber = parseInt(currentPageId.replace('quiz-page-', ''), 10);
+            const data = quizData[questionNumber - 1];
+            
+            if (data && data.type === 'dictation') {
+                if (e.key === 'Backspace') {
+                    processJamo(questionNumber, 'DELETE');
+                    return;
+                }
+                
+                // Allow ONLY valid Hangul Jamos from OS input
+                if (validJamos.includes(e.key)) {
+                    processJamo(questionNumber, e.key);
+                }
+            }
+        });
         
         document.addEventListener('DOMContentLoaded', () => {
             initializeQuiz();
