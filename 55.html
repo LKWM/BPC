@@ -133,6 +133,8 @@
         }
         .quiz-option:hover { background-color: #f3f4f6; border-color: #d1d5db; }
         .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; color: #312e81; }
+        .quiz-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #15803d; }
+        .quiz-option.wrong { background-color: #fee2e2; border-color: #ef4444; color: #b91c1c; }
         .quiz-option input { display: none; }
     </style>
 </head>
@@ -150,6 +152,15 @@
         let dictationAssemblers = {};
         let activeDictationBox = { quizNum: -1, boxIndex: -1 };
         let isShiftActive = false;
+        let attempts = {}; // Track attempts per question
+
+        // Valid Hangul Jamos for physical keyboard
+        const validJamos = [
+            'ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ',
+            'ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ',
+            'ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ',
+            'ㅃ', 'ㅉ', 'ㄸ', 'ㄲ', 'ㅆ', 'ㅒ', 'ㅖ'
+        ];
         
         const sounds = {
             'h': { file: 'https://static.wixstatic.com/mp3/699687_465b64ac84e94f5eb10feebc6ac0027a.mp3' },
@@ -247,7 +258,6 @@
             }).catch(e => console.error("Audio could not start:", e));
         }
 
-        // [수정됨] postMessage 로직 추가
         function showPage(pageId) {
             const currentPage = document.getElementById(currentPageId);
             if (currentPage) currentPage.classList.remove('active');
@@ -257,13 +267,12 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 
-                // [추가됨] 완료 페이지에서 postMessage 전송
                 if (pageId === 'completion-page') {
                     if (window.parent) {
                         window.parent.postMessage({ type: 'lesson_complete' }, '*');
                     }
                 }
-                
+
                 const quizNumMatch = pageId.match(/quiz-page-(\d+)/);
                 if (quizNumMatch) {
                     currentQuizIndex = parseInt(quizNumMatch[1], 10) - 1;
@@ -279,10 +288,12 @@
             const quiz = quizData[currentQuizIndex];
             const quizNum = quiz.id;
             
+            // Reset attempts for this quiz
+            attempts[quizNum] = 0;
+
             const quizNav = pageElement.querySelector(`#quiz-${quizNum}-nav`);
             if (quizNav && quizNav.dataset.initialHtml) {
                 quizNav.innerHTML = quizNav.dataset.initialHtml;
-                // Re-bind the onclick event
                 const newCheckButton = quizNav.querySelector('button[onclick^="validate"]');
                 if (newCheckButton) {
                     const validateFn = quiz.type === 'mcq' ? () => validateMcq(quizNum) : () => validateDictation(quizNum);
@@ -292,21 +303,19 @@
             
             if (quiz.type === 'writing') {
                 isShiftActive = false;
-                // Re-initialize assemblers
                 dictationAssemblers[quizNum] = Array(quiz.syllables).fill(0).map(() => new HangeulAssembler());
-                setupDictationQuiz(quizNum, false); // false = not initial setup, just reset
-                setActiveDictationBox(quizNum, 0); // Set active box to first one
+                setupDictationQuiz(quizNum, false); 
+                setActiveDictationBox(quizNum, 0);
             } else if (quiz.type === 'mcq') {
-                setupMcq(quizNum); // Re-builds the MCQ options
+                setupMcq(quizNum);
             }
         }
 
-        // --- MCQ Functions ---
         function setupMcq(quizNum) {
             const quiz = quizData.find(q => q.id === quizNum);
             const page = document.getElementById(`quiz-page-${quizNum}`);
             const optionsContainer = page.querySelector('.options-container');
-            optionsContainer.innerHTML = '';
+            optionsContainer.innerHTML = ''; 
             quiz.options.forEach(opt => {
                 const label = document.createElement('label');
                 label.className = 'quiz-option';
@@ -333,25 +342,114 @@
             
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
 
             const nextQuizNum = quizNum + 1;
             const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
             const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
             
+            // Disable Inputs
+            page.querySelectorAll('input[type="checkbox"]').forEach(i => i.disabled = true);
+            validateBtn.style.display = 'none';
+
             if (isCorrect) {
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+                page.querySelectorAll('.quiz-option.selected').forEach(el => el.classList.add('correct'));
+                feedbackContainer.innerHTML = `<span class="text-green-600 font-bold mr-2">Bonne réponse !</span><button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                // Increment Attempts
+                attempts[quizNum] = (attempts[quizNum] || 0) + 1;
+
+                if (attempts[quizNum] >= 3) {
+                    // Reveal Answer
+                    const correctText = correctAnswers.join(', ');
+                    feedbackContainer.innerHTML = `
+                        <span class="text-red-600 font-bold mr-2">Réponse : ${correctText}</span>
+                        <button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>
+                    `;
+                } else {
+                    // Retry
+                    page.querySelectorAll('.quiz-option.selected').forEach(el => el.classList.add('wrong'));
+                    feedbackContainer.innerHTML = `<span class="text-red-500 font-bold mr-2">Mauvaise réponse (${attempts[quizNum]}/3)</span><button onclick="retryMcq(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                }
             }
         }
         
-        function resetQuiz(quizNum) {
-            const pageId = `quiz-page-${quizNum}`;
-            resetPageState(pageId);
+        function retryMcq(quizNum) {
+             const page = document.getElementById(`quiz-page-${quizNum}`);
+             page.querySelectorAll('input[type="checkbox"]').forEach(i => {
+                 i.disabled = false;
+                 i.checked = false; // Uncheck
+             });
+             page.querySelectorAll('.quiz-option').forEach(el => {
+                 el.classList.remove('wrong', 'selected'); // Reset visuals
+             });
+             
+             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+             feedbackContainer.innerHTML = '';
+             navEl.querySelector('button[onclick^="validate"]').style.display = 'block';
         }
 
-        // --- Dictation Functions ---
+        // Writing Quiz Functions
+        function validateDictation(quizNum) {
+            const quiz = quizData.find(q => q.id === quizNum);
+            let userAnswer = '';
+            const assemblers = dictationAssemblers[quizNum];
+            for (let i = 0; i < assemblers.length; i++) {
+                userAnswer += assemblers[i].getSyllable();
+            }
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
+            
+            const isCorrect = quiz.answer.includes(userAnswer);
+            const nextQuizNum = quizNum + 1;
+            const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
+            const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
+
+            if (isCorrect) {
+                validateBtn.style.display = 'none';
+                feedbackContainer.innerHTML = `<span class="text-green-600 font-bold mr-2">Bonne réponse !</span><button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+                // Disable keyboard
+                const jamoKeys = document.getElementById(`jamo-keyboard-${quizNum}`).querySelectorAll('button');
+                jamoKeys.forEach(b => b.disabled = true);
+            } else {
+                // Increment Attempts
+                attempts[quizNum] = (attempts[quizNum] || 0) + 1;
+
+                if (attempts[quizNum] >= 3) {
+                     validateBtn.style.display = 'none';
+                     const correctText = quiz.answer.join(', ');
+                     feedbackContainer.innerHTML = `
+                        <span class="text-red-600 font-bold mr-2">Réponse : ${correctText}</span>
+                        <button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>
+                     `;
+                     const jamoKeys = document.getElementById(`jamo-keyboard-${quizNum}`).querySelectorAll('button');
+                     jamoKeys.forEach(b => b.disabled = true);
+                } else {
+                    validateBtn.style.display = 'none';
+                    feedbackContainer.innerHTML = `<span class="text-red-500 font-bold mr-2">Mauvaise réponse (${attempts[quizNum]}/3)</span><button onclick="retryDictation(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                }
+            }
+        }
+
+        function retryDictation(quizNum) {
+            const quiz = quizData.find(q => q.id === quizNum);
+            dictationAssemblers[quizNum] = Array(quiz.syllables).fill(0).map(() => new HangeulAssembler());
+            updateAllDictationDisplays(quizNum);
+            setActiveDictationBox(quizNum, 0);
+            
+            const jamoKeys = document.getElementById(`jamo-keyboard-${quizNum}`).querySelectorAll('button');
+            jamoKeys.forEach(b => b.disabled = false);
+
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            feedbackContainer.innerHTML = '';
+            navEl.querySelector('button[onclick^="validate"]').style.display = 'block';
+        }
+
+        // ... (Remaining Hangeul Logic & Setup Functions kept same as structured) ...
+
         function setupDictationQuiz(quizNum, isInitialSetup = false) {
             const quiz = quizData.find(q => q.id === quizNum);
             if (!quiz) return;
@@ -416,10 +514,11 @@
 
         function processJamoInput(jamo) {
             const { quizNum, boxIndex } = activeDictationBox;
+            const submitBtn = document.querySelector(`#quiz-${quizNum}-nav button[onclick^="validate"]`);
+            if (!submitBtn || submitBtn.style.display === 'none') return;
+
             if (quizNum === -1 || !dictationAssemblers[quizNum] || !dictationAssemblers[quizNum][boxIndex]) return;
-
             let assembler = dictationAssemblers[quizNum][boxIndex];
-
             if (jamo === 'Backspace') {
                 if (assembler.state === 'start' && boxIndex > 0) {
                     setActiveDictationBox(quizNum, boxIndex - 1);
@@ -481,9 +580,7 @@
                     }
                 }
             }
-
             updateAllDictationDisplays(quizNum);
-            
             if (jamo !== 'Backspace' && isShiftActive) {
                 isShiftActive = false;
                 setupDictationQuiz(quizNum);
@@ -498,33 +595,7 @@
                 if (box) box.textContent = assembler.getSyllable();
             });
         }
-        
-        function validateDictation(quizNum) {
-            const quiz = quizData.find(q => q.id === quizNum);
-            let userAnswer = '';
-            const assemblers = dictationAssemblers[quizNum];
-            for (let i = 0; i < assemblers.length; i++) {
-                userAnswer += assemblers[i].getSyllable();
-            }
 
-            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
-
-            const isCorrect = quiz.answer.includes(userAnswer);
-            
-            const nextQuizNum = quizNum + 1;
-            const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
-            const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
-            
-            if (isCorrect) {
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
-            } else {
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
-            }
-        }
-
-        // --- Page Creation ---
         function createPages() {
             const container = document.querySelector('.course-container');
             let pagesHtml = `
@@ -564,8 +635,8 @@
                     <div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full">
                         <button onclick="showPage('${prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button>
                         <div class="flex items-center gap-4">
-                           <div id="quiz-${quizNum}-feedback" class="feedback-area"></div>
-                           <button onclick="${validateFn}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
+                            <div id="quiz-${quizNum}-feedback" class="feedback-area"></div>
+                            <button onclick="${validateFn}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>
                         </div>
                     </div>`;
 
@@ -575,9 +646,12 @@
                         ${navButtonHtml}
                     </div>
                 `;
+                
+                attempts[quizNum] = 0;
             });
             
-            const completionPageHtml = `<div id="completion-page" class="page"> <div class="page-content"> <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <h2 class="title-text font-bold text-gray-800 mb-3">Chapitre terminé !</h2> <p class="lesson-text text-gray-600">Félicitations, vous avez terminé le chapitre.</p> </div> <div class="w-full text-center pb-4"> <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button> </div> </div>`;
+            // Completion page without restart button
+            const completionPageHtml = `<div id="completion-page" class="page"> <div class="page-content"> <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <h2 class="title-text font-bold text-gray-800 mb-3">Chapitre terminé !</h2> <p class="lesson-text text-gray-600">Félicitations, vous avez terminé le chapitre.</p> </div> <div class="w-full text-center pb-4"></div> </div>`;
             container.innerHTML = pagesHtml + completionPageHtml;
         }
 
@@ -599,6 +673,25 @@
             showPage('page-0');
         }
         
+        // Physical Keyboard Support
+        document.addEventListener('keydown', (e) => {
+            if (!currentPageId.startsWith('quiz-page-')) return;
+            const quizNumMatch = currentPageId.match(/quiz-page-(\d+)/);
+            if (!quizNumMatch) return;
+            const quizNum = parseInt(quizNumMatch[1], 10);
+            const quiz = quizData.find(q => q.id === quizNum);
+            
+            if (quiz && quiz.type === 'writing') {
+                if (e.key === 'Backspace') {
+                    processJamoInput('Backspace');
+                    return;
+                }
+                if (validJamos.includes(e.key)) {
+                    processJamoInput(e.key);
+                }
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
