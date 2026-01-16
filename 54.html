@@ -129,6 +129,8 @@
         }
         .quiz-option:hover { background-color: #f3f4f6; border-color: #d1d5db; }
         .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; color: #312e81; }
+        .quiz-option.correct { background-color: #dcfce7; border-color: #22c55e; color: #15803d; }
+        .quiz-option.wrong { background-color: #fee2e2; border-color: #ef4444; color: #b91c1c; }
         .quiz-option input { display: none; }
     </style>
 </head>
@@ -146,7 +148,9 @@
         let dictationAssemblers = {};
         let activeDictationBox = { quizNum: -1, boxIndex: -1 };
         let isShiftActive = false;
-        
+        let dictationAttempts = {}; 
+        let mcqAttempts = {}; // [ADDED] Track MCQ attempts
+
         const sounds = {
             'g': { file: 'https://static.wixstatic.com/mp3/699687_a14958ffc05243ccb827e78390a1c8ca.mp3' },
             'k': { file: 'https://static.wixstatic.com/mp3/699687_1ae51315c24f4d72bcb16ca5a9de4aa8.mp3' },
@@ -190,7 +194,8 @@
         const CHO = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
         const JUNG = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'];
         const JONG = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
-        
+        const validJamos = [...CHO, ...JUNG, 'ㅃ','ㅉ','ㄸ','ㄲ','ㅆ','ㅒ','ㅖ']; 
+
         const isVowel = (c) => JUNG.includes(c);
         const isConsonant = (c) => CHO.includes(c);
         
@@ -260,7 +265,6 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
                 
-                // [추가됨] 완료 페이지에서 postMessage 전송
                 if (pageId === 'completion-page') {
                     if (window.parent) {
                         window.parent.postMessage({ type: 'lesson_complete' }, '*');
@@ -282,10 +286,13 @@
             const quiz = quizData[currentQuizIndex];
             const quizNum = quiz.id;
             
+            // Reset attempts on fresh page visit
+            dictationAttempts[quizNum] = 0;
+            mcqAttempts[quizNum] = 0; // [ADDED] Reset MCQ attempts
+
             const quizNav = pageElement.querySelector(`#quiz-${quizNum}-nav`);
             if (quizNav && quizNav.dataset.initialHtml) {
                 quizNav.innerHTML = quizNav.dataset.initialHtml;
-                // Re-bind the onclick event
                 const newCheckButton = quizNav.querySelector('button[onclick^="validate"]');
                 if (newCheckButton) {
                     const validateFn = quiz.type === 'mcq' ? () => validateMcq(quizNum) : () => validateDictation(quizNum);
@@ -295,12 +302,11 @@
             
             if (quiz.type === 'writing') {
                 isShiftActive = false;
-                // Re-initialize assemblers
                 dictationAssemblers[quizNum] = Array(quiz.syllables).fill(0).map(() => new HangeulAssembler());
-                setupDictationQuiz(quizNum, false); // false = not initial setup, just reset
-                setActiveDictationBox(quizNum, 0); // Set active box to first one
+                setupDictationQuiz(quizNum, false); 
+                setActiveDictationBox(quizNum, 0);
             } else if (quiz.type === 'mcq') {
-                setupMcq(quizNum); // Re-builds the MCQ options
+                setupMcq(quizNum);
             }
         }
 
@@ -308,7 +314,7 @@
             const quiz = quizData.find(q => q.id === quizNum);
             const page = document.getElementById(`quiz-page-${quizNum}`);
             const optionsContainer = page.querySelector('.options-container');
-            optionsContainer.innerHTML = ''; // Clear previous options
+            optionsContainer.innerHTML = ''; 
             quiz.options.forEach(opt => {
                 const label = document.createElement('label');
                 label.className = 'quiz-option';
@@ -335,22 +341,107 @@
             
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
 
             const nextQuizNum = quizNum + 1;
             const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
             const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
             
+            // Disable Inputs
+            page.querySelectorAll('input[type="checkbox"]').forEach(i => i.disabled = true);
+            validateBtn.style.display = 'none';
+
             if (isCorrect) {
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+                page.querySelectorAll('.quiz-option.selected').forEach(el => el.classList.add('correct'));
+                feedbackContainer.innerHTML = `<span class="text-green-600 font-bold mr-2">Bonne réponse !</span><button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             } else {
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                // Increment MCQ Attempts
+                mcqAttempts[quizNum] = (mcqAttempts[quizNum] || 0) + 1;
+
+                if (mcqAttempts[quizNum] >= 3) {
+                    // 3 Failures: Reveal Answer
+                    const answerText = quiz.answer.join(', ');
+                    feedbackContainer.innerHTML = `
+                        <span class="text-red-600 font-bold mr-2">Réponse : ${answerText}</span>
+                        <button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>
+                    `;
+                } else {
+                    // Retry
+                    page.querySelectorAll('.quiz-option.selected').forEach(el => el.classList.add('wrong'));
+                    feedbackContainer.innerHTML = `<span class="text-red-500 font-bold mr-2">Mauvaise réponse (${mcqAttempts[quizNum]}/3)</span><button onclick="retryMcq(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                }
             }
         }
         
-        function resetQuiz(quizNum) {
-            const pageId = `quiz-page-${quizNum}`;
-            resetPageState(pageId);
+        function retryMcq(quizNum) {
+             const page = document.getElementById(`quiz-page-${quizNum}`);
+             page.querySelectorAll('input[type="checkbox"]').forEach(i => {
+                 i.disabled = false;
+                 i.checked = false; // [MODIFIED] Clear selection
+             });
+             page.querySelectorAll('.quiz-option').forEach(el => {
+                 el.classList.remove('wrong', 'selected'); // [MODIFIED] Remove visual classes
+             });
+             
+             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+             feedbackContainer.innerHTML = '';
+             navEl.querySelector('button[onclick^="validate"]').style.display = 'block';
+        }
+
+        function retryDictation(quizNum) {
+            const quiz = quizData.find(q => q.id === quizNum);
+            dictationAssemblers[quizNum] = Array(quiz.syllables).fill(0).map(() => new HangeulAssembler());
+            updateAllDictationDisplays(quizNum);
+            setActiveDictationBox(quizNum, 0);
+            
+            const jamoKeys = document.getElementById(`jamo-keyboard-${quizNum}`).querySelectorAll('button');
+            jamoKeys.forEach(b => b.disabled = false);
+
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            feedbackContainer.innerHTML = '';
+            navEl.querySelector('button[onclick^="validate"]').style.display = 'block';
+        }
+
+        function validateDictation(quizNum) {
+            const quiz = quizData.find(q => q.id === quizNum);
+            let userAnswer = '';
+            const assemblers = dictationAssemblers[quizNum];
+            for (let i = 0; i < assemblers.length; i++) {
+                userAnswer += assemblers[i].getSyllable();
+            }
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
+            
+            const isCorrect = quiz.answer.includes(userAnswer);
+            const nextQuizNum = quizNum + 1;
+            const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
+            const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
+
+            if (isCorrect) {
+                validateBtn.style.display = 'none';
+                feedbackContainer.innerHTML = `<span class="text-green-600 font-bold mr-2">Bonne réponse !</span><button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+                const jamoKeys = document.getElementById(`jamo-keyboard-${quizNum}`).querySelectorAll('button');
+                jamoKeys.forEach(b => b.disabled = true);
+            } else {
+                dictationAttempts[quizNum] = (dictationAttempts[quizNum] || 0) + 1;
+                
+                if (dictationAttempts[quizNum] >= 3) {
+                     validateBtn.style.display = 'none';
+                     const correctText = quiz.answer[0]; 
+                     feedbackContainer.innerHTML = `
+                        <span class="text-red-600 font-bold mr-2">Réponse : ${correctText}</span>
+                        <button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>
+                     `;
+                     const jamoKeys = document.getElementById(`jamo-keyboard-${quizNum}`).querySelectorAll('button');
+                     jamoKeys.forEach(b => b.disabled = true);
+                } else {
+                    validateBtn.style.display = 'none';
+                    feedbackContainer.innerHTML = `<span class="text-red-500 font-bold mr-2">Mauvaise réponse (${dictationAttempts[quizNum]}/3)</span><button onclick="retryDictation(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                }
+            }
         }
 
         function setupDictationQuiz(quizNum, isInitialSetup = false) {
@@ -417,6 +508,9 @@
 
         function processJamoInput(jamo) {
             const { quizNum, boxIndex } = activeDictationBox;
+            const submitBtn = document.querySelector(`#quiz-${quizNum}-nav button[onclick^="validate"]`);
+            if (!submitBtn || submitBtn.style.display === 'none') return;
+
             if (quizNum === -1 || !dictationAssemblers[quizNum] || !dictationAssemblers[quizNum][boxIndex]) return;
             let assembler = dictationAssemblers[quizNum][boxIndex];
             if (jamo === 'Backspace') {
@@ -495,27 +589,6 @@
                 if (box) box.textContent = assembler.getSyllable();
             });
         }
-        
-        function validateDictation(quizNum) {
-            const quiz = quizData.find(q => q.id === quizNum);
-            let userAnswer = '';
-            const assemblers = dictationAssemblers[quizNum];
-            for (let i = 0; i < assemblers.length; i++) {
-                userAnswer += assemblers[i].getSyllable();
-            }
-            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
-            const isCorrect = quiz.answer.includes(userAnswer);
-            const nextQuizNum = quizNum + 1;
-            const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
-            const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
-            if (isCorrect) {
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
-            } else {
-                feedbackContainer.innerHTML = `<button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
-            }
-        }
 
         function createPages() {
             const container = document.querySelector('.course-container');
@@ -544,8 +617,13 @@
                 const validateFn = type === 'mcq' ? `validateMcq(${quizNum})` : `validateDictation(${quizNum})`;
                 const navButtonHtml = `<div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full"><button onclick="showPage('${prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button><div class="flex items-center gap-4"><div id="quiz-${quizNum}-feedback" class="feedback-area"></div><button onclick="${validateFn}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button></div></div>`;
                 pagesHtml += `<div id="${pageId}" class="page"><div class="page-content ${type === 'writing' ? 'writing-quiz-content' : ''}">${contentHtml}</div>${navButtonHtml}</div>`;
+                
+                // Initialize attempts for each quiz
+                dictationAttempts[quizNum] = 0;
+                mcqAttempts[quizNum] = 0; // Initialize MCQ attempts
             });
-            const completionPageHtml = `<div id="completion-page" class="page"> <div class="page-content"> <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <h2 class="title-text font-bold text-gray-800 mb-3">Chapitre terminé !</h2> <p class="lesson-text text-gray-600">Félicitations, vous avez terminé le chapitre.</p> </div> <div class="w-full text-center pb-4"> <button onclick="showPage('page-0')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Recommencer</button> </div> </div>`;
+            
+            const completionPageHtml = `<div id="completion-page" class="page"> <div class="page-content"> <svg class="w-20 h-20 mx-auto mb-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <h2 class="title-text font-bold text-gray-800 mb-3">Chapitre terminé !</h2> <p class="lesson-text text-gray-600">Félicitations, vous avez terminé le chapitre.</p> </div> <div class="w-full text-center pb-4"></div> </div>`;
             container.innerHTML = pagesHtml + completionPageHtml;
         }
 
@@ -555,13 +633,32 @@
                 if (q.type === 'writing') setupDictationQuiz(q.id, true);
                 else if (q.type === 'mcq') setupMcq(q.id);
             });
-            // Save initial nav bar state
+            // Save initial state of nav bars
             document.querySelectorAll('[id$="-nav"]').forEach(nav => {
                 nav.dataset.initialHtml = nav.innerHTML;
             });
             showPage('page-0');
         }
         
+        // Physical Keyboard Event Listener (Restricted to Hangul)
+        document.addEventListener('keydown', (e) => {
+            if (!currentPageId.startsWith('quiz-page-')) return;
+            const quizNumMatch = currentPageId.match(/quiz-page-(\d+)/);
+            if (!quizNumMatch) return;
+            const quizNum = parseInt(quizNumMatch[1], 10);
+            const quiz = quizData.find(q => q.id === quizNum);
+            
+            if (quiz && quiz.type === 'writing') {
+                if (e.key === 'Backspace') {
+                    processJamoInput('Backspace');
+                    return;
+                }
+                if (validJamos.includes(e.key)) {
+                    processJamoInput(e.key);
+                }
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
