@@ -187,6 +187,7 @@
         let currentPageId = 'page-0';
         const totalQuestions = 20;
         let questionResults = new Array(totalQuestions).fill(false);
+        let scoreRecorded = new Array(totalQuestions).fill(false);
         let dictationState = {}; 
         let dictationAttempts = {}; 
         let initialNavStates = {};
@@ -441,6 +442,12 @@
                 isCorrect = (userAnswer === data.answer);
             }
             
+            // Record score on first attempt
+            if (!scoreRecorded[questionNumber - 1]) {
+                questionResults[questionNumber - 1] = isCorrect;
+                scoreRecorded[questionNumber - 1] = true;
+            }
+
             // --- MCQ Logic ---
             if (data.type.startsWith('mcq')) {
                 if (isCorrect) {
@@ -451,7 +458,6 @@
                     allOptions.forEach(opt => opt.disabled = true);
                     
                     feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
-                    questionResults[questionNumber - 1] = true;
                     
                     submitBtn.textContent = 'Suivant';
                     submitBtn.dataset.state = 'next';
@@ -478,7 +484,6 @@
                     jamoKeys.forEach(k => k.disabled = true);
 
                     feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
-                    questionResults[questionNumber - 1] = true;
 
                     submitBtn.textContent = 'Suivant';
                     submitBtn.dataset.state = 'next';
