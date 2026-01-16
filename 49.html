@@ -124,6 +124,10 @@
             font-size: clamp(2rem, 10vmin, 3rem);
             font-family: 'Noto Sans KR', sans-serif; font-weight: 700;
             display: flex; justify-content: center; align-items: center; cursor: pointer; transition: border-color 0.2s;
+            border-radius: 0.5rem;
+        }
+        .syllable-input.active {
+            border-color: #3b82f6;
         }
         .jamo-bank { display: flex; flex-direction: column; gap: 0.25rem; justify-content: center; width: 100%; max-width: 500px; padding-top: 1rem; border-top: 1px solid #e5e7eb; margin-top: 1rem; align-items: center; }
         .jamo-row { display: flex; flex-wrap: nowrap; gap: 0.25rem; justify-content: center; width: 100%; }
@@ -167,6 +171,7 @@
         let currentPageId = 'page-0';
         const totalQuestions = 20;
         let questionResults = new Array(totalQuestions).fill(false);
+        let scoreRecorded = new Array(totalQuestions).fill(false); // [ADDED] Track if score is recorded for a question
         let dictationState = {};
         let dictationAttempts = {}; 
         let initialNavStates = {};
@@ -361,6 +366,12 @@
 
             isCorrect = (userAnswer === data.answer);
             
+            // Record score ONLY if it hasn't been recorded yet (First attempt)
+            if (!scoreRecorded[questionNumber - 1]) {
+                questionResults[questionNumber - 1] = isCorrect;
+                scoreRecorded[questionNumber - 1] = true;
+            }
+            
             // --- MCQ Logic ---
             if (data.type.startsWith('mcq')) {
                 if (isCorrect) {
@@ -372,7 +383,6 @@
                     allOptions.forEach(opt => opt.disabled = true);
                     
                     feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
-                    questionResults[questionNumber - 1] = true;
                     
                     // Change button to Suivant
                     submitBtn.textContent = 'Suivant';
@@ -403,7 +413,6 @@
                     jamoKeys.forEach(k => k.disabled = true);
 
                     feedbackEl.innerHTML = `<span class="text-green-600">Bonne réponse !</span>`;
-                    questionResults[questionNumber - 1] = true;
 
                     // Change button to Suivant
                     submitBtn.textContent = 'Suivant';
@@ -469,6 +478,7 @@
 
         function retakeQuiz() {
             questionResults.fill(false);
+            scoreRecorded.fill(false); // Reset score recording
             dictationState = {};
             dictationAttempts = {}; 
             
