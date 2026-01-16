@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Chapitre 8 - Les consonnes finales - Nasales et Liquide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,17 +12,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <style>
         :root {
-            --font-sm: clamp(0.75rem, 2vmin, 0.875rem);
-            --font-base: clamp(0.875rem, 2.5vmin, 1rem);
-            --font-lg: clamp(1rem, 3vmin, 1.25rem);
-            --font-xl: clamp(1.125rem, 4vmin, 1.5rem);
-            --font-title: clamp(1.5rem, 5vmin, 2rem);
-            --font-display: clamp(5rem, 20vmin, 8rem);
-            --font-char-btn: clamp(3rem, 12vmin, 4.5rem);
-            --font-jamo-key: clamp(0.8rem, 2.5vmin, 1rem);
-            --padding-sm: clamp(0.5rem, 2vmin, 0.75rem);
-            --padding-md: clamp(0.75rem, 3vmin, 1.5rem);
-            --padding-lg: clamp(1rem, 4vmin, 2.5rem);
+            --font-sm: clamp(0.75rem, 1.5vh, 0.875rem);
+            --font-base: clamp(0.875rem, 2vh, 1rem);
+            --font-lg: clamp(1rem, 2.5vh, 1.25rem);
+            --font-xl: clamp(1.125rem, 3vh, 1.5rem);
+            --font-title: clamp(1.5rem, 4vh, 2rem);
+            --font-display: clamp(3rem, 10vh, 5rem);
+            --font-char-btn: clamp(2rem, 8vw, 3.5rem);
+            --font-jamo-key: clamp(0.9rem, 2.2vh, 1.1rem);
+            --padding-sm: clamp(0.5rem, 1vh, 0.75rem);
+            --padding-md: clamp(0.75rem, 2vh, 1.5rem);
+            --padding-lg: clamp(1rem, 3vh, 2rem);
         }
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
@@ -30,16 +30,36 @@
         body {
             font-family: 'Inter', 'Noto Sans KR', sans-serif;
             display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 1rem; background-color: #f3f4f6;
+            background-color: #f3f4f6;
         }
 
         /* --- Layout --- */
-        .course-wrapper { width: 100%; max-width: 600px; }
+        .course-wrapper {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            padding: 1rem; box-sizing: border-box;
+        }
         .course-container {
-            width: 100%; position: relative; aspect-ratio: 1 / 1;
+            width: 100%; max-width: 600px;
+            position: relative;
+            /* 데스크탑: 정사각형 비율 유지 */
+            aspect-ratio: 1 / 1;
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
             border-radius: 0.75rem; overflow: hidden; background-color: white;
+            display: flex; flex-direction: column;
         }
+        
+        /* [모바일 화면 대응] 비율 해제 및 전체 화면 채움 */
+        @media (max-width: 600px) {
+            body { padding: 0; background-color: white; }
+            .course-wrapper { padding: 0; height: 100vh; width: 100vw; }
+            .course-container {
+                max-width: none; width: 100%; height: 100%;
+                aspect-ratio: auto; border-radius: 0; box-shadow: none;
+            }
+            .page { border-radius: 0; padding: 1rem; }
+        }
+
         .page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
@@ -48,66 +68,91 @@
         }
         .page.active { opacity: 1; visibility: visible; }
         .page-content {
-            flex-grow: 1; overflow: hidden; display: flex; flex-direction: column;
+            flex-grow: 1; overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
-            gap: clamp(1rem, 4vh, 2rem);
-        }
-        
-        /* --- Mobile Responsive --- */
-        @media (max-width: 600px) {
-            body { padding: 0; height: 100vh; max-height: -webkit-fill-available; }
-            .course-wrapper { height: 100%; max-width: 100%; }
-            .course-container { aspect-ratio: auto; height: 100%; border-radius: 0; }
-            .page { padding: 1.5rem 1rem; border-radius: 0; }
+            width: 100%;
+            gap: clamp(0.5rem, 2vh, 1.5rem); 
         }
 
         /* --- Common Elements --- */
         .title-text { 
             font-size: var(--font-title); 
             font-weight: 700; 
-            color: #1f2937;
+            color: #1f2937; 
             text-align: center;
         }
         .lesson-text { font-size: var(--font-lg); color: #4b5563; line-height: 1.6; }
-        .nav-button { padding: var(--padding-sm) var(--padding-md); border-radius: 0.5rem; font-weight: 600; font-size: var(--font-base); transition: background-color 0.2s; }
+        
+        .nav-button { 
+            padding: clamp(0.6rem, 2vh, 0.8rem) clamp(1rem, 3vw, 1.5rem); 
+            border-radius: 0.5rem; 
+            font-weight: 600; 
+            font-size: var(--font-base); 
+            transition: background-color 0.2s; 
+            white-space: nowrap;
+        }
+        
         .char-button {
             font-size: var(--font-char-btn); font-weight: 700; font-family: 'Noto Sans KR', sans-serif;
             background-color: #eff6ff; border: 2px solid #93c5fd;
-            border-radius: 1rem; padding: var(--padding-sm) var(--padding-md);
+            border-radius: 1rem; padding: 0.5rem 1rem;
             cursor: pointer; transition: background-color 0.2s, transform 0.1s;
-            line-height: 1.1;
+            line-height: 1.2;
         }
         .char-button:hover { background-color: #dbeafe; }
         .char-button:active { transform: scale(0.95); }
-        
+
         /* --- Quiz --- */
-        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; }
+        .quiz-question { font-weight: 600; font-size: var(--font-lg); color: #1f2937; margin-bottom: 0.5vh; }
         .audio-button { background: none; border: none; cursor: pointer; }
-        .audio-icon { width: clamp(2.5rem, 8vmin, 3rem); height: clamp(2.5rem, 8vmin, 3rem); color: #6b7280; transition: color 0.2s; }
+        .audio-icon { width: clamp(2.5rem, 6vh, 3.5rem); height: clamp(2.5rem, 6vh, 3.5rem); color: #6b7280; transition: color 0.2s; }
         .audio-button:hover .audio-icon { color: #1d4ed8; }
-        .feedback-area { text-align: right; min-height: 52px; display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;}
+        
+        .feedback-area { 
+            text-align: right; min-height: 3rem; 
+            display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;
+            font-size: var(--font-base);
+        }
         
         /* Writing Quiz */
-        .writing-quiz-content { gap: clamp(0.25rem, 1.5vh, 1rem); }
-        .syllable-container { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; align-items: center; min-height: clamp(80px, 22vmin, 100px); }
+        /* [수정] 중앙 정렬로 변경 */
+        .writing-quiz-content { 
+            gap: 0.5rem; 
+            justify-content: center; /* 다시 중앙 정렬 */
+            padding-top: 0; /* 상단 패딩 제거 */
+        }
+        .syllable-container { 
+            display: flex; flex-wrap: wrap; gap: 0.5rem; 
+            justify-content: center; align-items: center; 
+            min-height: clamp(60px, 15vh, 90px);
+            margin-bottom: 0.5rem; 
+        }
         .syllable-input { 
             border: 2px solid #cbd5e1; background-color: #f9fafb; 
-            width: clamp(80px, 22vmin, 100px); height: clamp(80px, 22vmin, 100px); 
+            width: clamp(60px, 18vw, 90px); height: clamp(60px, 18vw, 90px); 
             font-size: var(--font-char-btn); font-family: 'Noto Sans KR', sans-serif; 
             font-weight: 700; display: flex; justify-content: center; align-items: center; 
             cursor: pointer; transition: border-color 0.2s; border-radius: 0.5rem;
         }
-        .syllable-input.active { border-color: #3b82f6; }
-        .jamo-bank { display: flex; flex-direction: column; gap: 4px; justify-content: center; padding: clamp(0.5rem, 1vmin, 0.75rem); border-top: 1px solid #e5e7eb; margin-top: clamp(0.5rem, 2vh, 1rem); align-items: center; width:100%;}
-        .jamo-row { display: flex; flex-wrap: nowrap; gap: 4px; justify-content: center; width: 100%; }
+        .syllable-input.active { border-color: #3b82f6; background-color: #eff6ff; }
+        
+        .jamo-bank { 
+            display: flex; flex-direction: column; gap: 0.3rem; 
+            justify-content: center; padding: 0.5rem; 
+            border-top: 1px solid #e5e7eb; 
+            margin-top: 0.5rem; 
+            width: 100%; max-width: 500px;
+        }
+        .jamo-row { display: flex; flex-wrap: nowrap; gap: 0.3rem; justify-content: center; width: 100%; }
         .jamo-key {
-            height: clamp(35px, 8vmin, 45px); font-size: var(--font-jamo-key);
+            flex: 1; height: clamp(36px, 7vh, 48px); 
+            font-size: var(--font-jamo-key);
             font-family: 'Noto Sans KR', sans-serif; font-weight: 600;
             border: 1px solid #d1d5db; border-bottom-width: 3px;
             border-radius: 0.375rem; background-color: #ffffff;
             cursor: pointer; display:flex; align-items:center; justify-content:center;
-            flex-grow: 1; min-width: 0;
-            transition: background-color 0.1s, border-color 0.1s, transform 0.1s;
+            transition: all 0.1s;
             -webkit-tap-highlight-color: transparent;
         }
         .jamo-key:hover { background-color: #f9fafb; }
@@ -117,23 +162,28 @@
         .backspace-key { flex-grow: 1.5; }
 
         /* MCQ Quiz */
-        .options-container { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(0.5rem, 2vmin, 0.75rem); }
+        .options-container { 
+            display: flex; flex-wrap: wrap; justify-content: center; 
+            gap: 0.5rem; width: 100%; 
+        }
         .quiz-option {
-            font-size: clamp(1.5rem, 5vmin, 2rem);
+            font-size: var(--font-xl);
             font-family: 'Noto Sans KR', sans-serif;
             font-weight: 600;
             color: #374151;
             background-color: #f9fafb;
             border: 2px solid #e5e7eb;
             border-radius: 0.5rem;
-            padding: var(--padding-sm) var(--padding-md);
+            padding: clamp(0.5rem, 1.5vh, 0.8rem) clamp(1rem, 3vw, 1.5rem);
             cursor: pointer;
             transition: all 0.2s;
-            min-width: clamp(60px, 15vmin, 80px);
+            min-width: clamp(60px, 15vw, 80px);
             text-align: center;
         }
         .quiz-option:hover { background-color: #f3f4f6; border-color: #d1d5db; }
         .quiz-option.selected { background-color: #e0e7ff; border-color: #a5b4fc; color: #312e81; }
+        .quiz-option.correct { background-color: #dcfce7; border-color: #16a34a; color: #14532d; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
         .quiz-option input { display: none; }
     </style>
 </head>
@@ -152,6 +202,7 @@
         let activeDictationBox = { quizNum: -1, boxIndex: -1 };
         let isShiftActive = false;
         let initialNavStates = {}; 
+        let attemptCounts = {}; 
 
         const sounds = {
             'n': { file: 'https://static.wixstatic.com/mp3/699687_4814975f22564446b6ed84b41c0555ba.mp3' },
@@ -245,7 +296,7 @@
                 } else if (this.state === 'cho_typed') { this.cho = -1; this.state = 'start'; }
             }
         }
-        
+
         function playSound(soundKey) {
             if (!sounds[soundKey]) return;
             Tone.start().then(() => {
@@ -264,7 +315,6 @@
                 nextPage.classList.add('active');
                 currentPageId = pageId;
 
-                // [ADDED] postMessage logic
                 if (pageId === 'completion-page') {
                     if (window.parent) {
                         window.parent.postMessage({ type: 'lesson_complete' }, '*');
@@ -274,104 +324,29 @@
                 const quizNumMatch = pageId.match(/quiz-page-(\d+)/);
                 if (quizNumMatch) {
                     currentQuizIndex = parseInt(quizNumMatch[1], 10) - 1;
-                    resetPageState(pageId);
+                    const quizNum = quizData[currentQuizIndex].id;
+                    const quiz = quizData[currentQuizIndex];
+                    
+                    // Reset attempt counts if needed or just init
+                    if(attemptCounts[quizNum] === undefined) attemptCounts[quizNum] = 0;
+
+                    if (quiz.type === 'writing') {
+                        isShiftActive = false;
+                        setupDictationQuiz(quizNum, true);
+                    }
                 } else if (pageId === 'page-0') {
                     currentQuizIndex = -1;
+                    // Reset all
+                    attemptCounts = {};
                 }
             }
         }
         
         function resetPageState(pageId) {
             const pageElement = document.getElementById(pageId);
-            if (!pageElement || currentQuizIndex === -1) return;
-            
-            const quiz = quizData[currentQuizIndex];
-            const quizNum = quiz.id;
-            
-            const quizNav = pageElement.querySelector(`#quiz-${quizNum}-nav`);
-             if (quizNav && initialNavStates[quizNav.id]) {
-                quizNav.innerHTML = initialNavStates[quizNav.id];
-                // Re-bind buttons
-                const newCheckButton = quizNav.querySelector('button[onclick^="validate"]');
-                if (newCheckButton) {
-                    newCheckButton.onclick = quiz.type === 'mcq' ? () => validateMcq(quizNum) : () => validateDictation(quizNum);
-                }
-            }
-            
-            if (quiz.type === 'writing') {
-                isShiftActive = false;
-                setupDictationQuiz(quizNum, true);
-            } else if (quiz.type === 'mcq') {
-                setupMcq(quizNum);
-            }
-        }
-
-        function setupMcq(quizNum) {
-            const quiz = quizData.find(q => q.id === quizNum);
-            const page = document.getElementById(`quiz-page-${quizNum}`);
-            const optionsContainer = page.querySelector('.options-container');
-            optionsContainer.innerHTML = '';
-            quiz.options.forEach(opt => {
-                const label = document.createElement('label');
-                label.className = 'quiz-option';
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.name = `quiz-${quizNum}`;
-                input.value = opt;
-                input.onchange = (e) => {
-                    document.querySelectorAll(`input[name="quiz-${quizNum}"]`).forEach(radio => {
-                        radio.parentElement.classList.remove('selected');
-                    });
-                    e.currentTarget.parentElement.classList.toggle('selected', e.currentTarget.checked);
-                };
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(opt));
-                optionsContainer.appendChild(label);
-            });
-        }
-        
-        function validateMcq(quizNum) {
-            const quiz = quizData.find(q => q.id === quizNum);
-            const page = document.getElementById(`quiz-page-${quizNum}`);
-            const selectedOption = page.querySelector(`input[name="quiz-${quizNum}"]:checked`);
-            
-            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
-            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
-
-            if (!selectedOption) {
-                // [MODIFIED] Added font-size
-                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold mr-2" style="font-size: var(--font-base);">Veuillez sélectionner une réponse.</p><button onclick="validateMcq(${quizNum})" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>`;
-                navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
-                setTimeout(() => {
-                    const currentFeedback = feedbackContainer.querySelector('p');
-                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
-                        if (navEl.dataset.initialHtml) {
-                           navEl.innerHTML = navEl.dataset.initialHtml;
-                           navEl.querySelector('button[onclick^="validate"]').onclick = () => validateMcq(quizNum);
-                        }
-                    }
-                }, 2000);
-                return;
-            }
-
-            const nextQuizNum = quiz.id + 1;
-            const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
-            const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
-
-            if (selectedOption && quiz.answer.includes(selectedOption.value)) {
-                selectedOption.parentElement.classList.add('correct');
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
-            } else {
-                if (selectedOption) selectedOption.parentElement.classList.add('incorrect');
-                 // [MODIFIED] Added font-size
-                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
-            }
-        }
-        
-        function resetQuiz(quizNum) {
-            const pageId = `quiz-page-${quizNum}`;
-            resetPageState(pageId);
+            if (!pageElement) return;
+            const quizDataEntry = quizData.find(q => `page-${q.page}` === pageId);
+            if(!quizDataEntry) return; 
         }
 
         function setupDictationQuiz(quizNum, isInitialSetup = false) {
@@ -385,21 +360,25 @@
             const jamoBank = document.getElementById(`jamo-keyboard-${quizNum}`);
             if (!jamoBank) return;
             jamoBank.innerHTML = ''; 
-            
+
             for(let i=0; i < quiz.syllables; i++) {
                 const inputEl = document.getElementById(`input-${quizNum}-${i}`);
-                if (inputEl) inputEl.textContent = '';
+                if (inputEl) {
+                    inputEl.textContent = '';
+                    inputEl.style.color = '#1f2937'; // reset color
+                    inputEl.style.borderColor = '#cbd5e1';
+                }
             }
 
             const keyboardLayout = [
                 ['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ','ㅛ','ㅕ','ㅑ','ㅐ','ㅔ'],
                 ['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],
-                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Backspace']
+                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Del']
             ];
             const shiftedLayout = [
                 ['ㅃ','ㅉ','ㄸ','ㄲ','ㅆ','ㅛ','ㅕ','ㅑ','ㅒ','ㅖ'],
                 ['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],
-                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Backspace']
+                ['Shift', 'ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ', 'Del']
             ];
 
             keyboardLayout.forEach((row, rowIndex) => {
@@ -410,14 +389,13 @@
                 currentLayout.forEach((key) => {
                     const keyEl = document.createElement('button');
                     keyEl.className = 'jamo-key';
-                    keyEl.textContent = key;
+                    keyEl.textContent = key === 'Del' ? '←' : key;
                     if (key === 'Shift') {
                         keyEl.classList.add('shift-key');
                         if(isShiftActive) keyEl.classList.add('active');
                         keyEl.onclick = () => { isShiftActive = !isShiftActive; setupDictationQuiz(quizNum); };
-                    } else if (key === 'Backspace') {
+                    } else if (key === 'Del') {
                         keyEl.classList.add('backspace-key');
-                        keyEl.textContent = '←';
                         keyEl.onclick = () => processJamoInput('Backspace');
                     } else {
                         keyEl.onclick = () => processJamoInput(key);
@@ -431,10 +409,10 @@
                 setActiveDictationBox(quizNum, 0);
             }
         }
-        
+
         function setActiveDictationBox(quizNum, boxIndex) {
             activeDictationBox = { quizNum, boxIndex };
-            document.querySelectorAll(`.syllable-input[id^="input-${quizNum}"]`).forEach(el => el.classList.remove('active'));
+            document.querySelectorAll(`.syllable-input`).forEach(el => el.classList.remove('active'));
             const currentBox = document.getElementById(`input-${quizNum}-${boxIndex}`);
             if (currentBox) {
                 currentBox.classList.add('active');
@@ -443,8 +421,13 @@
 
         function processJamoInput(jamo) {
             const { quizNum, boxIndex } = activeDictationBox;
+            // Prevent input if 3 strikes reached
+            if (attemptCounts[quizNum] >= 3) return;
+
             if (quizNum === -1 || !dictationAssemblers[quizNum] || !dictationAssemblers[quizNum][boxIndex]) return;
+
             let assembler = dictationAssemblers[quizNum][boxIndex];
+
             if (jamo === 'Backspace') {
                 if (assembler.state === 'start' && boxIndex > 0) {
                     setActiveDictationBox(quizNum, boxIndex - 1);
@@ -455,58 +438,42 @@
             } else if (isVowel(jamo)) {
                 if (assembler.state === 'jong_typed') {
                     const jongChar = JONG[assembler.jong];
-                    let lastConsOfPrevSyllable, firstConsOfNextSyllable;
-                    if (JONG_SPLIT[jongChar]) { 
-                        const parts = JONG_SPLIT[jongChar];
-                        lastConsOfPrevSyllable = parts[0];
-                        firstConsOfNextSyllable = parts[1];
-                    } else {
-                        lastConsOfPrevSyllable = '';
-                        firstConsOfNextSyllable = jongChar;
-                    }
-                    assembler.jong = JONG.indexOf(lastConsOfPrevSyllable);
+                    let lastCons = '', firstCons = jongChar;
+                    if (JONG_SPLIT[jongChar]) { lastCons = JONG_SPLIT[jongChar][0]; firstCons = JONG_SPLIT[jongChar][1]; } 
+                    else { lastCons = ''; firstCons = jongChar; }
+                    assembler.jong = JONG.indexOf(lastCons);
                     assembler.state = (assembler.jong > 0) ? 'jong_typed' : 'jung_typed';
                     if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
                         setActiveDictationBox(quizNum, boxIndex + 1);
-                        const nextAssembler = dictationAssemblers[quizNum][boxIndex + 1];
-                        nextAssembler.add(firstConsOfNextSyllable);
-                        nextAssembler.add(jamo);
+                        const nextAss = dictationAssemblers[quizNum][boxIndex + 1];
+                        nextAss.add(firstCons); nextAss.add(jamo);
                     }
-                } else {
-                    assembler.add(jamo);
-                }
+                } else { assembler.add(jamo); }
             } else if (isConsonant(jamo)) {
                 if (assembler.state === 'jung_typed') {
-                    if (JONG.indexOf(jamo) > 0) {
-                        assembler.add(jamo);
-                    } else {
-                        if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
-                            setActiveDictationBox(quizNum, boxIndex + 1);
-                            dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
-                        }
+                    if (JONG.indexOf(jamo) > 0) assembler.add(jamo);
+                    else if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
+                        setActiveDictationBox(quizNum, boxIndex + 1);
+                        dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
                     }
                 } else if (assembler.state === 'jong_typed') {
                     const prevJong = JONG[assembler.jong];
-                    if (CONSONANT_PAIRS[prevJong] && CONSONANT_PAIRS[prevJong][jamo]) {
-                        assembler.add(jamo);
-                    } else {
-                        if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
-                            setActiveDictationBox(quizNum, boxIndex + 1);
-                            dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
-                        }
+                    if (CONSONANT_PAIRS[prevJong] && CONSONANT_PAIRS[prevJong][jamo]) assembler.add(jamo);
+                    else if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
+                        setActiveDictationBox(quizNum, boxIndex + 1);
+                        dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
                     }
                 } else {
-                    if (assembler.state === 'start') {
-                        assembler.add(jamo);
-                    } else {
-                        if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
-                            setActiveDictationBox(quizNum, boxIndex + 1);
-                            dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
-                        }
+                    if (assembler.state === 'start') assembler.add(jamo);
+                    else if (boxIndex + 1 < dictationAssemblers[quizNum].length) {
+                        setActiveDictationBox(quizNum, boxIndex + 1);
+                        dictationAssemblers[quizNum][boxIndex + 1].add(jamo);
                     }
                 }
             }
+
             updateAllDictationDisplays(quizNum);
+            
             if (jamo !== 'Backspace' && isShiftActive) {
                 isShiftActive = false;
                 setupDictationQuiz(quizNum);
@@ -522,6 +489,72 @@
             });
         }
         
+        function validateMcq(quizNum) {
+            const quiz = quizData.find(q => q.id === quizNum);
+            const page = document.getElementById(`quiz-page-${quizNum}`);
+            const selectedOption = page.querySelector(`input[name="quiz-${quizNum}"]:checked`);
+            
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
+
+            if (!selectedOption) {
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold mr-2 text-sm">Veuillez sélectionner une réponse.</p>`;
+                if(validateBtn) validateBtn.style.display = 'none';
+                
+                // [FIX] Auto restore after 2 seconds
+                setTimeout(() => {
+                    feedbackContainer.innerHTML = '';
+                    if(validateBtn) validateBtn.style.display = 'inline-block';
+                }, 2000);
+                return;
+            }
+
+            validateBtn.style.display = 'none'; 
+            
+            const isCorrect = quiz.answer.includes(selectedOption.value);
+            const nextQuizNum = quiz.id + 1;
+            const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
+            const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
+            const nextButtonHtml = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+
+            if (isCorrect) {
+                selectedOption.parentElement.classList.add('correct');
+                feedbackContainer.innerHTML = nextButtonHtml;
+            } else {
+                if (!attemptCounts[quizNum]) attemptCounts[quizNum] = 0;
+                attemptCounts[quizNum]++;
+                
+                selectedOption.parentElement.classList.add('incorrect');
+
+                if (attemptCounts[quizNum] >= 3) {
+                    // Show answer after 3 strikes
+                    const correctVal = quiz.answer[0];
+                    const correctInput = Array.from(page.querySelectorAll('input')).find(input => input.value === correctVal);
+                    if(correctInput) correctInput.parentElement.classList.add('correct');
+                    
+                    feedbackContainer.innerHTML = `<span class="text-red-600 font-bold mr-2 text-sm">3 fautes. Réponse : ${correctVal}</span> ${nextButtonHtml}`;
+                } else {
+                    feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2 text-sm">Incorrect.</p><button onclick="resetMcq(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                }
+            }
+        }
+
+        function resetMcq(quizNum) {
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
+            
+            feedbackContainer.innerHTML = '';
+            if(validateBtn) validateBtn.style.display = 'inline-block';
+            
+            const page = document.getElementById(`quiz-page-${quizNum}`);
+            page.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                opt.querySelector('input').checked = false;
+            });
+        }
+
         function validateDictation(quizNum) {
             const quiz = quizData.find(q => q.id === quizNum);
             let userAnswer = '';
@@ -529,55 +562,121 @@
             for (let i = 0; i < assemblers.length; i++) {
                 userAnswer += assemblers[i].getSyllable();
             }
+
             const navEl = document.getElementById(`quiz-${quizNum}-nav`);
             const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
-            navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
 
             if (userAnswer.trim() === '') {
-                 // [MODIFIED] Added font-size
-                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold mr-2" style="font-size: var(--font-base);">Veuillez entrer une réponse.</p><button onclick="validateDictation(${quizNum})" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button>`;
-                navEl.querySelector('button[onclick^="validate"]').style.display = 'none';
+                feedbackContainer.innerHTML = `<p class="text-yellow-600 font-bold mr-2 text-sm">Veuillez écrire une réponse.</p>`;
+                if(validateBtn) validateBtn.style.display = 'none';
+                
+                // [FIX] Auto restore after 2 seconds
                 setTimeout(() => {
-                    const currentFeedback = feedbackContainer.querySelector('p');
-                    if (currentFeedback && currentFeedback.textContent.includes('Veuillez')) {
-                        if (navEl.dataset.initialHtml) {
-                           navEl.innerHTML = navEl.dataset.initialHtml;
-                           navEl.querySelector('button[onclick^="validate"]').onclick = () => validateDictation(quizNum);
-                        }
-                    }
+                    feedbackContainer.innerHTML = '';
+                    if(validateBtn) validateBtn.style.display = 'inline-block';
                 }, 2000);
                 return;
             }
 
+            if(validateBtn) validateBtn.style.display = 'none';
+
             const isCorrect = quiz.answer.includes(userAnswer);
-            
             const nextQuizNum = quiz.id + 1;
             const nextPageId = nextQuizNum <= quizData.length ? `quiz-page-${nextQuizNum}` : 'completion-page';
             const buttonText = nextQuizNum <= quizData.length ? 'Suivant &rarr;' : 'Terminer';
+            const nextButtonHtml = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
             
             if (isCorrect) {
-                feedbackContainer.innerHTML = `<button onclick="showPage('${nextPageId}')" class="nav-button bg-green-600 text-white hover:bg-green-700">${buttonText}</button>`;
+                feedbackContainer.innerHTML = nextButtonHtml;
             } else {
-                 // [MODIFIED] Added font-size
-                feedbackContainer.innerHTML = `<p class="text-red-600 font-bold mr-2" style="font-size: var(--font-base);">Incorrect.</p><button onclick="resetQuiz(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                if (!attemptCounts[quizNum]) attemptCounts[quizNum] = 0;
+                attemptCounts[quizNum]++;
+
+                if (attemptCounts[quizNum] >= 3) {
+                    // Show answer after 3 strikes
+                    const correctStr = quiz.answer[0];
+                    for(let i=0; i < quiz.syllables; i++) {
+                        const box = document.getElementById(`input-${quizNum}-${i}`);
+                        if(box) {
+                            box.textContent = correctStr[i] || '';
+                            box.style.color = '#dc2626'; 
+                            box.style.borderColor = '#dc2626';
+                        }
+                    }
+                    feedbackContainer.innerHTML = `<span class="text-red-600 font-bold mr-2 text-sm">3 fautes. Réponse : ${correctStr}</span> ${nextButtonHtml}`;
+                } else {
+                    feedbackContainer.innerHTML = `<span class="text-red-600 font-bold mr-2 text-sm">Incorrect.</span><button onclick="resetDictation(${quizNum})" class="nav-button bg-red-600 text-white hover:bg-red-700">Réessayer</button>`;
+                }
             }
+        }
+        
+        function resetDictation(quizNum) {
+            const navEl = document.getElementById(`quiz-${quizNum}-nav`);
+            const feedbackContainer = navEl.querySelector(`#quiz-${quizNum}-feedback`);
+            const validateBtn = navEl.querySelector('button[onclick^="validate"]');
+            
+            feedbackContainer.innerHTML = '';
+            if(validateBtn) validateBtn.style.display = 'inline-block';
+            
+            setupDictationQuiz(quizNum, false);
         }
 
         function createPages() {
             const container = document.querySelector('.course-container');
             let pagesHtml = `
-                <div id="page-0" class="page active items-center justify-center text-center"> 
-                    <div class="page-content"> 
+                <div id="page-0" class="page active items-center justify-center text-center"> 
+                    <div class="page-content"> 
                         <h1 class="title-text text-gray-800 mb-6">Chapitre 8<br>Les consonnes finales</br>Les consonnes nasales et liquide en position finale</h1>
-                        <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> 
-                    </div> 
+                        <button onclick="showPage('page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700 mt-8">Commencer</button> 
+                    </div> 
                 </div>
-                <div id="page-1" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('n')">ㄴ</button> <p class="lesson-text">À la position finale, la prononciation de &lt;ㄴ&gt; s’arrête sans détacher la langue de la gencive.</p> </div> <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button> <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-2" class="page"> <div class="page-content"> <div class="flex justify-center gap-2 sm:gap-4"><button class="char-button" onclick="playSound('na')">나</button> <button class="char-button" onclick="playSound('an')">안</button></div> <p class="lesson-text">En position finale, il faut arrêter la prononciation avec la langue touchant la gencive.</p> </div> <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-3" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('l')">ㄹ</button> <p class="lesson-text">Pour prononcer &lt;ㄹ&gt; final, mettez le bout de la langue sur la gencive et arrêtez la prononciation.</p> </div> <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-4" class="page"> <div class="page-content"> <div class="flex justify-center gap-2 sm:gap-4"><button class="char-button" onclick="playSound('li')">리</button> <button class="char-button" onclick="playSound('il')">일</button></div> <p class="lesson-text">En position finale, il faut arrêter la prononciation avec la langue pressée contre la gencive.</p> </div> <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-5" class="page"> <div class="page-content"> <button class="char-button" onclick="playSound('m')">ㅁ</button> <p class="lesson-text">&lt;ㅁ&gt; se produit en fermant la bouche. Il ne faut pas rouvrir la bouche mais s’arrêter en position fermée.</p> </div> <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> </div>
-                <div id="page-6" class="page"> <div class="page-content"> <p class="lesson-text mb-6">Pratiquons avec &lt;ㅇ&gt; que nous avons appris au chapitre 6. Les consonnes finales se placent en bas d'une syllabe, au milieu.</p> <div class="flex justify-center gap-2 sm:gap-4"> <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('gang')">강</button> <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('bang')">방</button> <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('jong')">종</button> </div> </div> <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button> </div> </div>
+                <div id="page-1" class="page"> 
+                    <div class="page-content"> 
+                        <button class="char-button" onclick="playSound('n')">ㄴ</button> 
+                        <p class="lesson-text">À la position finale, la prononciation de &lt;ㄴ&gt; s’arrête sans détacher la langue de la gencive.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-0')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Titre</button> <button onclick="showPage('page-2')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-2" class="page"> 
+                    <div class="page-content"> 
+                        <div class="flex justify-center gap-2 sm:gap-4"><button class="char-button" onclick="playSound('na')">나</button> <button class="char-button" onclick="playSound('an')">안</button></div> 
+                        <p class="lesson-text">En position finale, il faut arrêter la prononciation avec la langue touchant la gencive.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-1')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-3')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-3" class="page"> 
+                    <div class="page-content"> 
+                        <button class="char-button" onclick="playSound('l')">ㄹ</button> 
+                        <p class="lesson-text">Pour prononcer &lt;ㄹ&gt; final, mettez le bout de la langue sur la gencive et arrêtez la prononciation.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-2')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-4')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-4" class="page"> 
+                    <div class="page-content"> 
+                        <div class="flex justify-center gap-2 sm:gap-4"><button class="char-button" onclick="playSound('li')">리</button> <button class="char-button" onclick="playSound('il')">일</button></div> 
+                        <p class="lesson-text">En position finale, il faut arrêter la prononciation avec la langue pressée contre la gencive.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-3')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-5')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-5" class="page"> 
+                    <div class="page-content"> 
+                        <button class="char-button" onclick="playSound('m')">ㅁ</button> 
+                        <p class="lesson-text">&lt;ㅁ&gt; se produit en fermant la bouche. Il ne faut pas rouvrir la bouche mais s’arrêter en position fermée.</p> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-4')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('page-6')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Suivant &rarr;</button> </div> 
+                </div>
+                <div id="page-6" class="page"> 
+                    <div class="page-content"> 
+                        <p class="lesson-text mb-6">Pratiquons avec &lt;ㅇ&gt; que nous avons appris au chapitre 6. Les consonnes finales se placent en bas d'une syllabe, au milieu.</p> 
+                        <div class="flex justify-center gap-2 sm:gap-4"> 
+                            <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('gang')">강</button> 
+                            <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('bang')">방</button> 
+                            <button class="char-button" style="font-size: clamp(2.5rem, 10vw, 4rem);" onclick="playSound('jong')">종</button> 
+                        </div> 
+                    </div> 
+                    <div class="flex justify-between items-center w-full"> <button onclick="showPage('page-5')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button> <button onclick="showPage('quiz-page-1')" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Faire le quiz &rarr;</button> </div> 
+                </div>
             `;
             
             quizData.forEach((quiz, index) => {
@@ -585,14 +684,17 @@
                 const pageId = `quiz-page-${quizNum}`;
                 const prevPageId = index === 0 ? 'page-6' : `quiz-page-${quizNum - 1}`;
                 let contentHtml = '';
+                
                 if (type === 'mcq') {
                     contentHtml = `<p class="quiz-question">Écoutez et choisissez la bonne écriture.</p><button class="audio-button" onclick="playSound('${sound}')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button><div class="options-container"></div>`;
                 } else if (type === 'writing') {
-                     let syllableInputs = Array.from({ length: syllables }, (_, i) => `<div id="input-${quizNum}-${i}" class="syllable-input" onclick="setActiveDictationBox(${quizNum}, ${i})"></div>`).join('');
+                    let syllableInputs = Array.from({ length: syllables }, (_, i) => `<div id="input-${quizNum}-${i}" class="syllable-input" onclick="setActiveDictationBox(${quizNum}, ${i})"></div>`).join('');
                     contentHtml = `<p class="quiz-question">Écrivez en coréen.</p><button class="audio-button" onclick="playSound('${sound}')"><svg class="audio-icon mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" /></svg></button><div class="syllable-container">${syllableInputs}</div><div id="jamo-keyboard-${quizNum}" class="jamo-bank"></div>`;
                 }
+                
                 const validateFn = type === 'mcq' ? `validateMcq(${quizNum})` : `validateDictation(${quizNum})`;
                 const navButtonHtml = `<div id="quiz-${quizNum}-nav" class="flex justify-between items-center w-full"><button onclick="showPage('${prevPageId}')" class="nav-button text-gray-600 hover:bg-gray-200">&larr; Précédent</button><div class="flex items-center gap-4"><div id="quiz-${quizNum}-feedback" class="feedback-area"></div><button onclick="${validateFn}" class="nav-button bg-blue-600 text-white hover:bg-blue-700">Valider</button></div></div>`;
+                
                 pagesHtml += `<div id="${pageId}" class="page"><div class="page-content ${type === 'writing' ? 'writing-quiz-content' : ''}">${contentHtml}</div>${navButtonHtml}</div>`;
             });
 
@@ -614,6 +716,27 @@
             });
             
             showPage('page-0');
+        }
+        
+        // Helper setup function for MCQ
+        function setupMcq(quizNum) {
+            const quiz = quizData.find(q => q.id === quizNum);
+            const page = document.getElementById(`quiz-page-${quizNum}`);
+            const optionsContainer = page.querySelector('.options-container');
+            if(!optionsContainer) return;
+            optionsContainer.innerHTML = '';
+            quiz.options.forEach(opt => {
+                const label = document.createElement('label');
+                label.className = 'quiz-option';
+                const input = document.createElement('input');
+                input.type = 'radio'; input.name = `quiz-${quizNum}`; input.value = opt;
+                input.onchange = (e) => {
+                    document.querySelectorAll(`input[name="quiz-${quizNum}"]`).forEach(radio => radio.parentElement.classList.remove('selected'));
+                    e.currentTarget.parentElement.classList.add('selected');
+                };
+                label.appendChild(input); label.appendChild(document.createTextNode(opt));
+                optionsContainer.appendChild(label);
+            });
         }
         
         document.addEventListener('DOMContentLoaded', initializeApp);
